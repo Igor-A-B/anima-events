@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import com.example.anima.theme.AnimaTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -13,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.Color
 import com.example.anima.feature.search.presentation.SearchEventsScreen
 import com.example.anima.feature.home.presentation.HomeScreen
 import com.example.anima.navigation.AppDestination
@@ -25,8 +27,9 @@ fun App() {
         mutableStateOf(AppDestination.HOME)
     }
 
-    MaterialTheme {
+    AnimaTheme {
         Scaffold(
+            containerColor = MaterialTheme.colorScheme.background,
             bottomBar = {
                 Box(
                     modifier = Modifier
