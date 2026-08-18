@@ -1,47 +1,65 @@
 package com.example.anima
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.resources.painterResource
-
-import anima.app.shared.generated.resources.Res
-import anima.app.shared.generated.resources.compose_multiplatform
+import androidx.compose.ui.unit.dp
+import com.example.anima.feature.search.presentation.SearchEventsScreen
+import com.example.anima.feature.home.presentation.HomeScreen
+import com.example.anima.navigation.AppDestination
+import com.example.anima.navigation.FloatingBottomNavigation
+import androidx.compose.foundation.layout.fillMaxWidth
 
 @Composable
-@Preview
 fun App() {
+    var currentDestination by remember {
+        mutableStateOf(AppDestination.HOME)
+    }
+
     MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
-            }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
+        Scaffold(
+            bottomBar = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            horizontal = 32.dp,
+                            vertical = 16.dp,
+                        ),
+                    contentAlignment = Alignment.Center,
                 ) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
+                    FloatingBottomNavigation(
+                        selectedDestination = currentDestination,
+                        onDestinationSelected = { destination ->
+                            currentDestination = destination
+                        },
+                    )
+                }
+            },
+        ) { innerPadding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+            ) {
+                when (currentDestination) {
+                    AppDestination.HOME -> {
+                        HomeScreen(
+                        )
+                    }
+
+                    AppDestination.SEARCH -> {
+                        SearchEventsScreen()
+                    }
                 }
             }
         }
