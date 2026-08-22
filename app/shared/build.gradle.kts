@@ -18,41 +18,47 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     js {
         browser()
     }
-    
+
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         browser()
     }
-    
+
     android {
-       namespace = "com.example.anima.app.shared"
-       compileSdk = libs.versions.android.compileSdk.get().toInt()
-       minSdk = libs.versions.android.minSdk.get().toInt()
-    
-       compilerOptions {
-           jvmTarget = JvmTarget.JVM_11
-       }
-       androidResources {
-           enable = true
-       }
-       withHostTest {
-           isIncludeAndroidResources = true
-       }
-       withDeviceTestBuilder {
-           sourceSetTreeName = "test"
-       }.configure {
-           instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-       }
+        namespace = "com.example.anima.app.shared"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
+
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_11
+        }
+        androidResources {
+            enable = true
+        }
+        withHostTest {
+            isIncludeAndroidResources = true
+        }
+        withDeviceTestBuilder {
+            sourceSetTreeName = "test"
+        }.configure {
+            instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        }
     }
-    
+
     sourceSets {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.compose.uiTooling)
+            // ktor
+            implementation(libs.ktor.client.android)
+        }
+        iosMain.dependencies {
+            // ktor
+            implementation(libs.ktor.client.darwin)
         }
         commonMain.dependencies {
             api(project(":core"))
@@ -64,12 +70,19 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            // ktor dependecies
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.contentNeg)
+            implementation(libs.ktor.client.logging)
+            implementation(libs.ktor.serialization.json)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
         jsMain.dependencies {
             implementation(libs.wrappers.browser)
+            // ktor
+            implementation(libs.ktor.client.js)
         }
     }
 }

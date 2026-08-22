@@ -51,6 +51,14 @@ jakarta-persistence = { module = "jakarta.persistence:jakarta.persistence-api", 
 
 postgres-driver = { module = "org.postgresql:postgresql", version.ref = "postgres" }
 hikari-cp = { module = "com.zaxxer:HikariCP", version.ref = "hikari" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktor" }
+ktor-client-contentNeg = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
+ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+wrappers-browser = { module = "org.jetbrains.kotlin-wrappers:kotlin-browser", version.ref = "kotlin-wrappers" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
