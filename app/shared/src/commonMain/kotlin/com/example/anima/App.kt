@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,21 +17,24 @@ import org.jetbrains.compose.resources.painterResource
 
 import anima.app.shared.generated.resources.Res
 import anima.app.shared.generated.resources.compose_multiplatform
+import com.example.anima.core.theme.AnimaTheme
 
 @Composable
 @Preview
 fun App() {
-    MaterialTheme {
+    AnimaTheme {
         var showContent by remember { mutableStateOf(false) }
         Column(
             modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
+                .background(AnimaTheme.colors.background)
                 .safeContentPadding()
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
+                Text(
+                    "Click me!", style = AnimaTheme.typography.headlineLarge,
+                )
             }
             AnimatedVisibility(showContent) {
                 val greeting = remember { Greeting().greet() }
