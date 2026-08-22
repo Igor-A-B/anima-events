@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Textos padrão do APP (Português) -->
+
+    <string name="core_app_name">ANIMA</string>
+
+    <!-- Botões -->
+    <string name="core_button_confirm">Confirmar</string>
+    <string name="core_button_enter">Entrar</string>
+    <string name="core_button_cancel">Cancelar</string>
+    <string name="core_button_save">Salvar</string>
+    <string name="core_button_change">Alterar</string>
+    <string name="core_button_next">Próximo</string>
+
+    <!-- Mensagens de erro -->
+    <string name="core_error_generic">Ocorreu um erro inesperado. Tente novamente.</string>
+    <string name="core_error_network">Sem conexão com a internet.</string>
+
+    <!-- Feature: Login -->
+    <string name="login_title">Bem-vindo(a) de volta!</string>
+    <string name="login_subtitle">Entre para continuar</string>
+    <string name="login_enter_with_biometrics">Entrar com biometria</string>
+
+    <!-- Inputs de Login -->
+    <string name="login_email_hint">Digite seu e-mail</string>
+    <string name="login_password_hint">Digite sua senha</string>
+
+    <!-- FEATURE: Register -->
+    <string name="register_stepper">Passo</string>
+    <string name="register_step1_title">Qual o intuito da sua conta?</string>
+    <string name="register_step1_subtitle">Escolha a experiência que melhor combina com você.</string>
+    <string name="register_step1_participate_card_title">Participar</string>
+    <string name="register_step1_participate_card_subtitle">Descobrir e participar de eventos</string>
+    <string name="register_step1_exhibit_Card_title">Expor</string>
+    <string name="register_step1_exhibit_Card_subtitle">Criar e divulgar meus eventos</string>
+    <string name="register_step2_space_title">Olá! Como seu espaço deve aparecer aqui?</string>
+    <string name="register_step2_space_subtitle">Use o nome do estabelecimento, marca ou negócio.</string>
+    <string name="register_step2_user_title">Olá! Como podemos te chamar?</string>
+    <string name="register_step2_user_subtitle">Pode ser seu nome ou um apelido carinhoso.</string>
+    <string name="register_step3_title">Qual e-mail será usado na conta?</string>
+    <string name="register_step3_subtitle">Vamos usá-lo para manter sua conta segura.</string>
+    <string name="register_step4_title">Agora, crie uma senha segura.</string>
+    <string name="register_step4_subtitle">Use pelo menos 8 caracteres, incluindo letras e números.</string>
+    <string name="register_step5_title">Tudo pronto!</string>
+    <string name="register_step5_subtitle">Bem-vindo(a)! Sua conta foi criada com sucesso e você já pode começar a usar nosso app.</string>
+
+    <!-- Inputs de Registro -->
+    <string name="register_space_name_hint">Nome do seu espaço</string>
+    <string name="register_user_name_hint">Seu nome ou apelido</string>
+    <string name="register_email_hint">Seu e-mail</string>
+    <string name="register_password_hint">Sua senha segura</string>
+
+    <!-- FEATURE: Home -->
+    <string name="home_welcome_message">Bem-vindo(a) de volta!</string>
+    <string name="home_upcoming_events">Próximos eventos</string>
+    <string name="home_following">Seguindo</string>
+    <string name="home_happening_now">Acontecendo agora</string>
+
+    <!-- Categories -->
+    <string name="categories_all">Todos</string>
+    <string name="categories_music">Música</string>
+    <string name="categories_arts">Artes</string>
+    <string name="categories_cuisine">Gastronomia</string>
+
+</resources>
