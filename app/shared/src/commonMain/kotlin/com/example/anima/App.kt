@@ -42,8 +42,10 @@ fun App() {
                     "Click me!", style = AnimaTheme.typography.headlineLarge,
                 )
             }
+
             AnimatedVisibility(showContent) {
                 val greeting = remember { Greeting().greet() }
+
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
