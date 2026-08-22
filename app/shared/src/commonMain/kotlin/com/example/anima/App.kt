@@ -14,11 +14,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 import anima.app.shared.generated.resources.Res
 import anima.app.shared.generated.resources.compose_multiplatform
 import com.example.anima.core.theme.AnimaTheme
-
+import anima.app.shared.generated.resources.login_title
 @Composable
 @Preview
 fun App() {
@@ -31,6 +32,11 @@ fun App() {
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            Text(
+                text = stringResource(Res.string.login_title),
+                style = AnimaTheme.typography.headlineLarge,
+                color = AnimaTheme.colors.onBackground
+            )
             Button(onClick = { showContent = !showContent }) {
                 Text(
                     "Click me!", style = AnimaTheme.typography.headlineLarge,
