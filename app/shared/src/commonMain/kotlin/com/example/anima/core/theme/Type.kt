@@ -105,7 +105,7 @@ fun animaTypography(): AnimaTypography {
         titleLarge = TextStyle(
             fontFamily = inter,
             fontWeight = FontWeight.SemiBold,
-            fontSize = 22.sp,
+            fontSize = 20.sp,
             lineHeight = 28.sp,
             letterSpacing = 0.sp
         ),
@@ -129,7 +129,7 @@ fun animaTypography(): AnimaTypography {
         bodyLarge = TextStyle(
             fontFamily = inter,
             fontWeight = FontWeight.Normal,
-            fontSize = 16.sp,
+            fontSize = 18.sp,
             lineHeight = 24.sp,
             letterSpacing = 0.5.sp
         ),
