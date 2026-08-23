@@ -20,6 +20,8 @@
     <string name="login_title">Bem-vindo(a) de volta!</string>
     <string name="login_subtitle">Entre para continuar</string>
     <string name="login_enter_with_biometrics">Entrar com biometria</string>
+    <string name="login_no_account">Não tem conta? </string>
+    <string name="login_register">Cadastre-se</string>
 
     <!-- Inputs de Login -->
     <string name="login_email_hint">Digite seu e-mail</string>

@@ -20,6 +20,8 @@
     <string name="login_title">Welcome Back!</string>
     <string name="login_subtitle">Sign in to continue</string>
     <string name="login_enter_with_biometrics">Enter with biometrics</string>
+    <string name="login_no_account">Don't have an account? </string>
+    <string name="login_register">Sign up</string>
 
     <!-- Login Inputs -->
     <string name="login_email_hint">Enter your email</string>

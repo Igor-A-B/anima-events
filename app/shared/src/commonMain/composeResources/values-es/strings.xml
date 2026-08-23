@@ -24,6 +24,8 @@
     <!-- Inputs de Login -->
     <string name="login_email_hint">Ingresa tu correo electrónico</string>
     <string name="login_password_hint">Ingresa tu contraseña</string>
+    <string name="login_no_account">¿No tienes cuenta? </string>
+    <string name="login_register">Regístrate</string>
 
     <!-- FEATURE: Register -->
     <string name="register_stepper">Paso</string>
