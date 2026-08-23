@@ -33,7 +33,7 @@ fun UserAccountCard(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clip(AnimaTheme.shapes.large)
+            .clip(AnimaTheme.shapes.medium)
             .background(AnimaTheme.colors.surface)
             .padding(AnimaTheme.spacing.lg),
         verticalAlignment = Alignment.CenterVertically,
