@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun AnimaIcon(
     imageVector: ImageVector,
-    contentDescription: String?,
+    contentDescription: String? = "",
     modifier: Modifier = Modifier,
     size: Dp = AnimaIconDefaults.Size,
     tint: Color = LocalContentColor.current

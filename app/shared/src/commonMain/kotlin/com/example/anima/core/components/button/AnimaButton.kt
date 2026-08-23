@@ -42,8 +42,8 @@ fun AnimaButton(
     }
 
     val textStyle = when (size) {
-        AnimaButtonSize.DEFAULT -> AnimaTheme.typography.labelLarge
-        AnimaButtonSize.COMPACT -> AnimaTheme.typography.labelMedium
+        AnimaButtonSize.DEFAULT -> AnimaTheme.typography.titleMedium
+        AnimaButtonSize.COMPACT -> AnimaTheme.typography.titleSmall
     }
 
     when (variant) {
