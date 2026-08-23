@@ -75,6 +75,7 @@ kotlin {
             implementation(libs.ktor.client.contentNeg)
             implementation(libs.ktor.client.logging)
             implementation(libs.ktor.serialization.json)
+            implementation(libs.androidx.navigation.compose)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
