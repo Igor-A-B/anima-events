@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -110,7 +111,8 @@ private fun AccountTypeCard(
             .background(AnimaTheme.colors.surface)
             .border(1.5.dp, borderColor, AnimaTheme.shapes.large)
             .clickable { onClick() }
-            .padding(AnimaTheme.spacing.md),
+            .padding(AnimaTheme.spacing.md)
+            .defaultMinSize(minHeight = 100.dp),
         verticalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.sm)
     ) {
         icon()
