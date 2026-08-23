@@ -104,10 +104,9 @@ private fun AccountTypeCard(
         AnimaTheme.colors.surface
     }
 
-
     Column(
         modifier = modifier
-            .clip(AnimaTheme.shapes.large)
+            .clip(AnimaTheme.shapes.medium)
             .background(AnimaTheme.colors.surface)
             .border(1.5.dp, borderColor, AnimaTheme.shapes.large)
             .clickable { onClick() }
