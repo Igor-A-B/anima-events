@@ -1,11 +1,6 @@
 package com.example.anima.features.auth.presentation.register
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,10 +25,13 @@ import com.example.anima.features.auth.presentation.register.components.steps.Ac
 import com.example.anima.features.auth.presentation.register.components.steps.EmailStep
 import com.example.anima.features.auth.presentation.register.components.steps.NameStep
 import com.example.anima.features.auth.presentation.register.components.steps.PasswordStep
+import com.example.anima.navigation.horizontalSlideTransition
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun RegisterScreen(
+    onNavigateBack: () -> Unit = {},
+    onRegisterComplete: () -> Unit = {},
     viewModel: RegisterViewModel = viewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -48,7 +46,7 @@ fun RegisterScreen(
         RegisterHeader(
             currentStep = uiState.step,
             totalSteps = uiState.totalSteps,
-            onBack = viewModel::onPreviousStep,
+            onBack = if (uiState.step > 1) viewModel::onPreviousStep else onNavigateBack,
         )
 
         Spacer(modifier = Modifier.height(AnimaTheme.spacing.xxxl))
@@ -57,10 +55,7 @@ fun RegisterScreen(
             targetState = uiState.step,
             modifier = Modifier.weight(1f),
             transitionSpec = {
-                val forward = targetState > initialState
-
-                (slideInHorizontally { if (forward) it else -it } + fadeIn())
-                    .togetherWith(slideOutHorizontally { if (forward) -it else it } + fadeOut())
+                horizontalSlideTransition(forward = targetState > initialState)
             },
             label = "RegisterStepContent",
         ) { step ->
@@ -99,8 +94,12 @@ fun RegisterScreen(
                 else Res.string.core_button_next
             ),
             onClick = {
-                if (uiState.isLastStep) viewModel.onSubmit()
-                else viewModel.onNextStep()
+                if (uiState.isLastStep) {
+                    viewModel.onSubmit()
+                    onRegisterComplete()
+                } else {
+                    viewModel.onNextStep()
+                }
             },
             enabled = uiState.canAdvance,
             modifier = Modifier.fillMaxWidth(),

@@ -5,10 +5,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,7 +23,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import anima.app.shared.generated.resources.Res
 import anima.app.shared.generated.resources.core_button_enter
+import anima.app.shared.generated.resources.login_no_account
 import anima.app.shared.generated.resources.login_password_hint
+import anima.app.shared.generated.resources.login_register
 import com.example.anima.core.components.brand.AnimaBrand
 import com.example.anima.core.components.button.AnimaButton
 import com.example.anima.core.components.form.AnimaTextField
@@ -35,7 +39,9 @@ import com.example.anima.features.auth.presentation.login.components.UserAccount
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(
+    onNavigateToRegister: () -> Unit = {},
+) {
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
 
@@ -92,6 +98,25 @@ fun LoginScreen() {
             text = stringResource(Res.string.core_button_enter),
             onClick = { },
         )
+
+        Spacer(modifier = Modifier.height(AnimaTheme.spacing.md))
+
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = stringResource(Res.string.login_no_account),
+                style = AnimaTheme.typography.bodySmall,
+                color = AnimaTheme.colors.onSurfaceVariant,
+            )
+            Text(
+                text = stringResource(Res.string.login_register),
+                style = AnimaTheme.typography.bodySmall,
+                color = AnimaTheme.colors.primary,
+                modifier = Modifier.clickable { onNavigateToRegister() },
+            )
+        }
 
         Spacer(modifier = Modifier.height(AnimaTheme.spacing.huge))
 
