@@ -19,9 +19,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
+import anima.app.shared.generated.resources.Res
+import anima.app.shared.generated.resources.login_enter_with_biometrics
 import com.example.anima.core.components.icon.AnimaIcon
 import com.example.anima.core.components.icon.lucide.LucideFingerprint
 import com.example.anima.core.theme.AnimaTheme
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun BiometricButton(
@@ -29,6 +32,8 @@ fun BiometricButton(
     modifier: Modifier = Modifier,
 ) {
     val primary = AnimaTheme.colors.primary
+
+    val label = stringResource(Res.string.login_enter_with_biometrics)
 
     Column(
         modifier = modifier,
@@ -69,14 +74,14 @@ fun BiometricButton(
         ) {
             AnimaIcon(
                 imageVector = LucideFingerprint,
-                contentDescription = "Entrar com biometria",
+                contentDescription = label,
                 tint = primary,
                 size = BiometricButtonDefaults.IconSize,
             )
         }
 
         Text(
-            text = "Entrar com biometria",
+            text = label,
             style = AnimaTheme.typography.bodyMedium,
             color = AnimaTheme.colors.onSurfaceVariant,
         )
