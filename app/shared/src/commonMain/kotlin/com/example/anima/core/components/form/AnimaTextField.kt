@@ -127,7 +127,7 @@ private fun AnimaTextFieldDecoration(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = AnimaTheme.spacing.sm),
+                .padding(vertical = AnimaTheme.spacing.md),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.md),
         ) {
