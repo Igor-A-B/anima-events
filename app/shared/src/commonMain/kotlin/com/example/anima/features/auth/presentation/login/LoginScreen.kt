@@ -30,8 +30,8 @@ import com.example.anima.core.components.icon.lucide.LucideEye
 import com.example.anima.core.components.icon.lucide.LucideEyeOff
 import com.example.anima.core.components.icon.lucide.LucideLock
 import com.example.anima.core.theme.AnimaTheme
-import com.example.anima.features.auth.core.components.BiometricButton
-import com.example.anima.features.auth.core.components.UserAccountCard
+import com.example.anima.features.auth.presentation.login.components.BiometricButton
+import com.example.anima.features.auth.presentation.login.components.UserAccountCard
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

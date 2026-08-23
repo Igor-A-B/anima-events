@@ -1,4 +1,4 @@
-package com.example.anima.features.auth.core.components
+package com.example.anima.features.auth.presentation.login.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
