@@ -1,58 +1,123 @@
 package com.example.anima.features.feed.presentation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.style.TextAlign
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import anima.app.shared.generated.resources.Res
-import anima.app.shared.generated.resources.core_button_enter
-import anima.app.shared.generated.resources.login_password_hint
-import com.example.anima.core.components.brand.AnimaBrand
-import com.example.anima.core.components.button.AnimaButton
-import com.example.anima.core.components.form.AnimaTextField
-import com.example.anima.core.components.icon.AnimaIcon
-import com.example.anima.core.components.icon.lucide.LucideEye
-import com.example.anima.core.components.icon.lucide.LucideEyeOff
-import com.example.anima.core.components.icon.lucide.LucideLock
+import anima.app.shared.generated.resources.core_error_generic
+import anima.app.shared.generated.resources.feed_empty
 import com.example.anima.core.theme.AnimaTheme
-import com.example.anima.features.auth.presentation.login.components.BiometricButton
-import com.example.anima.features.auth.presentation.login.components.UserAccountCard
+import com.example.anima.features.feed.domain.Event
+import com.example.anima.features.feed.domain.FeedSection
+import com.example.anima.features.feed.presentation.components.FeedHeader
+import com.example.anima.features.feed.presentation.components.FeedSectionRow
 import org.jetbrains.compose.resources.stringResource
 
+// feed entry point, called by appNavGraph
 @Composable
 fun FeedScreen(
-    onNavigateToRegister: () -> Unit = {},
+    onNavigateToEvent: (String) -> Unit = {},
+    viewModel: FeedViewModel = viewModel(),
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    Column(
-        modifier = Modifier
+    FeedContent(
+        uiState = uiState,
+        onEventClick = { event -> onNavigateToEvent(event.id) },
+        onSeeAllClick = { /* TODO: navegar para a listagem completa da secao */ },
+    )
+}
+
+// stateless part: data in, lambdas out
+@Composable
+private fun FeedContent(
+    uiState: FeedUiState,
+    onEventClick: (Event) -> Unit,
+    onSeeAllClick: (FeedSection) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
             .background(AnimaTheme.colors.background)
             .safeContentPadding()
             .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
     ) {
+        // one explicit branch per state: loading, error, empty, content
+        if (uiState.isLoading) {
+            CircularProgressIndicator(
+                color = AnimaTheme.colors.primary,
+                modifier = Modifier.align(Alignment.Center),
+            )
+            return@Box
+        }
 
+        if (uiState.error.isNotBlank()) {
+            FeedMessage(
+                text = stringResource(Res.string.core_error_generic),
+                modifier = Modifier.align(Alignment.Center),
+            )
+            return@Box
+        }
 
+        if (uiState.isEmpty) {
+            FeedMessage(
+                text = stringResource(Res.string.feed_empty),
+                modifier = Modifier.align(Alignment.Center),
+            )
+            return@Box
+        }
 
-        Spacer(modifier = Modifier.height(AnimaTheme.spacing.huge))
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(
+                top = AnimaTheme.spacing.lg,
+                bottom = AnimaTheme.spacing.xxxl,
+            ),
+            verticalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.xl),
+        ) {
+            item(key = "header") {
+                FeedHeader(
+                    modifier = Modifier.padding(horizontal = AnimaTheme.spacing.lg),
+                )
+            }
 
+            // one FeedSectionRow per section
+            items(items = uiState.sections, key = { section -> section.type.name }) { section ->
+                FeedSectionRow(
+                    section = section,
+                    onEventClick = onEventClick,
+                    onSeeAllClick = onSeeAllClick,
+                )
+            }
+        }
     }
+}
+
+@Composable
+private fun FeedMessage(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = text,
+        style = AnimaTheme.typography.bodyMedium,
+        color = AnimaTheme.colors.onSurfaceVariant,
+        textAlign = TextAlign.Center,
+        modifier = modifier.padding(AnimaTheme.spacing.xl),
+    )
 }
