@@ -64,4 +64,35 @@
     <string name="categories_arts">Artes</string>
     <string name="categories_cuisine">Gastronomia</string>
 
+
+    <!-- FEATURE: Feed -->
+    <string name="feed_headline">O que vai rolar hoje?</string>
+    <string name="feed_see_all">Ver tudo</string>
+    <string name="feed_live">AO VIVO</string>
+    <string name="feed_price_free">Grátis</string>
+    <string name="feed_empty">Nenhum evento por aqui ainda. Tente de novo mais tarde.</string>
+    <string name="feed_interested">%1$s interessados</string>
+
+    <!-- Seções do feed -->
+    <string name="feed_section_now_title">Acontecendo agora</string>
+    <string name="feed_section_now_subtitle">Começou agora, dá tempo de chegar</string>
+    <string name="feed_section_nearby_title">Rolando por perto</string>
+    <string name="feed_section_nearby_subtitle">A menos de 10 km de você</string>
+    <string name="feed_section_week_title">Essa semana</string>
+    <string name="feed_section_week_subtitle">Nos próximos sete dias</string>
+    <string name="feed_section_trending_title">Em alta</string>
+    <string name="feed_section_trending_subtitle">O que a galera está salvando</string>
+
+    <!-- Mais categorias -->
+    <string name="categories_party">Festa</string>
+    <string name="categories_sport">Esporte</string>
+    <string name="categories_theater">Teatro</string>
+    <string name="categories_cinema">Cinema</string>
+    <string name="categories_tech">Tecnologia</string>
+
+
+    <!-- FEATURE: Detalhe do evento -->
+    <string name="event_detail_title">Detalhe do evento</string>
+    <string name="event_detail_received_id">Id recebido: %1$s</string>
+
 </resources>
