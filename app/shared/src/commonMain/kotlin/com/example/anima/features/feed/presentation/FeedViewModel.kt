@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.anima.features.feed.data.FeedRepository
 import com.example.anima.features.feed.data.MockFeedRepository
+import com.example.anima.features.feed.domain.EventCategory
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,11 +22,18 @@ class FeedViewModel(
         loadFeed()
     }
 
+    fun onCategorySelected(category: EventCategory?) {
+        if (category == _uiState.value.selectedCategory) return
+
+        _uiState.update { it.copy(selectedCategory = category) }
+        loadFeed()
+    }
+
     fun loadFeed() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = "") }
 
-            runCatching { repository.getSections() }
+            runCatching { repository.getSections(_uiState.value.selectedCategory) }
                 .onSuccess { sections ->
                     _uiState.update { it.copy(isLoading = false, sections = sections) }
                 }
