@@ -41,6 +41,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun LoginScreen(
     onNavigateToRegister: () -> Unit = {},
+    onLoginSuccess: () -> Unit = {},
 ) {
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -96,7 +97,7 @@ fun LoginScreen(
 
         AnimaButton(
             text = stringResource(Res.string.core_button_enter),
-            onClick = { },
+            onClick = { onLoginSuccess },
         )
 
         Spacer(modifier = Modifier.height(AnimaTheme.spacing.md))

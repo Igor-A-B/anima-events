@@ -17,6 +17,11 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController) {
                 onNavigateToRegister = {
                     navController.navigate(AppRoutes.REGISTER)
                 },
+                onLoginSuccess = {
+                    navController.navigate(AppRoutes.APP_GRAPH) {
+                        popUpTo(AppRoutes.AUTH_GRAPH) { inclusive = true }
+                    }
+                },
             )
         }
 
