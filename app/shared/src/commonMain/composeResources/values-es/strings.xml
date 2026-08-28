@@ -24,6 +24,8 @@
     <!-- Inputs de Login -->
     <string name="login_email_hint">Ingresa tu correo electrónico</string>
     <string name="login_password_hint">Ingresa tu contraseña</string>
+    <string name="login_no_account">¿No tienes cuenta? </string>
+    <string name="login_register">Regístrate</string>
 
     <!-- FEATURE: Register -->
     <string name="register_stepper">Paso</string>
@@ -61,5 +63,37 @@
     <string name="categories_music">Música</string>
     <string name="categories_arts">Artes</string>
     <string name="categories_cuisine">Gastronomía</string>
+
+
+    <!-- FEATURE: Feed -->
+    <string name="feed_headline">¿Qué va a pasar hoy?</string>
+    <string name="feed_see_all">Ver todo</string>
+    <string name="feed_live">EN VIVO</string>
+    <string name="feed_status_finished">Finalizado</string>
+    <string name="feed_price_free">Gratis</string>
+    <string name="feed_empty">Aún no hay eventos por aquí. Inténtalo más tarde.</string>
+    <string name="feed_interested">%1$s interesados</string>
+
+    <!-- Secciones del feed -->
+    <string name="feed_section_now_title">Ocurriendo ahora</string>
+    <string name="feed_section_now_subtitle">Acaba de empezar, aún llegas</string>
+    <string name="feed_section_nearby_title">Cerca de ti</string>
+    <string name="feed_section_nearby_subtitle">A menos de 10 km de ti</string>
+    <string name="feed_section_recommended_title">Recomendados para ti</string>
+    <string name="feed_section_recommended_subtitle">Según lo que participaste</string>
+    <string name="feed_section_participating_title">Eventos en los que participo</string>
+    <string name="feed_section_participating_subtitle">Tu agenda confirmada</string>
+
+    <!-- Más categorías -->
+    <string name="categories_party">Fiesta</string>
+    <string name="categories_sport">Deporte</string>
+    <string name="categories_theater">Teatro</string>
+    <string name="categories_cinema">Cine</string>
+    <string name="categories_tech">Tecnología</string>
+
+
+    <!-- FEATURE: Detalle del evento -->
+    <string name="event_detail_title">Detalle del evento</string>
+    <string name="event_detail_received_id">Id recibido: %1$s</string>
 
 </resources>

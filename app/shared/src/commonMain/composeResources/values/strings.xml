@@ -20,6 +20,8 @@
     <string name="login_title">Welcome Back!</string>
     <string name="login_subtitle">Sign in to continue</string>
     <string name="login_enter_with_biometrics">Enter with biometrics</string>
+    <string name="login_no_account">Don't have an account? </string>
+    <string name="login_register">Sign up</string>
 
     <!-- Login Inputs -->
     <string name="login_email_hint">Enter your email</string>
@@ -62,5 +64,37 @@
     <string name="categories_music">Music</string>
     <string name="categories_arts">Arts</string>
     <string name="categories_cuisine">Cuisine</string>
+
+
+    <!-- FEATURE: Feed -->
+    <string name="feed_headline">What is happening today?</string>
+    <string name="feed_see_all">See all</string>
+    <string name="feed_live">LIVE</string>
+    <string name="feed_status_finished">Ended</string>
+    <string name="feed_price_free">Free</string>
+    <string name="feed_empty">No events around here yet. Try again soon.</string>
+    <string name="feed_interested">%1$s interested</string>
+
+    <!-- Feed sections -->
+    <string name="feed_section_now_title">Happening now</string>
+    <string name="feed_section_now_subtitle">It just started, you can still make it</string>
+    <string name="feed_section_nearby_title">Going on nearby</string>
+    <string name="feed_section_nearby_subtitle">Less than 10 km from you</string>
+    <string name="feed_section_recommended_title">Recommended for you</string>
+    <string name="feed_section_recommended_subtitle">Based on what you have attended</string>
+    <string name="feed_section_participating_title">Events I am attending</string>
+    <string name="feed_section_participating_subtitle">Your confirmed schedule</string>
+
+    <!-- More categories -->
+    <string name="categories_party">Party</string>
+    <string name="categories_sport">Sports</string>
+    <string name="categories_theater">Theater</string>
+    <string name="categories_cinema">Cinema</string>
+    <string name="categories_tech">Tech</string>
+
+
+    <!-- FEATURE: Event detail -->
+    <string name="event_detail_title">Event detail</string>
+    <string name="event_detail_received_id">Received id: %1$s</string>
 
 </resources>
