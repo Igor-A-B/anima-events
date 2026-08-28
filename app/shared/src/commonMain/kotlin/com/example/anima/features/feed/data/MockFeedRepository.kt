@@ -16,8 +16,8 @@ class MockFeedRepository : FeedRepository {
         return listOf(
             FeedSection(type = FeedSectionType.HAPPENING_NOW, events = happeningNow),
             FeedSection(type = FeedSectionType.NEARBY, events = nearby),
-            FeedSection(type = FeedSectionType.THIS_WEEK, events = thisWeek),
-            FeedSection(type = FeedSectionType.TRENDING, events = trending),
+            FeedSection(type = FeedSectionType.RECOMMENDED, events = recommended),
+            FeedSection(type = FeedSectionType.PARTICIPATING, events = participating),
         )
     }
 
@@ -123,7 +123,7 @@ class MockFeedRepository : FeedRepository {
         ),
     )
 
-    private val thisWeek = listOf(
+    private val recommended = listOf(
         Event(
             id = "e8",
             title = "Anima Fest 2026 - dia 1",
@@ -178,7 +178,7 @@ class MockFeedRepository : FeedRepository {
         ),
     )
 
-    private val trending = listOf(
+    private val participating = listOf(
         Event(
             id = "e12",
             title = "Turne Eclipse - show unico",

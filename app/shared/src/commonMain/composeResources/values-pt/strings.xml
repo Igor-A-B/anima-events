@@ -78,10 +78,10 @@
     <string name="feed_section_now_subtitle">Começou agora, dá tempo de chegar</string>
     <string name="feed_section_nearby_title">Rolando por perto</string>
     <string name="feed_section_nearby_subtitle">A menos de 10 km de você</string>
-    <string name="feed_section_week_title">Essa semana</string>
-    <string name="feed_section_week_subtitle">Nos próximos sete dias</string>
-    <string name="feed_section_trending_title">Em alta</string>
-    <string name="feed_section_trending_subtitle">O que a galera está salvando</string>
+    <string name="feed_section_recommended_title">Recomendados pra você</string>
+    <string name="feed_section_recommended_subtitle">Com base no que você participou</string>
+    <string name="feed_section_participating_title">Eventos que estou participando</string>
+    <string name="feed_section_participating_subtitle">Sua agenda confirmada</string>
 
     <!-- Mais categorias -->
     <string name="categories_party">Festa</string>
