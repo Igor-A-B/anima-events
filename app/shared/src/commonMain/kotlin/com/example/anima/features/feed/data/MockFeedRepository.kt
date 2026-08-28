@@ -9,7 +9,7 @@ import kotlinx.coroutines.delay
 // fake data source for UI development
 class MockFeedRepository : FeedRepository {
 
-    override suspend fun getSections(): List<FeedSection> {
+    override suspend fun getSections(category: EventCategory?): List<FeedSection> {
         // fake network latency
         delay(600)
 
@@ -19,6 +19,11 @@ class MockFeedRepository : FeedRepository {
             FeedSection(type = FeedSectionType.RECOMMENDED, events = recommended),
             FeedSection(type = FeedSectionType.PARTICIPATING, events = participating),
         )
+            .map { section ->
+                if (category == null) section
+                else section.copy(events = section.events.filter { it.category == category })
+            }
+            .filter { section -> section.events.isNotEmpty() }
     }
 
     // mock data
