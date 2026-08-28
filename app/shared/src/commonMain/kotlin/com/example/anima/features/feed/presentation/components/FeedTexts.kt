@@ -14,10 +14,10 @@ import anima.app.shared.generated.resources.feed_section_nearby_subtitle
 import anima.app.shared.generated.resources.feed_section_nearby_title
 import anima.app.shared.generated.resources.feed_section_now_subtitle
 import anima.app.shared.generated.resources.feed_section_now_title
-import anima.app.shared.generated.resources.feed_section_trending_subtitle
-import anima.app.shared.generated.resources.feed_section_trending_title
-import anima.app.shared.generated.resources.feed_section_week_subtitle
-import anima.app.shared.generated.resources.feed_section_week_title
+import anima.app.shared.generated.resources.feed_section_participating_subtitle
+import anima.app.shared.generated.resources.feed_section_participating_title
+import anima.app.shared.generated.resources.feed_section_recommended_subtitle
+import anima.app.shared.generated.resources.feed_section_recommended_title
 import com.example.anima.features.feed.domain.EventCategory
 import com.example.anima.features.feed.domain.FeedSectionType
 import org.jetbrains.compose.resources.stringResource
@@ -42,8 +42,8 @@ fun FeedSectionType.title(): String = stringResource(
     when (this) {
         FeedSectionType.HAPPENING_NOW -> Res.string.feed_section_now_title
         FeedSectionType.NEARBY -> Res.string.feed_section_nearby_title
-        FeedSectionType.THIS_WEEK -> Res.string.feed_section_week_title
-        FeedSectionType.TRENDING -> Res.string.feed_section_trending_title
+        FeedSectionType.RECOMMENDED -> Res.string.feed_section_recommended_title
+        FeedSectionType.PARTICIPATING -> Res.string.feed_section_participating_title
     }
 )
 
@@ -52,7 +52,7 @@ fun FeedSectionType.subtitle(): String = stringResource(
     when (this) {
         FeedSectionType.HAPPENING_NOW -> Res.string.feed_section_now_subtitle
         FeedSectionType.NEARBY -> Res.string.feed_section_nearby_subtitle
-        FeedSectionType.THIS_WEEK -> Res.string.feed_section_week_subtitle
-        FeedSectionType.TRENDING -> Res.string.feed_section_trending_subtitle
+        FeedSectionType.RECOMMENDED -> Res.string.feed_section_recommended_subtitle
+        FeedSectionType.PARTICIPATING -> Res.string.feed_section_participating_subtitle
     }
 )

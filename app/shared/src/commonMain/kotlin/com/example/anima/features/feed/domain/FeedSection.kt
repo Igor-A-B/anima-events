@@ -4,8 +4,8 @@ package com.example.anima.features.feed.domain
 enum class FeedSectionType {
     HAPPENING_NOW,
     NEARBY,
-    THIS_WEEK,
-    TRENDING,
+    RECOMMENDED,
+    PARTICIPATING,
 }
 
 // one feed row
