@@ -47,22 +47,6 @@ fun EventCard(
             verticalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.xs),
         ) {
             Text(
-                text = "${event.dateLabel} - ${event.timeLabel}",
-                style = AnimaTheme.typography.labelMedium,
-                color = AnimaTheme.colors.primaryVariant,
-                maxLines = 1,
-            )
-
-            Text(
-                text = event.title,
-                style = AnimaTheme.typography.titleSmall,
-                color = AnimaTheme.colors.onSurface,
-                minLines = 2,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
-
-            Text(
                 text = "${event.venue} - ${event.city}",
                 style = AnimaTheme.typography.bodySmall,
                 color = AnimaTheme.colors.onSurfaceVariant,
@@ -107,5 +91,5 @@ fun EventCard(
 
 object EventCardDefaults {
     val Width = 232.dp
-    val CoverHeight = 132.dp
+    val CoverHeight = 168.dp
 }

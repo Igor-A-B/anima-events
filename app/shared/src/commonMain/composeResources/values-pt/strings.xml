@@ -69,6 +69,7 @@
     <string name="feed_headline">O que vai rolar hoje?</string>
     <string name="feed_see_all">Ver tudo</string>
     <string name="feed_live">AO VIVO</string>
+    <string name="feed_status_finished">Encerrado</string>
     <string name="feed_price_free">Grátis</string>
     <string name="feed_empty">Nenhum evento por aqui ainda. Tente de novo mais tarde.</string>
     <string name="feed_interested">%1$s interessados</string>
