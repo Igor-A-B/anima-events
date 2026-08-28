@@ -11,7 +11,16 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController) {
         route = AppRoutes.AUTH_GRAPH,
     ) {
         composable(AppRoutes.LOGIN) {
-            // login screen
+            LoginScreen(
+                onNavigateToRegister = {
+                    navController.navigate(AppRoutes.REGISTER)
+                },
+                onLoginSuccess = {
+                    navController.navigate(AppRoutes.APP_GRAPH) {
+                        popUpTo(AppRoutes.AUTH_GRAPH) { inclusive = true }
+                    }
+                },
+            )
         }
 
         composable(AppRoutes.REGISTER) {
