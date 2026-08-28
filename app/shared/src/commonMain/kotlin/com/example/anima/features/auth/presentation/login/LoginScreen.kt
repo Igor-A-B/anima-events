@@ -97,7 +97,7 @@ fun LoginScreen(
 
         AnimaButton(
             text = stringResource(Res.string.core_button_enter),
-            onClick = { onLoginSuccess },
+            onClick =  onLoginSuccess,
         )
 
         Spacer(modifier = Modifier.height(AnimaTheme.spacing.md))
