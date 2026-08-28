@@ -13,6 +13,14 @@ enum class EventCategory {
     TECH,
 }
 
+// what the card shows on the top right: date, live or ended
+// TODO: the doc also lists cancelled and postponed
+enum class EventStatus {
+    UPCOMING,
+    OCCURRING,
+    FINISHED,
+}
+
 // feed event
 // TODO: real types when the API lands
 data class Event(
@@ -27,7 +35,7 @@ data class Event(
     val price: String? = null,
     val distanceLabel: String? = null,
     val attendees: Int = 0,
-    val isLive: Boolean = false,
+    val status: EventStatus = EventStatus.UPCOMING,
     // stands in for the cover image: the UI turns it into a gradient
     val coverSeed: Int = 0,
 )

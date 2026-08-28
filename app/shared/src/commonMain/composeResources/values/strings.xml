@@ -70,6 +70,7 @@
     <string name="feed_headline">What is happening today?</string>
     <string name="feed_see_all">See all</string>
     <string name="feed_live">LIVE</string>
+    <string name="feed_status_finished">Ended</string>
     <string name="feed_price_free">Free</string>
     <string name="feed_empty">No events around here yet. Try again soon.</string>
     <string name="feed_interested">%1$s interested</string>

@@ -15,13 +15,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import anima.app.shared.generated.resources.Res
 import anima.app.shared.generated.resources.feed_live
 import anima.app.shared.generated.resources.feed_price_free
+import anima.app.shared.generated.resources.feed_status_finished
 import com.example.anima.core.theme.AnimaTheme
 import com.example.anima.features.feed.domain.Event
+import com.example.anima.features.feed.domain.EventStatus
 import org.jetbrains.compose.resources.stringResource
 
 // gradients for the cover image until an image loader is added
@@ -37,7 +40,7 @@ private val coverPalettes: List<List<Color>> = listOf(
 fun eventCoverBrush(coverSeed: Int): Brush =
     Brush.linearGradient(coverPalettes[coverSeed.mod(coverPalettes.size)])
 
-// cover: gradient
+// cover holds the date on top and the title at the bottom, over the gradient
 @Composable
 fun EventCover(
     event: Event,
@@ -50,30 +53,74 @@ fun EventCover(
             .height(height)
             .background(eventCoverBrush(event.coverSeed)),
     ) {
+        // scrim: keeps the title readable over any gradient
         Box(
             modifier = Modifier
-                .align(Alignment.TopStart)
+                .matchParentSize()
+                .background(
+                    Brush.verticalGradient(
+                        0.35f to Color.Transparent,
+                        1f to Color.Black.copy(alpha = 0.75f),
+                    )
+                ),
+        )
+
+        Row(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .fillMaxWidth()
                 .padding(AnimaTheme.spacing.sm),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Top,
         ) {
-            if (event.isLive) {
-                LiveBadge()
-            } else {
-                EventChip(
-                    text = event.category.label().uppercase(),
+            EventChip(
+                text = event.category.label().uppercase(),
+                background = Color.Black.copy(alpha = 0.45f),
+                contentColor = Color.White,
+            )
+
+            // same slot, three meanings: when it happens, or that it is on, or over
+            when (event.status) {
+                EventStatus.UPCOMING -> EventChip(
+                    text = "${event.dateLabel} - ${event.timeLabel}",
                     background = Color.Black.copy(alpha = 0.45f),
                     contentColor = Color.White,
+                )
+
+                EventStatus.OCCURRING -> LiveBadge()
+
+                EventStatus.FINISHED -> EventChip(
+                    text = stringResource(Res.string.feed_status_finished).uppercase(),
+                    background = Color.Black.copy(alpha = 0.45f),
+                    contentColor = Color.White.copy(alpha = 0.7f),
                 )
             }
         }
 
-        EventChip(
-            text = event.price ?: stringResource(Res.string.feed_price_free),
-            background = AnimaTheme.colors.surface,
-            contentColor = AnimaTheme.colors.onSurface,
+        Row(
             modifier = Modifier
-                .align(Alignment.BottomEnd)
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
                 .padding(AnimaTheme.spacing.sm),
-        )
+            horizontalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.sm),
+            verticalAlignment = Alignment.Bottom,
+        ) {
+            Text(
+                text = event.title,
+                style = AnimaTheme.typography.titleSmall,
+                color = Color.White,
+                minLines = 2,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f),
+            )
+
+            EventChip(
+                text = event.price ?: stringResource(Res.string.feed_price_free),
+                background = AnimaTheme.colors.surface,
+                contentColor = AnimaTheme.colors.onSurface,
+            )
+        }
     }
 }
 

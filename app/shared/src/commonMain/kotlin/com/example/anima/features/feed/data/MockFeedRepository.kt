@@ -2,6 +2,7 @@ package com.example.anima.features.feed.data
 
 import com.example.anima.features.feed.domain.Event
 import com.example.anima.features.feed.domain.EventCategory
+import com.example.anima.features.feed.domain.EventStatus
 import com.example.anima.features.feed.domain.FeedSection
 import com.example.anima.features.feed.domain.FeedSectionType
 import kotlinx.coroutines.delay
@@ -40,7 +41,7 @@ class MockFeedRepository : FeedRepository {
             price = "R$ 30",
             distanceLabel = "1,2 km",
             attendees = 412,
-            isLive = true,
+            status = EventStatus.OCCURRING,
             coverSeed = 0,
         ),
         Event(
@@ -54,7 +55,7 @@ class MockFeedRepository : FeedRepository {
             price = null,
             distanceLabel = "3,8 km",
             attendees = 87,
-            isLive = true,
+            status = EventStatus.OCCURRING,
             coverSeed = 1,
         ),
         Event(
@@ -68,7 +69,7 @@ class MockFeedRepository : FeedRepository {
             price = "R$ 25",
             distanceLabel = "6,1 km",
             attendees = 143,
-            isLive = true,
+            status = EventStatus.OCCURRING,
             coverSeed = 2,
         ),
     )
@@ -153,6 +154,7 @@ class MockFeedRepository : FeedRepository {
             price = null,
             distanceLabel = "18 km",
             attendees = 302,
+            status = EventStatus.FINISHED,
             coverSeed = 2,
         ),
         Event(
@@ -166,6 +168,7 @@ class MockFeedRepository : FeedRepository {
             price = "R$ 60",
             distanceLabel = "5,2 km",
             attendees = 66,
+            status = EventStatus.FINISHED,
             coverSeed = 3,
         ),
         Event(
