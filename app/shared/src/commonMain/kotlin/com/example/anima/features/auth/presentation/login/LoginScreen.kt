@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import anima.app.shared.generated.resources.Res
 import anima.app.shared.generated.resources.core_button_enter
 import anima.app.shared.generated.resources.login_no_account
@@ -42,8 +44,9 @@ import org.jetbrains.compose.resources.stringResource
 fun LoginScreen(
     onNavigateToRegister: () -> Unit = {},
     onLoginSuccess: () -> Unit = {},
+    viewModel: LoginViewModel = viewModel(),
 ) {
-    var password by remember { mutableStateOf("") }
+    val uiState by viewModel.uiState.collectAsState()
     var passwordVisible by remember { mutableStateOf(false) }
 
     Column(
@@ -67,8 +70,8 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(AnimaTheme.spacing.huge))
 
         AnimaTextField(
-            value = password,
-            onValueChange = { password = it },
+            value = uiState.password,
+            onValueChange = viewModel::onPasswordChanged,
             placeholder = stringResource(Res.string.login_password_hint),
             leadingIcon = {
                 AnimaIcon(
@@ -97,7 +100,8 @@ fun LoginScreen(
 
         AnimaButton(
             text = stringResource(Res.string.core_button_enter),
-            onClick =  onLoginSuccess,
+            onClick = { viewModel.onSubmit(onLoginSuccess) },
+            enabled = uiState.canSubmit,
         )
 
         Spacer(modifier = Modifier.height(AnimaTheme.spacing.md))
