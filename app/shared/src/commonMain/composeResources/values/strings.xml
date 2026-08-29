@@ -51,6 +51,11 @@
     <string name="register_user_name_hint">Your name or nickname</string>
     <string name="register_email_hint">Your email</string>
     <string name="register_password_hint">Your secure password</string>
+    <string name="register_password_strength_length">8 characters</string>
+    <string name="register_password_strength_uppercase">Uppercase letter</string>
+    <string name="register_password_strength_lowercase">Lowercase letter</string>
+    <string name="register_password_strength_number">Number</string>
+    <string name="register_password_strength_special">Special character</string>
 
 
     <!-- FEATURE: Home -->
