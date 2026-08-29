@@ -1,5 +1,7 @@
 package com.example.anima.features.auth.presentation.register
 
+import com.example.anima.features.auth.presentation.register.components.steps.isPasswordStrong
+
 enum class AccountType { VISITOR, EXHIBITOR }
 
 data class RegisterUiState(
@@ -19,7 +21,7 @@ data class RegisterUiState(
         1 -> accountType != null
         2 -> name.isNotBlank()
         3 -> email.isNotBlank()
-        4 -> password.isNotBlank()
+        4 -> isPasswordStrong(password)
         else -> false
     }
 }

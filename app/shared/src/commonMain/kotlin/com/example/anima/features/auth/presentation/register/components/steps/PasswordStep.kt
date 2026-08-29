@@ -1,10 +1,9 @@
 package com.example.anima.features.auth.presentation.register.components.steps
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,22 +36,22 @@ fun PasswordStep(
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
 
-    Column(modifier = modifier) {
-        Text(
-            text = stringResource(Res.string.register_step4_title),
-            style = AnimaTheme.typography.headlineMedium,
-            color = AnimaTheme.colors.onBackground,
-        )
-
-        Spacer(modifier = Modifier.height(AnimaTheme.spacing.sm))
-
-        Text(
-            text = stringResource(Res.string.register_step4_subtitle),
-            style = AnimaTheme.typography.bodyMedium,
-            color = AnimaTheme.colors.onSurfaceVariant,
-        )
-
-        Spacer(modifier = Modifier.height(AnimaTheme.spacing.xxxl))
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.xl),
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.sm)) {
+            Text(
+                text = stringResource(Res.string.register_step4_title),
+                style = AnimaTheme.typography.headlineMedium,
+                color = AnimaTheme.colors.onBackground,
+            )
+            Text(
+                text = stringResource(Res.string.register_step4_subtitle),
+                style = AnimaTheme.typography.bodyMedium,
+                color = AnimaTheme.colors.onSurfaceVariant,
+            )
+        }
 
         AnimaTextField(
             value = value,
@@ -80,5 +79,7 @@ fun PasswordStep(
                 }
             },
         )
+
+        PasswordStrengthIndicator(password = value)
     }
 }
