@@ -22,7 +22,6 @@ class RegisterViewModel : ViewModel() {
         _uiState.update { it.copy(email = email) }
     }
 
-
     fun onPasswordChanged(password: String) {
         _uiState.update { it.copy(password = password) }
     }
@@ -47,7 +46,7 @@ class RegisterViewModel : ViewModel() {
         }
     }
 
-    fun onSubmit(){
+    fun onSubmit() {
         // when backend ready, call usecase here
     }
 }

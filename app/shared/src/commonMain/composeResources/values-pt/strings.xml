@@ -51,6 +51,11 @@
     <string name="register_user_name_hint">Seu nome ou apelido</string>
     <string name="register_email_hint">Seu e-mail</string>
     <string name="register_password_hint">Sua senha segura</string>
+    <string name="register_password_strength_length">8 caracteres</string>
+    <string name="register_password_strength_uppercase">Letra maiúscula</string>
+    <string name="register_password_strength_lowercase">Letra minúscula</string>
+    <string name="register_password_strength_number">Número</string>
+    <string name="register_password_strength_special">Caractere especial</string>
 
     <!-- FEATURE: Home -->
     <string name="home_welcome_message">Bem-vindo(a) de volta!</string>

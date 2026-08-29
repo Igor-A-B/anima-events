@@ -28,6 +28,8 @@ val Neutral700 = Color(0xFF6D595B)
 val Neutral800 = Color(0xFF332D2D)
 val Neutral900 = Color(0xFF1C1A1A)
 
+val Success = Color(0xFF4CAF82)
+
 data class AnimaColors(
     val background: Color,
     val onBackground: Color,
@@ -41,6 +43,7 @@ data class AnimaColors(
     val outline: Color,
     val error: Color,
     val onError: Color,
+    val success: Color,
 )
 
 val darkAnimaColors = AnimaColors(
@@ -56,7 +59,8 @@ val darkAnimaColors = AnimaColors(
     outline = Neutral600,
     error = Primary300,
     onError = Primary900,
-)
+    success = Success,
+    )
 
 val lightAnimaColors = AnimaColors(
     background = Neutral100,
@@ -71,7 +75,8 @@ val lightAnimaColors = AnimaColors(
     outline = Neutral300,
     error = Primary600,
     onError = Neutral50,
-)
+    success = Success,
+    )
 
 val LocalAnimaColors = staticCompositionLocalOf<AnimaColors> {
     error("No AnimaColors provided")
