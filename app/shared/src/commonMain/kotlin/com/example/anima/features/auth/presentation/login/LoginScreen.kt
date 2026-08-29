@@ -7,9 +7,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -28,6 +31,7 @@ import anima.app.shared.generated.resources.core_button_enter
 import anima.app.shared.generated.resources.login_no_account
 import anima.app.shared.generated.resources.login_password_hint
 import anima.app.shared.generated.resources.login_register
+import com.example.anima.core.components.AnimaScaffold
 import com.example.anima.core.components.brand.AnimaBrand
 import com.example.anima.core.components.button.AnimaButton
 import com.example.anima.core.components.form.AnimaTextField
@@ -49,84 +53,87 @@ fun LoginScreen(
     val uiState by viewModel.uiState.collectAsState()
     var passwordVisible by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .background(AnimaTheme.colors.background)
-            .safeContentPadding()
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        AnimaBrand()
+    AnimaScaffold {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(AnimaTheme.colors.background)
+                .windowInsetsPadding(WindowInsets.safeDrawing)
+                .padding(horizontal = AnimaTheme.spacing.xl),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            AnimaBrand()
 
-        Spacer(modifier = Modifier.height(AnimaTheme.spacing.xxl))
+            Spacer(modifier = Modifier.height(AnimaTheme.spacing.xxl))
 
-        UserAccountCard(
-            name = "John Doe",
-            email = "jo*******@gmail.com",
-            onSwitch = { },
-        )
+            UserAccountCard(
+                name = "John Doe",
+                email = "jo*******@gmail.com",
+                onSwitch = { },
+            )
 
-        Spacer(modifier = Modifier.height(AnimaTheme.spacing.huge))
+            Spacer(modifier = Modifier.height(AnimaTheme.spacing.huge))
 
-        AnimaTextField(
-            value = uiState.password,
-            onValueChange = viewModel::onPasswordChanged,
-            placeholder = stringResource(Res.string.login_password_hint),
-            leadingIcon = {
-                AnimaIcon(
-                    imageVector = LucideLock,
-                    contentDescription = null,
-                    tint = AnimaTheme.colors.onSurfaceVariant,
-                    size = 20.dp,
-                )
-            },
-            trailingIcon = {
-                Box(
-                    modifier = Modifier.clickable { passwordVisible = !passwordVisible },
-                ) {
+            AnimaTextField(
+                value = uiState.password,
+                onValueChange = viewModel::onPasswordChanged,
+                placeholder = stringResource(Res.string.login_password_hint),
+                leadingIcon = {
                     AnimaIcon(
-                        imageVector = if (passwordVisible) LucideEyeOff else LucideEye,
+                        imageVector = LucideLock,
+                        contentDescription = null,
                         tint = AnimaTheme.colors.onSurfaceVariant,
                         size = 20.dp,
                     )
-                }
-            },
-            visualTransformation = if (passwordVisible) VisualTransformation.None
-            else PasswordVisualTransformation(),
-        )
-
-        Spacer(modifier = Modifier.height(AnimaTheme.spacing.huge))
-
-        AnimaButton(
-            text = stringResource(Res.string.core_button_enter),
-            onClick = { viewModel.onSubmit(onLoginSuccess) },
-            enabled = uiState.canSubmit,
-        )
-
-        Spacer(modifier = Modifier.height(AnimaTheme.spacing.md))
-
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = stringResource(Res.string.login_no_account),
-                style = AnimaTheme.typography.bodySmall,
-                color = AnimaTheme.colors.onSurfaceVariant,
+                },
+                trailingIcon = {
+                    Box(
+                        modifier = Modifier.clickable { passwordVisible = !passwordVisible },
+                    ) {
+                        AnimaIcon(
+                            imageVector = if (passwordVisible) LucideEyeOff else LucideEye,
+                            tint = AnimaTheme.colors.onSurfaceVariant,
+                            size = 20.dp,
+                        )
+                    }
+                },
+                visualTransformation = if (passwordVisible) VisualTransformation.None
+                else PasswordVisualTransformation(),
             )
-            Text(
-                text = stringResource(Res.string.login_register),
-                style = AnimaTheme.typography.bodySmall,
-                color = AnimaTheme.colors.primary,
-                modifier = Modifier.clickable { onNavigateToRegister() },
+
+            Spacer(modifier = Modifier.height(AnimaTheme.spacing.huge))
+
+            AnimaButton(
+                text = stringResource(Res.string.core_button_enter),
+                onClick = { viewModel.onSubmit(onLoginSuccess) },
+                enabled = uiState.canSubmit,
+            )
+
+            Spacer(modifier = Modifier.height(AnimaTheme.spacing.md))
+
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(Res.string.login_no_account),
+                    style = AnimaTheme.typography.bodySmall,
+                    color = AnimaTheme.colors.onSurfaceVariant,
+                )
+                Text(
+                    text = stringResource(Res.string.login_register),
+                    style = AnimaTheme.typography.bodySmall,
+                    color = AnimaTheme.colors.primary,
+                    modifier = Modifier.clickable { onNavigateToRegister() },
+                )
+            }
+
+            Spacer(modifier = Modifier.height(AnimaTheme.spacing.huge))
+
+            BiometricButton(
+                onClick = { },
             )
         }
-
-        Spacer(modifier = Modifier.height(AnimaTheme.spacing.huge))
-
-        BiometricButton(
-            onClick = { },
-        )
     }
 }
