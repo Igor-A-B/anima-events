@@ -7,5 +7,5 @@ data class LoginUiState(
     val isLoading: Boolean = false,
     val error: String? = null,
 ) {
-    val canSubmit: Boolean = email.isNotBlank() && password.isNotBlank()
+    val canSubmit: Boolean = password.isNotBlank()
 }
