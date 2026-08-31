@@ -2,41 +2,36 @@ package com.example.anima.navigation
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import androidx.navigation.navigation
+import androidx.navigation.compose.navigation
+import androidx.navigation.toRoute
 import com.example.anima.features.eventdetail.presentation.EventDetailScreen
 import com.example.anima.features.feed.presentation.FeedScreen
 
 fun NavGraphBuilder.appNavGraph(navController: NavHostController) {
-    navigation(
-        startDestination = AppRoutes.HOME,
-        route = AppRoutes.APP_GRAPH,
+    navigation<AppGraph>(
+        startDestination = Home,
+        enterTransition = NavTransitions.enter,
+        exitTransition = NavTransitions.exit,
+        popEnterTransition = NavTransitions.popEnter,
+        popExitTransition = NavTransitions.popExit
     ) {
-        composable(AppRoutes.HOME) {
+
+        composable<Home> {
             FeedScreen(
                 onNavigateToEvent = { eventId ->
-                    navController.navigate(AppRoutes.eventDetail(eventId))
+                    navController.navigate(EventDetail(eventId))
                 },
             )
         }
 
-        composable(
-            route = AppRoutes.EVENT_DETAIL,
-            arguments = listOf(
-                navArgument(AppRoutes.EVENT_ID_ARG) { type = NavType.StringType },
-            ),
-        ) { backStackEntry ->
-            val eventId = backStackEntry.arguments
-                ?.getString(AppRoutes.EVENT_ID_ARG)
-                .orEmpty()
+        composable<EventDetail> { backStackEntry ->
+            val route: EventDetail = backStackEntry.toRoute()
 
             EventDetailScreen(
-                eventId = eventId,
+                eventId = route.eventId,
                 onNavigateBack = { navController.popBackStack() },
             )
         }
-
     }
 }

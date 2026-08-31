@@ -4,7 +4,7 @@ import androidx.compose.runtime.*
 import androidx.navigation.compose.rememberNavController
 import com.example.anima.core.theme.AnimaTheme
 import com.example.anima.navigation.AppNavHost
-import com.example.anima.navigation.AppRoutes
+import com.example.anima.navigation.AuthGraph
 
 @Composable
 fun App() {
@@ -13,7 +13,7 @@ fun App() {
 
         AppNavHost(
             navController = navController,
-            startDestination = AppRoutes.AUTH_GRAPH,
+            startDestination = AuthGraph,
         )
     }
 }
