@@ -1,10 +1,15 @@
-FROM gradle:8-jdk17 AS build
-COPY --chown=gradle:gradle . /home/gradle/src
+FROM docker.io/library/gradle:8.7-jdk21-alpine AS build
 WORKDIR /home/gradle/src
-RUN ./gradlew buildFatJar --no-daemon
+COPY --chown=gradle:gradle . .
+RUN chmod +x gradlew
 
-FROM openjdk:17-slim
+ENV GRADLE_OPTS="-Dorg.gradle.jvmargs='-Xmx1024m -XX:MaxMetaspaceSize=512m' -Dorg.gradle.daemon=false"
+ENV KOTLIN_COMPILER_EXECUTION_STRATEGY="in-process"
+
+RUN ./gradlew :server:buildFatJar --no-daemon -Porg.gradle.java.installations.auto-download=false
+
+FROM docker.io/library/eclipse-temurin:21-jre-alpine
 EXPOSE 8080
-RUN mkdir /app
-COPY --from=build /home/gradle/src/build/libs/*-all.jar /app/ktor-server.jar
+WORKDIR /app
+COPY --from=build /home/gradle/src/server/build/libs/*.jar /app/ktor-server.jar
 ENTRYPOINT ["java", "-jar", "/app/ktor-server.jar"]
