@@ -81,13 +81,9 @@
 
     <!-- Seções do feed -->
     <string name="feed_section_now_title">Acontecendo agora</string>
-    <string name="feed_section_now_subtitle">Começou agora, dá tempo de chegar</string>
     <string name="feed_section_nearby_title">Rolando por perto</string>
-    <string name="feed_section_nearby_subtitle">A menos de 10 km de você</string>
     <string name="feed_section_recommended_title">Recomendados pra você</string>
-    <string name="feed_section_recommended_subtitle">Com base no que você participou</string>
-    <string name="feed_section_participating_title">Eventos que estou participando</string>
-    <string name="feed_section_participating_subtitle">Sua agenda confirmada</string>
+    <string name="feed_section_participating_title">Participando</string>
 
     <!-- Mais categorias -->
     <string name="categories_party">Festa</string>
