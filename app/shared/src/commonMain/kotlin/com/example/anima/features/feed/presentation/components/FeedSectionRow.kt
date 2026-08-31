@@ -48,11 +48,6 @@ fun FeedSectionRow(
                     style = AnimaTheme.typography.titleLarge,
                     color = AnimaTheme.colors.onBackground,
                 )
-                Text(
-                    text = section.type.subtitle(),
-                    style = AnimaTheme.typography.bodySmall,
-                    color = AnimaTheme.colors.onSurfaceVariant,
-                )
             }
 
             Text(
