@@ -7,7 +7,8 @@ import androidx.navigation.compose.NavHost
 @Composable
 fun AppNavHost(
     navController: NavHostController,
-    startDestination: String,
+    // Any: type-safe routes with destiny and object, not string
+    startDestination: Any,
 ) {
     NavHost(
         navController = navController,
