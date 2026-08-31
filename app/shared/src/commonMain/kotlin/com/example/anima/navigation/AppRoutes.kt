@@ -1,17 +1,26 @@
 package com.example.anima.navigation
 
-object AppRoutes {
-    const val AUTH_GRAPH = "auth"
-    const val LOGIN = "login"
-    const val REGISTER = "register"
+import kotlinx.serialization.Serializable
 
-    const val APP_GRAPH = "app"
-    const val HOME = "home"
+// type-safe routes
+// each destination is a type, not a string
+// the compiler checks the arguments, so there is no route to build by hand
 
-    // route with argument, read from the NavBackStackEntry
-    const val EVENT_ID_ARG = "eventId"
-    const val EVENT_DETAIL = "event/{$EVENT_ID_ARG}"
+@Serializable
+data object AuthGraph
 
-    // builds the concrete route when navigating
-    fun eventDetail(eventId: String) = "event/$eventId"
-}
+@Serializable
+data object Login
+
+@Serializable
+data object Register
+
+@Serializable
+data object AppGraph
+
+@Serializable
+data object Home
+
+// arguments are constructor parameters
+@Serializable
+data class EventDetail(val eventId: String)
