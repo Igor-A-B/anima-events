@@ -13,9 +13,13 @@ composeMultiplatform = "1.11.1"
 junit = "4.13.2"
 kotlin = "2.4.10"
 kotlin-wrappers = "2026.7.7"
-ktor = "3.5.1"
 logback = "1.6.1"
 material3 = "1.11.0-alpha07"
+ktor = "3.5.1"
+
+hibernate = "6.6.4.Final"
+postgres = "42.7.4"
+hikari = "5.1.0"
 navigation = "2.9.0-beta01"
 
 [libraries]
@@ -37,9 +41,16 @@ compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMul
 compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
 compose-uiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "composeMultiplatform" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+
 ktor-serverCore = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
 ktor-serverNetty = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" }
 ktor-serverTestHost = { module = "io.ktor:ktor-server-test-host-jvm", version.ref = "ktor" }
+
+hibernate-core = { module = "org.hibernate.orm:hibernate-core", version.ref = "hibernate" }
+jakarta-persistence = { module = "jakarta.persistence:jakarta.persistence-api", version = "3.1.0" }
+
+postgres-driver = { module = "org.postgresql:postgresql", version.ref = "postgres" }
+hikari-cp = { module = "com.zaxxer:HikariCP", version.ref = "hikari" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
