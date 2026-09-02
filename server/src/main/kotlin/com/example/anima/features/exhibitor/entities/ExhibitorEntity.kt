@@ -1,5 +1,7 @@
-package com.anima.entities
+package com.example.anima.features.exhibitor.entities
 
+import com.example.anima.features.address.entities.AddressEntity
+import com.example.anima.features.user.entities.UserEntity
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType

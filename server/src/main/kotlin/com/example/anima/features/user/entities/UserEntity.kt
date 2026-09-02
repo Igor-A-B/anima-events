@@ -1,4 +1,4 @@
-package com.anima.entities
+package com.example.anima.features.user.entities
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

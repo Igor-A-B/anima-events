@@ -1,6 +1,6 @@
-package com.anima
+package com.example.anima
 
-import com.anima.config.DatabaseFactory
+import com.example.anima.config.DatabaseFactory
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
