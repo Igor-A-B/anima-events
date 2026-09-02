@@ -1,12 +1,12 @@
 <persistence xmlns="https://jakarta.ee/xml/ns/persistence" version="3.1">
     <persistence-unit name="anima" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <class>com.anima.features.user.entities.UserEntity</class>
-        <class>com.anima.features.visitor.entities.VisitorEntity</class>
-        <class>com.anima.features.exhibitor.entities.ExhibitorEntity</class>
-        <class>com.anima.features.event.entities.EventEntity</class>
-        <class>com.anima.features.category.entities.CategoryEntity</class>
-        <class>com.anima.features.address.entities.AddressEntity</class>
+        <class>com.example.anima.features.user.entities.UserEntity</class>
+        <class>com.example.anima.features.visitor.entities.VisitorEntity</class>
+        <class>com.example.anima.features.exhibitor.entities.ExhibitorEntity</class>
+        <class>com.example.anima.features.event.entities.EventEntity</class>
+        <class>com.example.anima.features.category.entities.CategoryEntity</class>
+        <class>com.example.anima.features.address.entities.AddressEntity</class>
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.show_sql" value="true"/>
