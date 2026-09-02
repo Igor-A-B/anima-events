@@ -21,6 +21,9 @@ class UserEntity {
     @Column(nullable = false, unique = true)
     var email: String = ""
 
+    @Column(nullable = false, unique = true)
+    var password: String = ""
+
     @Column(nullable = false)
     var registerDate: LocalDateTime = LocalDateTime.now()
 }
