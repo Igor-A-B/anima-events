@@ -82,13 +82,9 @@
 
     <!-- Feed sections -->
     <string name="feed_section_now_title">Happening now</string>
-    <string name="feed_section_now_subtitle">It just started, you can still make it</string>
     <string name="feed_section_nearby_title">Going on nearby</string>
-    <string name="feed_section_nearby_subtitle">Less than 10 km from you</string>
     <string name="feed_section_recommended_title">Recommended for you</string>
-    <string name="feed_section_recommended_subtitle">Based on what you have attended</string>
-    <string name="feed_section_participating_title">Events I am attending</string>
-    <string name="feed_section_participating_subtitle">Your confirmed schedule</string>
+    <string name="feed_section_participating_title">Attending</string>
 
     <!-- More categories -->
     <string name="categories_party">Party</string>

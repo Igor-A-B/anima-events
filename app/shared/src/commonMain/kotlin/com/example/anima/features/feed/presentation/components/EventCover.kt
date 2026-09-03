@@ -3,13 +3,16 @@ package com.example.anima.features.feed.presentation.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -19,9 +22,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import anima.app.shared.generated.resources.Res
+import anima.app.shared.generated.resources.feed_interested
 import anima.app.shared.generated.resources.feed_live
 import anima.app.shared.generated.resources.feed_price_free
 import anima.app.shared.generated.resources.feed_status_finished
+import com.example.anima.core.components.icon.AnimaIcon
+import com.example.anima.core.components.icon.lucide.LucideUsers
 import com.example.anima.core.theme.AnimaTheme
 import com.example.anima.features.feed.domain.Event
 import com.example.anima.features.feed.domain.EventStatus
@@ -109,19 +115,45 @@ fun EventCover(
                 text = event.title,
                 style = AnimaTheme.typography.titleSmall,
                 color = Color.White,
-                minLines = 2,
-                maxLines = 2,
+                minLines = 1,
+                maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1f),
             )
 
-            EventChip(
-                text = event.price ?: stringResource(Res.string.feed_price_free),
-                background = AnimaTheme.colors.surface,
-                contentColor = AnimaTheme.colors.onSurface,
-            )
+            Column(
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.xs),
+            ) {
+                EventChip(
+                    text = event.attendees.toString(),
+                    background = Color.Black.copy(alpha = 0.45f),
+                    contentColor = Color.White,
+                    leadingIcon = {
+                        AnimaIcon(
+                            imageVector = LucideUsers,
+                            // only the number shows, the label goes to screen readers
+                            contentDescription = stringResource(
+                                Res.string.feed_interested,
+                                event.attendees.toString(),
+                            ),
+                            size = EventChipDefaults.IconSize,
+                        )
+                    },
+                )
+
+                EventChip(
+                    text = event.price ?: stringResource(Res.string.feed_price_free),
+                    background = AnimaTheme.colors.surface,
+                    contentColor = AnimaTheme.colors.onSurface,
+                )
+            }
         }
     }
+}
+
+object EventChipDefaults {
+    val IconSize: Dp = 12.dp
 }
 
 @Composable
@@ -130,16 +162,30 @@ fun EventChip(
     background: Color,
     contentColor: Color,
     modifier: Modifier = Modifier,
+    leadingIcon: (@Composable () -> Unit)? = null,
 ) {
-    Text(
-        text = text,
-        style = AnimaTheme.typography.labelSmall,
-        color = contentColor,
+    Row(
         modifier = modifier
             .clip(AnimaTheme.shapes.full)
             .background(background)
             .padding(horizontal = AnimaTheme.spacing.sm, vertical = AnimaTheme.spacing.xs),
-    )
+        horizontalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.xs),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        // the icon inherits the chip content color, so the caller passes no tint
+        leadingIcon?.let { icon ->
+            CompositionLocalProvider(
+                LocalContentColor provides contentColor,
+                content = icon,
+            )
+        }
+
+        Text(
+            text = text,
+            style = AnimaTheme.typography.labelSmall,
+            color = contentColor,
+        )
+    }
 }
 
 @Composable

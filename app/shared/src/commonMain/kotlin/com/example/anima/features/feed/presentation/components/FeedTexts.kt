@@ -10,13 +10,9 @@ import anima.app.shared.generated.resources.categories_party
 import anima.app.shared.generated.resources.categories_sport
 import anima.app.shared.generated.resources.categories_tech
 import anima.app.shared.generated.resources.categories_theater
-import anima.app.shared.generated.resources.feed_section_nearby_subtitle
 import anima.app.shared.generated.resources.feed_section_nearby_title
-import anima.app.shared.generated.resources.feed_section_now_subtitle
 import anima.app.shared.generated.resources.feed_section_now_title
-import anima.app.shared.generated.resources.feed_section_participating_subtitle
 import anima.app.shared.generated.resources.feed_section_participating_title
-import anima.app.shared.generated.resources.feed_section_recommended_subtitle
 import anima.app.shared.generated.resources.feed_section_recommended_title
 import com.example.anima.features.feed.domain.EventCategory
 import com.example.anima.features.feed.domain.FeedSectionType
@@ -44,15 +40,5 @@ fun FeedSectionType.title(): String = stringResource(
         FeedSectionType.NEARBY -> Res.string.feed_section_nearby_title
         FeedSectionType.RECOMMENDED -> Res.string.feed_section_recommended_title
         FeedSectionType.PARTICIPATING -> Res.string.feed_section_participating_title
-    }
-)
-
-@Composable
-fun FeedSectionType.subtitle(): String = stringResource(
-    when (this) {
-        FeedSectionType.HAPPENING_NOW -> Res.string.feed_section_now_subtitle
-        FeedSectionType.NEARBY -> Res.string.feed_section_nearby_subtitle
-        FeedSectionType.RECOMMENDED -> Res.string.feed_section_recommended_subtitle
-        FeedSectionType.PARTICIPATING -> Res.string.feed_section_participating_subtitle
     }
 )
