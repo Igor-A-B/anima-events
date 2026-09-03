@@ -105,7 +105,7 @@ private fun FeedContent(
                     else -> LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(bottom = AnimaTheme.spacing.xxxl),
-                        verticalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.xl),
+                        verticalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.xxxl),
                     ) {
                         // one FeedSectionRow per section
                         items(
