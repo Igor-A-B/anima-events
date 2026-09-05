@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -12,8 +13,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,39 +59,43 @@ fun AnimaBottomNav(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = AnimaTheme.spacing.xl),
-            horizontalArrangement = Arrangement.SpaceBetween,
+                .padding(horizontal = AnimaTheme.spacing.lg),
+            horizontalArrangement = Arrangement.spacedBy(
+                space = AnimaTheme.spacing.xxl,
+                alignment = Alignment.CenterHorizontally,
+            ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             items.forEach { item ->
                 val isSelected = currentRoute == item.qualifiedName
 
                 val tint by animateColorAsState(
-                    targetValue = if (isSelected) {
-                        AnimaTheme.colors.onPrimary
-                    } else {
-                        AnimaTheme.colors.onSurfaceVariant
-                    },
+                    targetValue = if (isSelected) AnimaTheme.colors.onPrimary
+                    else AnimaTheme.colors.onSurfaceVariant,
                     animationSpec = tween(200),
                     label = "BottomNavTint",
                 )
 
                 val backgroundColor by animateColorAsState(
-                    targetValue = if (isSelected) {
-                        AnimaTheme.colors.primary
-                    } else {
-                        Color.Transparent
-                    },
+                    targetValue = if (isSelected) AnimaTheme.colors.primary
+                    else Color.Transparent,
                     animationSpec = tween(200),
                     label = "BottomNavBackground",
                 )
 
                 Box(
                     modifier = Modifier
-                        .size(48.dp)
-                        .clip(AnimaTheme.shapes.extraLarge)
+                        .size(46.dp)
+                        .clip(AnimaTheme.shapes.full)
                         .background(backgroundColor)
-                        .clickable { onItemClick(item.route) },
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = ripple(
+                                bounded = true,
+                                color = AnimaTheme.colors.primary,
+                            ),
+                            onClick = { onItemClick(item.route) },
+                        ),
                     contentAlignment = Alignment.Center,
                 ) {
                     AnimaIcon(
