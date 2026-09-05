@@ -13,7 +13,7 @@ data class RegisterUiState(
     val isLoading: Boolean = false,
     val error: String = ""
 ) {
-    val totalSteps: Int = 4
+    val totalSteps: Int = 5
 
     val isLastStep: Boolean = step == totalSteps
 
@@ -22,6 +22,7 @@ data class RegisterUiState(
         2 -> name.isNotBlank()
         3 -> email.isNotBlank()
         4 -> isPasswordStrong(password)
+        5 -> true  // success step
         else -> false
     }
 }

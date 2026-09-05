@@ -19,7 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import anima.app.shared.generated.resources.Res
-import anima.app.shared.generated.resources.core_button_confirm
+import anima.app.shared.generated.resources.core_button_enter
 import anima.app.shared.generated.resources.core_button_next
 import com.example.anima.core.components.AnimaScaffold
 import com.example.anima.core.components.button.AnimaButton
@@ -29,6 +29,7 @@ import com.example.anima.features.auth.presentation.register.components.steps.Ac
 import com.example.anima.features.auth.presentation.register.components.steps.EmailStep
 import com.example.anima.features.auth.presentation.register.components.steps.NameStep
 import com.example.anima.features.auth.presentation.register.components.steps.PasswordStep
+import com.example.anima.features.auth.presentation.register.components.steps.SuccessStep
 import com.example.anima.navigation.horizontalSlideTransition
 import org.jetbrains.compose.resources.stringResource
 
@@ -49,11 +50,15 @@ fun RegisterScreen(
                 .padding(horizontal = AnimaTheme.spacing.xl),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            RegisterHeader(
-                currentStep = uiState.step,
-                totalSteps = uiState.totalSteps,
-                onBack = if (uiState.step > 1) viewModel::onPreviousStep else onNavigateBack,
-            )
+            if (uiState.step < uiState.totalSteps) {
+                RegisterHeader(
+                    currentStep = uiState.step,
+                    totalSteps = uiState.totalSteps - 1,
+                    onBack = if (uiState.step > 1) viewModel::onPreviousStep else onNavigateBack,
+                )
+
+                Spacer(modifier = Modifier.height(AnimaTheme.spacing.xxxl))
+            }
 
             Spacer(modifier = Modifier.height(AnimaTheme.spacing.xxxl))
 
@@ -90,14 +95,18 @@ fun RegisterScreen(
                             value = uiState.password,
                             onValueChange = viewModel::onPasswordChanged,
                         )
+
+                        5 -> SuccessStep()
                     }
                 }
             }
 
             AnimaButton(
                 text = stringResource(
-                    if (uiState.isLastStep) Res.string.core_button_confirm
-                    else Res.string.core_button_next
+                    when {
+                        uiState.isLastStep -> Res.string.core_button_enter
+                        else -> Res.string.core_button_next
+                    }
                 ),
                 onClick = {
                     if (uiState.isLastStep) {
@@ -111,7 +120,7 @@ fun RegisterScreen(
                 modifier = Modifier.fillMaxWidth(),
             )
 
-            Spacer(modifier = Modifier.height(AnimaTheme.spacing.xl))
+            Spacer(modifier = Modifier.height(AnimaTheme.spacing.sm))
         }
     }
 }
