@@ -21,6 +21,15 @@ data object AppGraph
 @Serializable
 data object Home
 
+@Serializable
+data object Search
+
+@Serializable
+data object AddEvent
+
+@Serializable
+data object Profile
+
 // arguments are constructor parameters
 @Serializable
 data class EventDetail(val eventId: String)

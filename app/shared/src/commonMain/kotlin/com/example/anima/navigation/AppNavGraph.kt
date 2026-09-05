@@ -9,20 +9,25 @@ import com.example.anima.features.eventdetail.presentation.EventDetailScreen
 import com.example.anima.features.feed.presentation.FeedScreen
 
 fun NavGraphBuilder.appNavGraph(navController: NavHostController) {
-    navigation<AppGraph>(
-        startDestination = Home,
-        enterTransition = NavTransitions.enter,
-        exitTransition = NavTransitions.exit,
-        popEnterTransition = NavTransitions.popEnter,
-        popExitTransition = NavTransitions.popExit
-    ) {
-
+    navigation<AppGraph>(startDestination = Home) {
         composable<Home> {
             FeedScreen(
                 onNavigateToEvent = { eventId ->
                     navController.navigate(EventDetail(eventId))
                 },
             )
+        }
+
+        composable<Search> {
+            // SearchScreen()
+        }
+
+        composable<AddEvent> {
+            // AddEventScreen()
+        }
+
+        composable<Profile> {
+            // ProfileScreen()
         }
 
         composable<EventDetail> { backStackEntry ->
