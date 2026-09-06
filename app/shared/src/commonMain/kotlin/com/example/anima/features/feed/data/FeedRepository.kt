@@ -1,5 +1,6 @@
 package com.example.anima.features.feed.data
 
+import com.example.anima.features.feed.domain.Event
 import com.example.anima.features.feed.domain.EventCategory
 import com.example.anima.features.feed.domain.FeedSection
 
@@ -8,4 +9,7 @@ import com.example.anima.features.feed.domain.FeedSection
 interface FeedRepository {
     // category == null means no filter
     suspend fun getSections(category: EventCategory? = null): List<FeedSection>
+
+    suspend fun findById(id: String): Event?
+
 }
