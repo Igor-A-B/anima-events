@@ -94,7 +94,14 @@
 
 
     <!-- FEATURE: Detalle del evento -->
-    <string name="event_detail_title">Detalle del evento</string>
-    <string name="event_detail_received_id">Id recibido: %1$s</string>
+    <string name="event_detail_date">Fecha</string>
+    <string name="event_detail_time">Horario</string>
+    <string name="event_detail_location">Lugar</string>
+    <string name="event_detail_attendees">Confirmados</string>
+    <string name="event_detail_attendees_count">personas</string>
+    <string name="event_detail_organized_by">Organizado por</string>
+    <string name="event_detail_about">Sobre</string>
+    <string name="event_detail_free">Gratuito</string>
+    <string name="event_detail_participate">Voy a ir</string>
 
 </resources>
