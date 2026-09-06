@@ -27,8 +27,10 @@ class MockFeedRepository : FeedRepository {
             .filter { section -> section.events.isNotEmpty() }
     }
 
-    // mock data
+    override suspend fun findById(id: String): Event? =
+        (happeningNow + nearby + recommended + participating).find { it.id == id }
 
+    // mock data
     private val happeningNow = listOf(
         Event(
             id = "e1",
@@ -43,6 +45,8 @@ class MockFeedRepository : FeedRepository {
             attendees = 412,
             status = EventStatus.OCCURRING,
             coverSeed = 0,
+            description = "Uma noite de música eletrônica com DJs convidados e pista aberta. O Bloco 9 reúne os melhores artistas da cena underground paulistana para uma experiência única.",
+            organizerName = "Bloco 9 Produções",
         ),
         Event(
             id = "e2",
@@ -57,6 +61,8 @@ class MockFeedRepository : FeedRepository {
             attendees = 87,
             status = EventStatus.OCCURRING,
             coverSeed = 1,
+            description = "Uma jam session aberta para músicos e amantes da música. Venha curtir apresentações improvisadas em um dos pontos mais tradicionais da cena artística de São Paulo.",
+            organizerName = "Beco Cultural",
         ),
         Event(
             id = "e3",
@@ -71,6 +77,8 @@ class MockFeedRepository : FeedRepository {
             attendees = 143,
             status = EventStatus.OCCURRING,
             coverSeed = 2,
+            description = "Uma noite de comédia com novos talentos e comediantes convidados. O palco é livre e a programação promete muitas histórias, improvisos e boas risadas.",
+            organizerName = "Teatro Pequeno",
         ),
     )
 
@@ -87,6 +95,8 @@ class MockFeedRepository : FeedRepository {
             distanceLabel = "900 m",
             attendees = 260,
             coverSeed = 3,
+            description = "Uma feira dedicada à gastronomia vegana, com comidas artesanais, produtos naturais e opções para todos os gostos. Um encontro para comer bem e conhecer novos produtores.",
+            organizerName = "Vila Verde Eventos",
         ),
         Event(
             id = "e5",
@@ -94,12 +104,14 @@ class MockFeedRepository : FeedRepository {
             category = EventCategory.CINEMA,
             venue = "Parque Augusta",
             city = "Sao Paulo",
-            dateLabel = "Amanha",
+            dateLabel = "Amanhã",
             timeLabel = "19:30",
             price = null,
             distanceLabel = "2,4 km",
             attendees = 531,
             coverSeed = 4,
+            description = "Uma sessão especial de cinema ao ar livre com a exibição de Cidade de Deus. Traga sua canga, reúna os amigos e aproveite uma noite de cinema sob as estrelas.",
+            organizerName = "CineSP",
         ),
         Event(
             id = "e6",
@@ -113,6 +125,8 @@ class MockFeedRepository : FeedRepository {
             distanceLabel = "4,5 km",
             attendees = 178,
             coverSeed = 5,
+            description = "Um passeio ciclístico noturno pela zona oeste de São Paulo. O percurso é acompanhado por organizadores e pensado para quem quer pedalar, conhecer a cidade e fazer novas amizades.",
+            organizerName = "Pedal SP",
         ),
         Event(
             id = "e7",
@@ -126,6 +140,8 @@ class MockFeedRepository : FeedRepository {
             distanceLabel = "7,9 km",
             attendees = 94,
             coverSeed = 0,
+            description = "Uma exposição contemporânea que explora a relação entre luz, som e espaço. Obras imersivas convidam o público a experimentar diferentes formas de perceber a arte.",
+            organizerName = "Galeria Norte",
         ),
     )
 
@@ -142,6 +158,8 @@ class MockFeedRepository : FeedRepository {
             distanceLabel = "12 km",
             attendees = 4820,
             coverSeed = 1,
+            description = "O primeiro dia do Anima Fest 2026 reúne grandes nomes da música em uma programação completa com shows, experiências e atrações especiais durante todo o dia.",
+            organizerName = "Anima Eventos",
         ),
         Event(
             id = "e9",
@@ -156,6 +174,8 @@ class MockFeedRepository : FeedRepository {
             attendees = 302,
             status = EventStatus.FINISHED,
             coverSeed = 2,
+            description = "Um encontro cultural para celebrar a produção artística da comunidade. O sarau conta com poesia, música, apresentações autorais e espaço aberto para novos artistas.",
+            organizerName = "Coletivo Quebrada Viva",
         ),
         Event(
             id = "e10",
@@ -170,6 +190,8 @@ class MockFeedRepository : FeedRepository {
             attendees = 66,
             status = EventStatus.FINISHED,
             coverSeed = 3,
+            description = "Workshop prático sobre desenvolvimento multiplataforma com Kotlin. Aprenda os principais conceitos do Kotlin Multiplatform e veja como compartilhar código entre diferentes plataformas.",
+            organizerName = "Kotlin SP Community",
         ),
         Event(
             id = "e11",
@@ -183,6 +205,8 @@ class MockFeedRepository : FeedRepository {
             distanceLabel = "8,7 km",
             attendees = 221,
             coverSeed = 4,
+            description = "Uma noite especial de forró com música ao vivo, dança e muita energia. Um ambiente descontraído para dançar, conhecer pessoas e aproveitar a noite com os amigos.",
+            organizerName = "Quintal da Lapa",
         ),
     )
 
@@ -199,6 +223,8 @@ class MockFeedRepository : FeedRepository {
             distanceLabel = "9,3 km",
             attendees = 9120,
             coverSeed = 5,
+            description = "Uma apresentação única da turnê Eclipse, com um show completo e uma produção audiovisual especial. Uma noite para os fãs aproveitarem o repertório da banda ao vivo.",
+            organizerName = "Eclipse Produções",
         ),
         Event(
             id = "e13",
@@ -212,6 +238,8 @@ class MockFeedRepository : FeedRepository {
             distanceLabel = "6,8 km",
             attendees = 2740,
             coverSeed = 0,
+            description = "Uma corrida de 10 km pelas ruas e áreas próximas ao Parque Ibirapuera. O evento é aberto para corredores de diferentes níveis e conta com estrutura de apoio aos participantes.",
+            organizerName = "Anima Sports",
         ),
         Event(
             id = "e14",
@@ -225,6 +253,8 @@ class MockFeedRepository : FeedRepository {
             distanceLabel = "11 km",
             attendees = 3310,
             coverSeed = 1,
+            description = "Um festival gastronômico reunindo food trucks de diferentes estilos e sabores. Além da comida, o evento conta com música, espaço para famílias e atrações durante todo o dia.",
+            organizerName = "Festival SP",
         ),
     )
 }

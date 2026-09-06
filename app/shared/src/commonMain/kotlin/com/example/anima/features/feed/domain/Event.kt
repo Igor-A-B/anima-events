@@ -31,11 +31,11 @@ data class Event(
     val city: String,
     val dateLabel: String,
     val timeLabel: String,
-    // null = free event
     val price: String? = null,
     val distanceLabel: String? = null,
     val attendees: Int = 0,
     val status: EventStatus = EventStatus.UPCOMING,
-    // stands in for the cover image: the UI turns it into a gradient
     val coverSeed: Int = 0,
+    val description: String = "",
+    val organizerName: String = "",
 )
