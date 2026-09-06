@@ -60,12 +60,12 @@ val darkAnimaColors = AnimaColors(
     error = Primary300,
     onError = Primary900,
     success = Success,
-    )
+)
 
 val lightAnimaColors = AnimaColors(
-    background = Neutral100,
+    background = Neutral50,
     onBackground = Neutral900,
-    surface = Neutral200,
+    surface = Neutral100,
     surfaceVariant = Primary100,
     onSurface = Neutral800,
     onSurfaceVariant = Neutral700,
@@ -76,7 +76,7 @@ val lightAnimaColors = AnimaColors(
     error = Primary600,
     onError = Neutral50,
     success = Success,
-    )
+)
 
 val LocalAnimaColors = staticCompositionLocalOf<AnimaColors> {
     error("No AnimaColors provided")
