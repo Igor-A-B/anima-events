@@ -15,6 +15,7 @@ data class AnimaSpacing(
     val xxl: Dp = 32.dp,
     val xxxl: Dp = 48.dp,
     val huge: Dp = 64.dp,
+    val huger: Dp = 80.dp,
 )
 
 val LocalAnimaSpacing = staticCompositionLocalOf { AnimaSpacing() }
