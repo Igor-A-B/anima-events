@@ -105,4 +105,32 @@
     <string name="event_detail_free">Free</string>
     <string name="event_detail_participate">I'm going</string>
 
+
+    <!-- FEATURE: Search -->
+    <string name="search_placeholder">Event, venue or organizer</string>
+    <string name="search_clear">Clear search</string>
+    <string name="search_empty">Nothing matches this search. Try other words or fewer filters.</string>
+    <string name="search_results_count">%1$s results</string>
+
+    <!-- Search filters -->
+    <string name="search_filters">Filters</string>
+    <string name="search_filters_count">Filters (%1$s)</string>
+    <string name="search_filters_title">Filters</string>
+    <string name="search_filters_clear">Clear</string>
+    <string name="search_filters_apply">Show %1$s results</string>
+    <string name="search_filters_price">Price</string>
+    <string name="search_filters_date">When</string>
+
+    <!-- Search filter: price -->
+    <string name="search_price_any">Any</string>
+    <string name="search_price_free">Free</string>
+    <string name="search_price_paid">Paid</string>
+
+    <!-- Search filter: date -->
+    <string name="search_date_any">Any time</string>
+    <string name="search_date_now">Happening now</string>
+    <string name="search_date_today">Today</string>
+    <string name="search_date_tomorrow">Tomorrow</string>
+    <string name="search_date_weekend">This weekend</string>
+
 </resources>

@@ -104,4 +104,32 @@
     <string name="event_detail_free">Gratuito</string>
     <string name="event_detail_participate">Voy a ir</string>
 
+
+    <!-- FEATURE: Búsqueda -->
+    <string name="search_placeholder">Evento, lugar u organizador</string>
+    <string name="search_clear">Limpiar búsqueda</string>
+    <string name="search_empty">No hay resultados para esta búsqueda. Prueba otras palabras o menos filtros.</string>
+    <string name="search_results_count">%1$s resultados</string>
+
+    <!-- Filtros de la búsqueda -->
+    <string name="search_filters">Filtros</string>
+    <string name="search_filters_count">Filtros (%1$s)</string>
+    <string name="search_filters_title">Filtros</string>
+    <string name="search_filters_clear">Limpiar</string>
+    <string name="search_filters_apply">Ver %1$s resultados</string>
+    <string name="search_filters_price">Precio</string>
+    <string name="search_filters_date">Cuándo</string>
+
+    <!-- Filtro de la búsqueda: precio -->
+    <string name="search_price_any">Cualquiera</string>
+    <string name="search_price_free">Gratis</string>
+    <string name="search_price_paid">De pago</string>
+
+    <!-- Filtro de la búsqueda: fecha -->
+    <string name="search_date_any">Cualquier fecha</string>
+    <string name="search_date_now">Ocurriendo ahora</string>
+    <string name="search_date_today">Hoy</string>
+    <string name="search_date_tomorrow">Mañana</string>
+    <string name="search_date_weekend">Fin de semana</string>
+
 </resources>
