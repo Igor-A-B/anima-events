@@ -1,4 +1,4 @@
-package com.example.anima.navigation.bottom_nav
+package com.example.anima.navigation.bottomnav
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween

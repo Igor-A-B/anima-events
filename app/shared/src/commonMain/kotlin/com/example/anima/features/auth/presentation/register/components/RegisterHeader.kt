@@ -1,6 +1,5 @@
 package com.example.anima.features.auth.presentation.register.components
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +12,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import anima.app.shared.generated.resources.Res
 import anima.app.shared.generated.resources.register_stepper
+import com.example.anima.core.components.button.AnimaIconButton
 import com.example.anima.core.components.icon.AnimaIcon
 import com.example.anima.core.components.icon.lucide.LucideArrowLeft
 import com.example.anima.core.theme.AnimaTheme
@@ -30,12 +30,13 @@ fun RegisterHeader(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        AnimaIcon(
-            imageVector = LucideArrowLeft,
-            contentDescription = null,
-            tint = AnimaTheme.colors.primary,
-            modifier = Modifier.clickable { onBack() },
-        )
+        AnimaIconButton(onClick = onBack) {
+            AnimaIcon(
+                imageVector = LucideArrowLeft,
+                contentDescription = null,
+                tint = AnimaTheme.colors.primary,
+            )
+        }
 
         Text(
             text = buildAnnotatedString {

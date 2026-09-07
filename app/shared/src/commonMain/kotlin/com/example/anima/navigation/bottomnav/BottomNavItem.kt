@@ -1,4 +1,4 @@
-package com.example.anima.navigation.bottom_nav
+package com.example.anima.navigation.bottomnav
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
