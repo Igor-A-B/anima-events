@@ -18,8 +18,9 @@ import anima.app.shared.generated.resources.inter_semibold
 import anima.app.shared.generated.resources.inter_thin
 import org.jetbrains.compose.resources.Font
 
-val InterFontFamily
-    @Composable get() = FontFamily(
+@Composable
+fun interFontFamily(): FontFamily {
+    return FontFamily(
         Font(Res.font.inter_thin, FontWeight.Thin),
         Font(Res.font.inter_extralight, FontWeight.ExtraLight),
         Font(Res.font.inter_light, FontWeight.Light),
@@ -30,6 +31,7 @@ val InterFontFamily
         Font(Res.font.inter_extrabold, FontWeight.ExtraBold),
         Font(Res.font.inter_black, FontWeight.Black),
     )
+}
 
 data class AnimaTypography(
     val displayLarge: TextStyle,
@@ -51,7 +53,7 @@ data class AnimaTypography(
 
 @Composable
 fun animaTypography(): AnimaTypography {
-    val inter = InterFontFamily
+    val inter = interFontFamily()
 
     return AnimaTypography(
         displayLarge = TextStyle(
