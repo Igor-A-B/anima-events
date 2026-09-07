@@ -1,7 +1,6 @@
 package com.example.anima.features.eventdetail.presentation.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,17 +8,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import anima.app.shared.generated.resources.Res
 import anima.app.shared.generated.resources.event_detail_free
+import com.example.anima.core.components.button.AnimaIconButton
 import com.example.anima.core.components.icon.AnimaIcon
 import com.example.anima.core.components.icon.lucide.LucideArrowLeft
 import com.example.anima.core.components.icon.lucide.LucideHeart
@@ -99,7 +97,10 @@ fun EventCover(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            CoverIconButton(onClick = onBack) {
+            AnimaIconButton(
+                onClick = onBack,
+                backgroundColor = Color.Black.copy(alpha = 0.3f),
+            ) {
                 AnimaIcon(
                     imageVector = LucideArrowLeft,
                     contentDescription = null,
@@ -109,21 +110,30 @@ fun EventCover(
             }
 
             Row(horizontalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.sm)) {
-                CoverIconButton(onClick = onShare) {
+                AnimaIconButton(
+                    onClick = onBack,
+                    backgroundColor = Color.Black.copy(alpha = 0.3f),
+                ) {
                     AnimaIcon(
                         imageVector = LucideShare,
                         contentDescription = null,
                         tint = Color.White,
                         size = 20.dp,
                     )
+
                 }
-                CoverIconButton(onClick = onFavorite) {
+
+                AnimaIconButton(
+                    onClick = onBack,
+                    backgroundColor = Color.Black.copy(alpha = 0.3f),
+                ) {
                     AnimaIcon(
                         imageVector = LucideHeart,
                         contentDescription = null,
                         tint = Color.White,
                         size = 20.dp,
                     )
+
                 }
             }
 
@@ -152,20 +162,6 @@ fun EventCover(
                 color = if (price != null) AnimaTheme.colors.primary else AnimaTheme.colors.success,
             )
         }
-    }
-}
-
-@Composable
-private fun CoverIconButton(
-    onClick: () -> Unit,
-    content: @Composable () -> Unit,
-) {
-    Box(
-        modifier = Modifier.size(40.dp).clip(AnimaTheme.shapes.full)
-            .background(Color.Black.copy(alpha = 0.3f)).clickable { onClick() },
-        contentAlignment = Alignment.Center,
-    ) {
-        content()
     }
 }
 
