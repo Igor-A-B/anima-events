@@ -92,7 +92,10 @@ fun EventCover(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = AnimaTheme.spacing.xl, vertical = AnimaTheme.spacing.xl)
+                .padding(
+                    horizontal = AnimaTheme.spacing.xl,
+                    vertical = AnimaTheme.spacing.lg,
+                )
                 .align(Alignment.TopCenter),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
@@ -105,7 +108,6 @@ fun EventCover(
                     imageVector = LucideArrowLeft,
                     contentDescription = null,
                     tint = Color.White,
-                    size = 20.dp,
                 )
             }
 
@@ -118,8 +120,8 @@ fun EventCover(
                         imageVector = LucideShare,
                         contentDescription = null,
                         tint = Color.White,
-                        size = 20.dp,
-                    )
+
+                        )
 
                 }
 
@@ -131,7 +133,6 @@ fun EventCover(
                         imageVector = LucideHeart,
                         contentDescription = null,
                         tint = Color.White,
-                        size = 20.dp,
                     )
 
                 }
