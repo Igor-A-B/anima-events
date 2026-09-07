@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
+import com.example.anima.features.addevent.presentation.AddEventScreen
 import com.example.anima.features.eventdetail.presentation.EventDetailScreen
 import com.example.anima.features.feed.presentation.FeedScreen
 
@@ -28,7 +29,10 @@ fun NavGraphBuilder.appNavGraph(navController: NavHostController) {
         }
 
         composable<AddEvent> {
-            // AddEventScreen()
+            AddEventScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onEventCreated = { navController.popBackStack() },
+            )
         }
 
         composable<Profile> {

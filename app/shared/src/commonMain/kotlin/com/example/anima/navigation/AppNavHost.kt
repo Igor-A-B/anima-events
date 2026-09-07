@@ -17,7 +17,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.anima.core.theme.AnimaTheme
-import com.example.anima.navigation.bottom_nav.AnimaBottomNav
+import com.example.anima.navigation.bottomnav.AnimaBottomNav
 
 @Composable
 fun AppNavHost(
@@ -30,7 +30,6 @@ fun AppNavHost(
     val showBottomNav = currentRoute in listOf(
         Home::class.qualifiedName,
         Search::class.qualifiedName,
-        AddEvent::class.qualifiedName,
         Profile::class.qualifiedName,
     )
 
