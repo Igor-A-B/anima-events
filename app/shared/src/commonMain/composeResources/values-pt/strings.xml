@@ -104,4 +104,18 @@
     <string name="event_detail_free">Gratuito</string>
     <string name="event_detail_participate">Vou participar</string>
 
+    <!-- FEATURE: Criar evento -->
+    <string name="add_event_title">Criar evento</string>
+    <string name="add_event_photo_picker">Adicionar foto</string>
+    <string name="add_event_name_hint">Nome do evento</string>
+    <string name="add_event_date_hint">Data</string>
+    <string name="add_event_time_hint">Horário</string>
+    <string name="add_event_location_hint">Local / Espaço</string>
+    <string name="add_event_address_hint">Endereço</string>
+    <string name="add_event_category_label">Categoria</string>
+    <string name="add_event_price_hint">Preço (vazio para gratuito)</string>
+    <string name="add_event_capacity_hint">Capacidade máxima</string>
+    <string name="add_event_about_label">Sobre o evento</string>
+    <string name="add_event_about_hint">Descreva seu evento...</string>
+
 </resources>

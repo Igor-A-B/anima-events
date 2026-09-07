@@ -105,4 +105,19 @@
     <string name="event_detail_free">Free</string>
     <string name="event_detail_participate">I'm going</string>
 
+
+    <!-- FEATURE: Add event -->
+    <string name="add_event_title">Create event</string>
+    <string name="add_event_photo_picker">Add photo</string>
+    <string name="add_event_name_hint">Event name</string>
+    <string name="add_event_date_hint">Date</string>
+    <string name="add_event_time_hint">Time</string>
+    <string name="add_event_location_hint">Venue / Space</string>
+    <string name="add_event_address_hint">Address</string>
+    <string name="add_event_category_label">Category</string>
+    <string name="add_event_price_hint">Price (leave empty for free)</string>
+    <string name="add_event_capacity_hint">Maximum capacity</string>
+    <string name="add_event_about_label">About the event</string>
+    <string name="add_event_about_hint">Describe your event...</string>
+
 </resources>
