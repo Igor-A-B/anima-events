@@ -16,14 +16,14 @@
     <string name="core_error_generic">An unexpected error occurred. Please try again.</string>
     <string name="core_error_network">No internet connection.</string>
 
-    <!-- Feature: Login -->
+    <!-- FEATURE: Login -->
     <string name="login_title">Welcome Back!</string>
     <string name="login_subtitle">Sign in to continue</string>
     <string name="login_enter_with_biometrics">Enter with biometrics</string>
     <string name="login_no_account">Don't have an account? </string>
     <string name="login_register">Sign up</string>
 
-    <!-- Login Inputs -->
+    <!-- Login inputs -->
     <string name="login_email_hint">Enter your email</string>
     <string name="login_password_hint">Enter your password</string>
 
@@ -46,7 +46,7 @@
     <string name="register_step5_title">All done!</string>
     <string name="register_step5_subtitle">Welcome! Your account has been successfully created, and you can now start using our app.</string>
 
-    <!-- Register Inputs -->
+    <!-- Register inputs -->
     <string name="register_space_name_hint">Name of your space</string>
     <string name="register_user_name_hint">Your name or nickname</string>
     <string name="register_email_hint">Your email</string>

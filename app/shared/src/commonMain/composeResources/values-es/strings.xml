@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Textos por defecto del APP (Español) -->
+    <!-- Default texts of the APP (Spanish) -->
 
     <string name="core_app_name">ANIMA</string>
 
-    <!-- Botones -->
+    <!-- Buttons -->
     <string name="core_button_confirm">Confirmar</string>
     <string name="core_button_enter">Entrar</string>
     <string name="core_button_cancel">Cancelar</string>
@@ -12,16 +12,16 @@
     <string name="core_button_change">Cambiar</string>
     <string name="core_button_next">Siguiente</string>
 
-    <!-- Mensajes de error -->
+    <!-- Error messages -->
     <string name="core_error_generic">Ocurrió un error inesperado. Inténtalo de nuevo.</string>
     <string name="core_error_network">Sin conexión a internet.</string>
 
-    <!-- Feature: Login -->
+    <!-- FEATURE: Login -->
     <string name="login_title">¡Bienvenido/a de nuevo!</string>
     <string name="login_subtitle">Inicia sesión para continuar</string>
     <string name="login_enter_with_biometrics">Entrar con biometría</string>
 
-    <!-- Inputs de Login -->
+    <!-- Login inputs -->
     <string name="login_email_hint">Ingresa tu correo electrónico</string>
     <string name="login_password_hint">Ingresa tu contraseña</string>
     <string name="login_no_account">¿No tienes cuenta? </string>
@@ -46,7 +46,7 @@
     <string name="register_step5_title">¡Todo listo!</string>
     <string name="register_step5_subtitle">¡Bienvenido/a! Tu cuenta ha sido creada con éxito y ya puedes empezar a usar nuestra app.</string>
 
-    <!-- Inputs de Registro -->
+    <!-- Register inputs -->
     <string name="register_space_name_hint">Nombre de tu espacio</string>
     <string name="register_user_name_hint">Tu nombre o apodo</string>
     <string name="register_email_hint">Tu correo electrónico</string>
@@ -79,13 +79,13 @@
     <string name="feed_empty">Aún no hay eventos por aquí. Inténtalo más tarde.</string>
     <string name="feed_interested">%1$s interesados</string>
 
-    <!-- Secciones del feed -->
+    <!-- Feed sections -->
     <string name="feed_section_now_title">Ocurriendo ahora</string>
     <string name="feed_section_nearby_title">Cerca de ti</string>
     <string name="feed_section_recommended_title">Recomendados para ti</string>
     <string name="feed_section_participating_title">Participando</string>
 
-    <!-- Más categorías -->
+    <!-- More categories -->
     <string name="categories_party">Fiesta</string>
     <string name="categories_sport">Deporte</string>
     <string name="categories_theater">Teatro</string>
@@ -93,7 +93,7 @@
     <string name="categories_tech">Tecnología</string>
 
 
-    <!-- FEATURE: Detalle del evento -->
+    <!-- FEATURE: Event detail -->
     <string name="event_detail_date">Fecha</string>
     <string name="event_detail_time">Horario</string>
     <string name="event_detail_location">Lugar</string>
@@ -105,13 +105,13 @@
     <string name="event_detail_participate">Voy a ir</string>
 
 
-    <!-- FEATURE: Búsqueda -->
+    <!-- FEATURE: Search -->
     <string name="search_placeholder">Evento, lugar u organizador</string>
     <string name="search_clear">Limpiar búsqueda</string>
     <string name="search_empty">No hay resultados para esta búsqueda. Prueba otras palabras o menos filtros.</string>
     <string name="search_results_count">%1$s resultados</string>
 
-    <!-- Filtros de la búsqueda -->
+    <!-- Search filters -->
     <string name="search_filters">Filtros</string>
     <string name="search_filters_count">Filtros (%1$s)</string>
     <string name="search_filters_title">Filtros</string>
@@ -120,12 +120,12 @@
     <string name="search_filters_price">Precio</string>
     <string name="search_filters_date">Cuándo</string>
 
-    <!-- Filtro de la búsqueda: precio -->
+    <!-- Search filter: price -->
     <string name="search_price_any">Cualquiera</string>
     <string name="search_price_free">Gratis</string>
     <string name="search_price_paid">De pago</string>
 
-    <!-- Filtro de la búsqueda: fecha -->
+    <!-- Search filter: date -->
     <string name="search_date_any">Cualquier fecha</string>
     <string name="search_date_now">Ocurriendo ahora</string>
     <string name="search_date_today">Hoy</string>
