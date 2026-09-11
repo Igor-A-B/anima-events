@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.example.anima.core.theme.AnimaTheme
 import com.example.anima.features.feed.domain.Event
 import com.example.anima.features.feed.presentation.components.EventCover
+import com.example.anima.features.feed.presentation.components.EventCoverSize
 
 /** Grid cell for a search result */
 @Composable
@@ -36,6 +37,7 @@ fun SearchResultCard(
         EventCover(
             event = event,
             height = SearchResultCardDefaults.CoverHeight,
+            size = EventCoverSize.COMPACT,
         )
 
         Row(

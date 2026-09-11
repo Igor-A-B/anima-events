@@ -46,12 +46,16 @@ private val coverPalettes: List<List<Color>> = listOf(
 fun eventCoverBrush(coverSeed: Int): Brush =
     Brush.linearGradient(coverPalettes[coverSeed.mod(coverPalettes.size)])
 
+// how much room the cover has for its chips
+enum class EventCoverSize { DEFAULT, COMPACT }
+
 // cover holds the date on top and the title at the bottom, over the gradient
 @Composable
 fun EventCover(
     event: Event,
     height: Dp,
     modifier: Modifier = Modifier,
+    size: EventCoverSize = EventCoverSize.DEFAULT,
 ) {
     Box(
         modifier = modifier
@@ -83,12 +87,22 @@ fun EventCover(
                 text = event.category.label().uppercase(),
                 background = Color.Black.copy(alpha = 0.45f),
                 contentColor = Color.White,
+                // fill = false keeps SpaceBetween working: the chip takes only what
+                // it needs, and gives way to the date chip when the row gets tight
+                modifier = Modifier
+                    .weight(1f, fill = false)
+                    // reserved outside the chip, so the two never touch
+                    .padding(end = AnimaTheme.spacing.sm),
             )
 
             // same slot, three meanings: when it happens, or that it is on, or over
             when (event.status) {
+                // narrow covers drop the time: the day alone still tells you when
                 EventStatus.UPCOMING -> EventChip(
-                    text = "${event.dateLabel} - ${event.timeLabel}",
+                    text = when (size) {
+                        EventCoverSize.DEFAULT -> "${event.dateLabel} - ${event.timeLabel}"
+                        EventCoverSize.COMPACT -> event.dateLabel
+                    },
                     background = Color.Black.copy(alpha = 0.45f),
                     contentColor = Color.White,
                 )
@@ -182,8 +196,11 @@ fun EventChip(
 
         Text(
             text = text,
-            style = AnimaTheme.typography.labelSmall,
+            style = AnimaTheme.typography.labelExtraSmall,
             color = contentColor,
+            // a chip is a single line by definition, it shrinks instead of wrapping
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }
@@ -206,7 +223,7 @@ private fun LiveBadge(modifier: Modifier = Modifier) {
         )
         Text(
             text = stringResource(Res.string.feed_live),
-            style = AnimaTheme.typography.labelSmall,
+            style = AnimaTheme.typography.labelExtraSmall,
             color = AnimaTheme.colors.onPrimary,
         )
     }
