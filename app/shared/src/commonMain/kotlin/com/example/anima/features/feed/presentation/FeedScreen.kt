@@ -69,7 +69,8 @@ private fun FeedContent(
                 .background(AnimaTheme.colors.background)
                 .fillMaxSize()
                 .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))
-                .padding(top = AnimaTheme.spacing.lg),
+                .padding(top = AnimaTheme.spacing.lg)
+                .padding(bottom = AnimaTheme.spacing.xxxl),
             verticalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.lg),
         ) {
             // header and filter stay put, only the area below reacts to the state

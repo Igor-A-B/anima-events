@@ -16,14 +16,14 @@
     <string name="core_error_generic">An unexpected error occurred. Please try again.</string>
     <string name="core_error_network">No internet connection.</string>
 
-    <!-- Feature: Login -->
+    <!-- FEATURE: Login -->
     <string name="login_title">Welcome Back!</string>
     <string name="login_subtitle">Sign in to continue</string>
     <string name="login_enter_with_biometrics">Enter with biometrics</string>
     <string name="login_no_account">Don't have an account? </string>
     <string name="login_register">Sign up</string>
 
-    <!-- Login Inputs -->
+    <!-- Login inputs -->
     <string name="login_email_hint">Enter your email</string>
     <string name="login_password_hint">Enter your password</string>
 
@@ -46,7 +46,7 @@
     <string name="register_step5_title">All done!</string>
     <string name="register_step5_subtitle">Welcome! Your account has been successfully created, and you can now start using our app.</string>
 
-    <!-- Register Inputs -->
+    <!-- Register inputs -->
     <string name="register_space_name_hint">Name of your space</string>
     <string name="register_user_name_hint">Your name or nickname</string>
     <string name="register_email_hint">Your email</string>
@@ -106,6 +106,32 @@
     <string name="event_detail_participate">I'm going</string>
 
 
+    <!-- FEATURE: Search -->
+    <string name="search_placeholder">Event, venue or organizer</string>
+    <string name="search_clear">Clear search</string>
+    <string name="search_empty">Nothing matches this search. Try other words or fewer filters.</string>
+    <string name="search_results_count">%1$s results</string>
+
+    <!-- Search filters -->
+    <string name="search_filters">Filters</string>
+    <string name="search_filters_count">Filters (%1$s)</string>
+    <string name="search_filters_title">Filters</string>
+    <string name="search_filters_clear">Clear</string>
+    <string name="search_filters_apply">Show %1$s results</string>
+    <string name="search_filters_price">Price</string>
+    <string name="search_filters_date">When</string>
+
+    <!-- Search filter: price -->
+    <string name="search_price_any">Any</string>
+    <string name="search_price_free">Free</string>
+    <string name="search_price_paid">Paid</string>
+
+    <!-- Search filter: date -->
+    <string name="search_date_any">Any time</string>
+    <string name="search_date_now">Happening now</string>
+    <string name="search_date_today">Today</string>
+    <string name="search_date_tomorrow">Tomorrow</string>
+    <string name="search_date_weekend">This weekend</string>
     <!-- FEATURE: Add event -->
     <string name="add_event_title">Create event</string>
     <string name="add_event_photo_picker">Add photo</string>

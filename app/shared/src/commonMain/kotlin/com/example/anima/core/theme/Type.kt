@@ -49,6 +49,7 @@ data class AnimaTypography(
     val labelLarge: TextStyle,
     val labelMedium: TextStyle,
     val labelSmall: TextStyle,
+    val labelExtraSmall: TextStyle,
 )
 
 @Composable
@@ -173,6 +174,14 @@ fun animaTypography(): AnimaTypography {
             fontWeight = FontWeight.Medium,
             fontSize = 11.sp,
             lineHeight = 16.sp,
+            letterSpacing = 0.5.sp
+        ),
+
+        labelExtraSmall = TextStyle(
+            fontFamily = inter,
+            fontWeight = FontWeight.Medium,
+            fontSize = 10.sp,
+            lineHeight = 14.sp,
             letterSpacing = 0.5.sp
         ),
     )
