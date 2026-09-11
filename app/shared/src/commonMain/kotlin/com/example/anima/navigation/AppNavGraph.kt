@@ -13,6 +13,7 @@ import androidx.navigation.toRoute
 import com.example.anima.features.addevent.presentation.AddEventScreen
 import com.example.anima.features.eventdetail.presentation.EventDetailScreen
 import com.example.anima.features.feed.presentation.FeedScreen
+import com.example.anima.features.profile.presentation.ProfileScreen
 import com.example.anima.features.search.presentation.SearchScreen
 
 fun NavGraphBuilder.appNavGraph(navController: NavHostController) {
@@ -41,7 +42,11 @@ fun NavGraphBuilder.appNavGraph(navController: NavHostController) {
         }
 
         composable<Profile> {
-            // ProfileScreen()
+            ProfileScreen(
+                onNavigateToEvent = { eventId ->
+                    navController.navigate(EventDetail(eventId))
+                },
+            )
         }
 
         composable<EventDetail>(
