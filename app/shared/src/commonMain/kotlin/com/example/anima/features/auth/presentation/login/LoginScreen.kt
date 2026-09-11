@@ -68,9 +68,9 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(AnimaTheme.spacing.xxl))
 
             UserAccountCard(
-                name = "John Doe",
-                email = "jo*******@gmail.com",
-                onSwitch = { },
+                name = uiState.account.name,
+                email = uiState.account.maskedEmail,
+                onSwitch = viewModel::onSwitchAccount,
             )
 
             Spacer(modifier = Modifier.height(AnimaTheme.spacing.huge))
