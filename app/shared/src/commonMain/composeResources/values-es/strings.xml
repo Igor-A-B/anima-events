@@ -131,5 +131,19 @@
     <string name="search_date_today">Hoy</string>
     <string name="search_date_tomorrow">Mañana</string>
     <string name="search_date_weekend">Fin de semana</string>
+    <!-- FEATURE: Crear evento -->
+    <string name="add_event_title">Crear evento</string>
+    <string name="add_event_photo_picker">Agregar foto</string>
+    <string name="add_event_name_hint">Nombre del evento</string>
+    <string name="add_event_date_hint">Fecha</string>
+    <string name="add_event_time_hint">Horario</string>
+    <string name="add_event_location_hint">Lugar / Espacio</string>
+    <string name="add_event_address_hint">Dirección</string>
+    <string name="add_event_category_label">Categoría</string>
+    <string name="add_event_price_hint">Precio (vacío para gratuito)</string>
+    <string name="add_event_capacity_hint">Capacidad máxima</string>
+    <string name="add_event_about_label">Sobre el evento</string>
+    <string name="add_event_about_hint">Describe tu evento...</string>
+
 
 </resources>

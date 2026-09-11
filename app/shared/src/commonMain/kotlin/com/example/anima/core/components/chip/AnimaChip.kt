@@ -30,16 +30,33 @@ fun AnimaChip(
     modifier: Modifier = Modifier,
     selected: Boolean = false,
     enabled: Boolean = true,
+    size: AnimaChipSize = AnimaChipSize.DEFAULT,
     leadingIcon: (@Composable () -> Unit)? = null,
 ) {
     val colors = rememberAnimaChipColors(selected = selected)
 
     val alpha = if (enabled) 1f else 0.4f
+
     val shape = AnimaTheme.shapes.large
+
+    val height = when (size) {
+        AnimaChipSize.DEFAULT -> AnimaChipDefaults.Height
+        AnimaChipSize.COMPACT -> AnimaChipDefaults.CompactHeight
+    }
+
+    val textStyle = when (size) {
+        AnimaChipSize.DEFAULT -> AnimaTheme.typography.titleSmall
+        AnimaChipSize.COMPACT -> AnimaTheme.typography.labelMedium
+    }
+
+    val horizontalPadding = when (size) {
+        AnimaChipSize.DEFAULT -> AnimaTheme.spacing.lg
+        AnimaChipSize.COMPACT -> AnimaTheme.spacing.md
+    }
 
     Row(
         modifier = modifier
-            .defaultMinSize(minHeight = AnimaChipDefaults.Height)
+            .defaultMinSize(minHeight = height)
             .clip(shape)
             .background(colors.background.copy(alpha = colors.background.alpha * alpha))
             .border(
@@ -51,13 +68,12 @@ fun AnimaChip(
             )
             .clickable(enabled = enabled, onClick = onClick)
             .padding(
-                horizontal = AnimaTheme.spacing.lg,
+                horizontal = horizontalPadding,
                 vertical = AnimaTheme.spacing.sm,
             ),
         horizontalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.sm),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-
         leadingIcon?.let { icon ->
             CompositionLocalProvider(
                 LocalContentColor provides colors.content.copy(alpha = alpha),
@@ -67,7 +83,7 @@ fun AnimaChip(
 
         Text(
             text = text,
-            style = AnimaTheme.typography.titleSmall,
+            style = textStyle,
             color = colors.content.copy(alpha = alpha),
         )
     }
@@ -105,8 +121,12 @@ private data class AnimaChipColors(
     val border: Color,
 )
 
+enum class AnimaChipSize { DEFAULT, COMPACT }
+
 object AnimaChipDefaults {
     val Height: Dp = 40.dp
+    val CompactHeight: Dp = 32.dp
     val BorderWidth: Dp = 1.dp
     val IconSize: Dp = 18.dp
+    val CompactIconSize: Dp = 14.dp
 }
