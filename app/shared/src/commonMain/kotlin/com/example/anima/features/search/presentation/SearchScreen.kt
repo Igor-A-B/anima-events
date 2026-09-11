@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -95,7 +96,7 @@ private fun SearchContent(
                 onOpenFilters = onOpenFilters,
             )
 
-            if (!uiState.isPristine && !uiState.isLoading && uiState.results.isNotEmpty()) {
+            if (!uiState.isPristine && uiState.results.isNotEmpty()) {
                 Text(
                     text = stringResource(
                         Res.string.search_results_count,
@@ -113,11 +114,6 @@ private fun SearchContent(
                     .fillMaxWidth(),
             ) {
                 when {
-                    uiState.isLoading && uiState.results.isEmpty() -> CircularProgressIndicator(
-                        color = AnimaTheme.colors.primary,
-                        modifier = Modifier.align(Alignment.Center),
-                    )
-
                     uiState.error.isNotBlank() -> SearchMessage(
                         text = stringResource(Res.string.core_error_generic),
                         modifier = Modifier.align(Alignment.Center),
@@ -128,9 +124,13 @@ private fun SearchContent(
                         modifier = Modifier.align(Alignment.Center),
                     )
 
+                    // also the first load: an empty grid plus the indicator on top
                     else -> LazyVerticalGrid(
                         columns = GridCells.Fixed(SEARCH_GRID_COLUMNS),
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            // results fade while the next search runs, instead of vanishing
+                            .alpha(if (uiState.isLoading) LOADING_CONTENT_ALPHA else 1f),
                         contentPadding = PaddingValues(
                             start = AnimaTheme.spacing.lg,
                             end = AnimaTheme.spacing.lg,
@@ -149,6 +149,14 @@ private fun SearchContent(
                             )
                         }
                     }
+                }
+
+                // every search shows it, not just the first one
+                if (uiState.isLoading) {
+                    CircularProgressIndicator(
+                        color = AnimaTheme.colors.primary,
+                        modifier = Modifier.align(Alignment.Center),
+                    )
                 }
             }
         }
@@ -181,3 +189,4 @@ private fun SearchMessage(
 }
 
 private const val SEARCH_GRID_COLUMNS = 2
+private const val LOADING_CONTENT_ALPHA = 0.35f
