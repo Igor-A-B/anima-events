@@ -24,6 +24,7 @@ import com.example.anima.core.components.icon.lucide.LucideHeart
 import com.example.anima.core.components.icon.lucide.LucideShare
 import com.example.anima.core.theme.AnimaTheme
 import com.example.anima.features.feed.domain.EventCategory
+import com.example.anima.features.feed.presentation.components.label
 import org.jetbrains.compose.resources.stringResource
 
 private val coverColors = listOf(
@@ -172,7 +173,7 @@ private fun EventCategoryBadge(
     modifier: Modifier = Modifier,
 ) {
     Text(
-        text = category.name.lowercase().replaceFirstChar { it.uppercase() },
+        text = category.label(),
         style = AnimaTheme.typography.labelSmall,
         color = AnimaTheme.colors.primary,
         modifier = modifier

@@ -145,4 +145,47 @@
     <string name="add_event_about_label">Sobre o evento</string>
     <string name="add_event_about_hint">Descreva seu evento...</string>
 
+    <!-- FEATURE: Perfil -->
+    <string name="profile_title">Perfil</string>
+    <string name="profile_add_photo">Adicionar foto</string>
+    <string name="profile_account_visitor">Visitante</string>
+    <string name="profile_account_exhibitor">Expositor</string>
+
+    <!-- Perfil: secao da conta -->
+    <string name="profile_section_account">Conta</string>
+    <string name="profile_field_name">Nome</string>
+    <string name="profile_field_email">E-mail</string>
+    <string name="profile_field_cpf">CPF</string>
+    <string name="profile_field_cnpj">CNPJ</string>
+    <string name="profile_change">Alterar</string>
+    <string name="profile_reveal">Mostrar documento</string>
+    <string name="profile_hide">Ocultar documento</string>
+
+    <!-- Perfil: secao de seguranca -->
+    <string name="profile_section_security">Segurança</string>
+    <string name="profile_field_password">Senha</string>
+    <string name="profile_password_mask">••••••••</string>
+    <string name="profile_field_recovery_email">E-mail de recuperação</string>
+
+    <!-- Perfil: verificacao do expositor -->
+    <string name="profile_unverified_title">Conta não verificada</string>
+    <string name="profile_unverified_body">Expositores verificados recebem um selo nos eventos e alcançam mais pessoas.</string>
+    <string name="profile_verify_action">Validar conta</string>
+
+    <!-- Perfil: secao de contato, apenas expositor -->
+    <string name="profile_section_contact">Contato</string>
+    <string name="profile_field_contact_link">Link</string>
+    <string name="profile_field_phone">Telefone</string>
+    <string name="profile_contact_hint">Essas informações aparecem nos eventos que você cria.</string>
+
+    <!-- Perfil: eventos criados, apenas expositor -->
+    <string name="profile_section_events">Meus eventos</string>
+    <string name="profile_events_count">%1$s de %2$s</string>
+    <string name="profile_see_all">Ver todos</string>
+    <string name="profile_event_published">Publicado</string>
+
+    <!-- Perfil: sessao -->
+    <string name="profile_logout">Sair da conta</string>
+    <string name="profile_delete_account">Excluir conta</string>
+
 </resources>

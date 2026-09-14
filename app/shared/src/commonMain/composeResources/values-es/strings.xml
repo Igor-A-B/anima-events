@@ -146,4 +146,47 @@
     <string name="add_event_about_hint">Describe tu evento...</string>
 
 
+    <!-- FEATURE: Perfil -->
+    <string name="profile_title">Perfil</string>
+    <string name="profile_add_photo">Añadir foto</string>
+    <string name="profile_account_visitor">Visitante</string>
+    <string name="profile_account_exhibitor">Expositor</string>
+
+    <!-- Perfil: seccion de la cuenta -->
+    <string name="profile_section_account">Cuenta</string>
+    <string name="profile_field_name">Nombre</string>
+    <string name="profile_field_email">Correo</string>
+    <string name="profile_field_cpf">CPF</string>
+    <string name="profile_field_cnpj">CNPJ</string>
+    <string name="profile_change">Cambiar</string>
+    <string name="profile_reveal">Mostrar documento</string>
+    <string name="profile_hide">Ocultar documento</string>
+
+    <!-- Perfil: seccion de seguridad -->
+    <string name="profile_section_security">Seguridad</string>
+    <string name="profile_field_password">Contraseña</string>
+    <string name="profile_password_mask">••••••••</string>
+    <string name="profile_field_recovery_email">Correo de recuperación</string>
+
+    <!-- Perfil: verificacion del expositor -->
+    <string name="profile_unverified_title">Cuenta no verificada</string>
+    <string name="profile_unverified_body">Los expositores verificados reciben un sello en sus eventos y llegan a más personas.</string>
+    <string name="profile_verify_action">Validar cuenta</string>
+
+    <!-- Perfil: seccion de contacto, solo expositor -->
+    <string name="profile_section_contact">Contacto</string>
+    <string name="profile_field_contact_link">Enlace</string>
+    <string name="profile_field_phone">Teléfono</string>
+    <string name="profile_contact_hint">Esta información aparece en los eventos que creas.</string>
+
+    <!-- Perfil: eventos creados, solo expositor -->
+    <string name="profile_section_events">Mis eventos</string>
+    <string name="profile_events_count">%1$s de %2$s</string>
+    <string name="profile_see_all">Ver todos</string>
+    <string name="profile_event_published">Publicado</string>
+
+    <!-- Perfil: sesion -->
+    <string name="profile_logout">Cerrar sesión</string>
+    <string name="profile_delete_account">Eliminar cuenta</string>
+
 </resources>
