@@ -18,6 +18,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.anima.core.theme.AnimaTheme
 import com.example.anima.navigation.bottomnav.AnimaBottomNav
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.windowInsetsPadding
+import com.example.anima.navigation.bottomnav.AnimaBottomNavDefaults
 
 @Composable
 fun AppNavHost(
@@ -62,7 +66,8 @@ fun AppNavHost(
                 },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = AnimaTheme.spacing.xxl),
+                    .windowInsetsPadding(WindowInsets.navigationBars)
+                    .padding(bottom = AnimaBottomNavDefaults.Gap),
             )
         }
     }
