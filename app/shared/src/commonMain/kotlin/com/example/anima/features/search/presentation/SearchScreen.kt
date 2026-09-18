@@ -36,6 +36,7 @@ import com.example.anima.features.search.presentation.components.SearchFilterBar
 import com.example.anima.features.search.presentation.components.SearchFiltersSheet
 import com.example.anima.features.search.presentation.components.SearchResultCard
 import org.jetbrains.compose.resources.stringResource
+import com.example.anima.navigation.bottomnav.AnimaBottomNavDefaults
 
 // search entry point, called by appNavGraph
 @Composable
@@ -79,7 +80,7 @@ private fun SearchContent(
             modifier = modifier
                 .fillMaxSize()
                 .padding(top = AnimaTheme.spacing.lg)
-                .padding(bottom = AnimaTheme.spacing.xxxl),
+                .padding(bottom = AnimaBottomNavDefaults.ContentReserve,),
             verticalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.lg),
         ) {
             SearchField(
@@ -133,8 +134,6 @@ private fun SearchContent(
                             .alpha(if (uiState.isLoading) LOADING_CONTENT_ALPHA else 1f),
                         contentPadding = PaddingValues(
                             start = AnimaTheme.spacing.lg,
-                            end = AnimaTheme.spacing.lg,
-                            bottom = AnimaTheme.spacing.xxxl,
                         ),
                         horizontalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.md),
                         verticalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.md),

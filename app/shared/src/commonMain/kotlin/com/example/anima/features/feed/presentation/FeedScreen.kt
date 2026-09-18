@@ -37,6 +37,7 @@ import com.example.anima.features.feed.presentation.components.CategoryFilterRow
 import com.example.anima.features.feed.presentation.components.FeedHeader
 import com.example.anima.features.feed.presentation.components.FeedSectionRow
 import org.jetbrains.compose.resources.stringResource
+import com.example.anima.navigation.bottomnav.AnimaBottomNavDefaults
 
 // feed entry point, called by appNavGraph
 @Composable
@@ -69,8 +70,7 @@ private fun FeedContent(
                 .background(AnimaTheme.colors.background)
                 .fillMaxSize()
                 .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))
-                .padding(top = AnimaTheme.spacing.lg)
-                .padding(bottom = AnimaTheme.spacing.xxxl),
+                .padding(top = AnimaTheme.spacing.lg),
             verticalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.lg),
         ) {
             // header and filter stay put, only the area below reacts to the state
@@ -105,7 +105,7 @@ private fun FeedContent(
 
                     else -> LazyColumn(
                         modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(bottom = AnimaTheme.spacing.xxxl),
+                        contentPadding = PaddingValues(bottom = AnimaBottomNavDefaults.ContentReserve),
                         verticalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.xxxl),
                     ) {
                         // one FeedSectionRow per section

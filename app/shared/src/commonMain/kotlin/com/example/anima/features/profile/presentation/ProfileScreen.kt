@@ -47,7 +47,6 @@ import anima.app.shared.generated.resources.profile_see_all
 import anima.app.shared.generated.resources.profile_title
 import com.example.anima.core.components.AnimaScaffold
 import com.example.anima.core.components.AnimaScaffoldInsets
-import com.example.anima.core.components.button.AnimaButtonDefaults
 import com.example.anima.core.components.icon.AnimaIcon
 import com.example.anima.core.components.icon.lucide.LucideEye
 import com.example.anima.core.components.icon.lucide.LucideEyeOff
@@ -65,6 +64,7 @@ import com.example.anima.features.profile.presentation.components.VerificationCa
 import com.example.anima.features.profile.presentation.components.documentLabel
 import com.example.anima.features.profile.presentation.components.maskDocument
 import org.jetbrains.compose.resources.stringResource
+import com.example.anima.navigation.bottomnav.AnimaBottomNavDefaults
 
 // profile entry point, called by appNavGraph
 @Composable
@@ -160,9 +160,7 @@ private fun ProfileList(
             start = AnimaTheme.spacing.lg,
             end = AnimaTheme.spacing.lg,
             top = AnimaTheme.spacing.lg,
-            bottom = AnimaTheme.spacing.xxl +
-                AnimaButtonDefaults.Height +
-                AnimaTheme.spacing.xl,
+            bottom = AnimaBottomNavDefaults.ContentReserve,
         ),
         verticalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.xl),
     ) {
