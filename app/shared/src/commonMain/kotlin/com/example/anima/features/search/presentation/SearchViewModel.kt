@@ -2,7 +2,7 @@ package com.example.anima.features.search.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.anima.features.feed.domain.EventCategory
+import com.example.anima.features.event.models.EventCategory
 import com.example.anima.features.search.data.MockSearchRepository
 import com.example.anima.features.search.data.SearchRepository
 import com.example.anima.features.search.domain.DateFilter

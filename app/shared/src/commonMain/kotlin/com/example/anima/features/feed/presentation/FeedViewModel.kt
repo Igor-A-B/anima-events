@@ -2,9 +2,9 @@ package com.example.anima.features.feed.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.anima.features.event.models.EventCategory
 import com.example.anima.features.feed.data.FeedRepository
 import com.example.anima.features.feed.data.MockFeedRepository
-import com.example.anima.features.feed.domain.EventCategory
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

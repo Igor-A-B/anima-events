@@ -29,8 +29,8 @@ import anima.app.shared.generated.resources.feed_status_finished
 import com.example.anima.core.components.icon.AnimaIcon
 import com.example.anima.core.components.icon.lucide.LucideUsers
 import com.example.anima.core.theme.AnimaTheme
-import com.example.anima.features.feed.domain.Event
-import com.example.anima.features.feed.domain.EventStatus
+import com.example.anima.features.event.models.Event
+import com.example.anima.features.event.models.EventStatus
 import org.jetbrains.compose.resources.stringResource
 
 // gradients for the cover image until an image loader is added
