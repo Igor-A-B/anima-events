@@ -1,7 +1,7 @@
 package com.example.anima.features.profile.domain.model
 
 import com.example.anima.features.auth.presentation.register.AccountType
-import com.example.anima.features.feed.domain.Event
+import com.example.anima.features.event.models.Event
 
 data class ExhibitorContact(
     val link: String,

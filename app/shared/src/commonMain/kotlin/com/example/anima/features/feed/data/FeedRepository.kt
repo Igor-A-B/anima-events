@@ -1,7 +1,7 @@
 package com.example.anima.features.feed.data
 
-import com.example.anima.features.feed.domain.Event
-import com.example.anima.features.feed.domain.EventCategory
+import com.example.anima.features.event.models.Event
+import com.example.anima.features.event.models.EventCategory
 import com.example.anima.features.feed.domain.FeedSection
 
 // feed data contract

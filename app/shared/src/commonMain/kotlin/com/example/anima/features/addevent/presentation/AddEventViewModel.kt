@@ -1,7 +1,7 @@
 package com.example.anima.features.addevent.presentation
 
 import androidx.lifecycle.ViewModel
-import com.example.anima.features.feed.domain.EventCategory
+import com.example.anima.features.event.models.EventCategory
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

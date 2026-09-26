@@ -17,7 +17,7 @@ import androidx.compose.ui.draw.clip
 import anima.app.shared.generated.resources.Res
 import anima.app.shared.generated.resources.feed_see_all
 import com.example.anima.core.theme.AnimaTheme
-import com.example.anima.features.feed.domain.Event
+import com.example.anima.features.event.models.Event
 import com.example.anima.features.feed.domain.FeedSection
 import org.jetbrains.compose.resources.stringResource
 

@@ -16,7 +16,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.anima.core.theme.AnimaTheme
-import com.example.anima.features.feed.domain.Event
+import com.example.anima.features.event.models.Event
 import com.example.anima.features.feed.presentation.components.EventCover
 import com.example.anima.features.feed.presentation.components.EventCoverSize
 

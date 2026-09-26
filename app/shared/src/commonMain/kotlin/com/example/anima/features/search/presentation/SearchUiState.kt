@@ -1,6 +1,6 @@
 package com.example.anima.features.search.presentation
 
-import com.example.anima.features.feed.domain.Event
+import com.example.anima.features.event.models.Event
 import com.example.anima.features.search.domain.SearchFilters
 
 data class SearchUiState(

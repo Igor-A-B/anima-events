@@ -1,8 +1,9 @@
 package com.example.anima.features.feed.data
 
-import com.example.anima.features.feed.domain.Event
-import com.example.anima.features.feed.domain.EventCategory
-import com.example.anima.features.feed.domain.EventStatus
+
+import com.example.anima.features.event.models.Event
+import com.example.anima.features.event.models.EventCategory
+import com.example.anima.features.event.models.EventStatus
 import com.example.anima.features.feed.domain.FeedSection
 import com.example.anima.features.feed.domain.FeedSectionType
 import kotlinx.coroutines.delay
