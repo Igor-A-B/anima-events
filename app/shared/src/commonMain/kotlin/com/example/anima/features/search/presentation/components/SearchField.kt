@@ -13,10 +13,10 @@ import androidx.compose.ui.unit.dp
 import anima.app.shared.generated.resources.Res
 import anima.app.shared.generated.resources.search_clear
 import anima.app.shared.generated.resources.search_placeholder
-import com.example.anima.core.components.form.AnimaTextField
 import com.example.anima.core.components.icon.AnimaIcon
 import com.example.anima.core.components.icon.lucide.LucideSearch
 import com.example.anima.core.components.icon.lucide.LucideX
+import com.example.anima.core.components.textfield.AnimaTextField
 import com.example.anima.core.theme.AnimaTheme
 import org.jetbrains.compose.resources.stringResource
 

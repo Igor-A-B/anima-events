@@ -1,4 +1,4 @@
-package com.example.anima.core.components.form
+package com.example.anima.core.components.textfield
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
