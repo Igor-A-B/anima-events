@@ -1,13 +1,16 @@
 package com.example.anima.core.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 
 @Composable
 fun AnimaTheme(
-    // colors as parameter to enable change theme in runtime
-    colors: AnimaColors = darkAnimaColors,
+    // identify the current theme based on the system
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    // define colors based on theme
+    colors: AnimaColors = if (darkTheme) darkAnimaColors else lightAnimaColors,
     content: @Composable () -> Unit
 ) {
     // must be created inside a @Composable cause Font(Res.font.*)

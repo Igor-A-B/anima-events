@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -49,22 +50,36 @@ fun EventCover(
 ) {
     val colors = coverColors[coverSeed % coverColors.size]
 
+    val backgroundColor = AnimaTheme.colors.background
+
+    // smooth scrim gradient to avoid color bleeding
+    val bottomScrimBrush = remember(backgroundColor) {
+        Brush.verticalGradient(
+            0.00f to Color.Transparent,
+            0.30f to backgroundColor.copy(alpha = 0.08f),
+            0.55f to backgroundColor.copy(alpha = 0.28f),
+            0.75f to backgroundColor.copy(alpha = 0.62f),
+            0.90f to backgroundColor.copy(alpha = 0.88f),
+            1.00f to backgroundColor,
+        )
+    }
+
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(320.dp)
+            .height(340.dp)
             .background(brush = Brush.linearGradient(colors = colors)),
     ) {
         // top scrim - buttons
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(100.dp)
+                .height(110.dp)
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
-                            AnimaTheme.colors.background.copy(alpha = 0.2f),
-                            Color.Transparent
+                            Color.Black.copy(alpha = 0.35f),
+                            Color.Transparent,
                         ),
                     ),
                 ),
@@ -74,19 +89,9 @@ fun EventCover(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(180.dp)
+                .height(220.dp)
                 .align(Alignment.BottomCenter)
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            Color.Transparent,
-                            AnimaTheme.colors.background.copy(alpha = 0.7f),
-                            AnimaTheme.colors.background,
-                        ),
-                        startY = 0f,
-                        endY = Float.POSITIVE_INFINITY,
-                    ),
-                ),
+                .background(bottomScrimBrush),
         )
 
         // top buttons
@@ -114,7 +119,7 @@ fun EventCover(
 
             Row(horizontalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.sm)) {
                 AnimaIconButton(
-                    onClick = onBack,
+                    onClick = onShare,
                     backgroundColor = Color.Black.copy(alpha = 0.3f),
                 ) {
                     AnimaIcon(
@@ -127,7 +132,7 @@ fun EventCover(
                 }
 
                 AnimaIconButton(
-                    onClick = onBack,
+                    onClick = onFavorite,
                     backgroundColor = Color.Black.copy(alpha = 0.3f),
                 ) {
                     AnimaIcon(
@@ -147,7 +152,7 @@ fun EventCover(
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
                 .padding(horizontal = AnimaTheme.spacing.xl)
-                .padding(bottom = AnimaTheme.spacing.xl),
+                .padding(bottom = AnimaTheme.spacing.lg),
             verticalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.xs),
         ) {
             EventCategoryBadge(category = category)
