@@ -45,9 +45,6 @@ class EventEntity {
     var price: Double? = null
     var capacity: Int? = null
 
-    @Column(nullable = false)
-    var attendees: Int = 0
-
     var latitude: Double? = null
     var longitude: Double? = null
 

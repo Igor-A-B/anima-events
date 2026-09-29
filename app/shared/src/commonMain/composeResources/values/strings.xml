@@ -189,4 +189,10 @@
     <string name="profile_logout">Log out</string>
     <string name="profile_delete_account">Delete account</string>
 
+    <string name="event_detail_subscription_confirmed">Going (tap to cancel)</string>
+    <string name="event_detail_subscribe_again">I'm going again</string>
+    <string name="event_detail_subscription_loading">Please wait...</string>
+    <string name="event_detail_subscription_attended">You attended</string>
+    <string name="event_detail_subscription_error">Couldn't update your subscription. Try again.</string>
+    <string name="login_error_invalid_credentials">Wrong email or password.</string>
 </resources>

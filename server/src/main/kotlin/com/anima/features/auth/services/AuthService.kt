@@ -4,7 +4,9 @@ import at.favre.lib.crypto.bcrypt.BCrypt
 import com.anima.features.auth.entities.RefreshTokenEntity
 import com.anima.features.auth.repositories.RefreshTokenRepository
 import com.anima.features.user.entities.UserEntity
+import com.anima.features.user.models.AccountType
 import com.anima.features.user.repositories.UserRepository
+import com.anima.features.visitor.repositories.VisitorRepository
 import com.anima.features.auth.dtos.TokenResponseDto
 import com.anima.features.auth.exceptions.InvalidCredentialsException
 import com.anima.features.auth.exceptions.InvalidRefreshTokenException
@@ -21,6 +23,7 @@ class AuthService(
     private val userRepository: UserRepository,
     private val refreshTokenRepository: RefreshTokenRepository,
     private val jwtService: JwtService,
+    private val visitorRepository: VisitorRepository,
     @Value($$"${jwt.refresh-token-expiration-days}") private val refreshTokenExpirationDays: Long
 ) {
     private val secureRandom = SecureRandom()
@@ -38,7 +41,7 @@ class AuthService(
 
         if (!passwordOk) throw InvalidCredentialsException()
 
-        val accessToken = jwtService.generateAccessToken(user.id!!, user.email)
+        val accessToken = jwtService.generateAccessToken(user.id!!, user.email, accountTypeOf(user))
         val refreshToken = issueRefreshToken(user)
 
         return TokenResponseDto(accessToken, refreshToken)
@@ -54,7 +57,7 @@ class AuthService(
         // token rotation
         refreshTokenRepository.revokeByTokenHash(tokenHash)
 
-        val accessToken = jwtService.generateAccessToken(stored.user.id!!, stored.user.email)
+        val accessToken = jwtService.generateAccessToken(stored.user.id!!, stored.user.email, accountTypeOf(stored.user))
         val newRefreshToken = issueRefreshToken(stored.user)
 
         return TokenResponseDto(accessToken, newRefreshToken)
@@ -64,6 +67,10 @@ class AuthService(
         val tokenHash = TokenHashUtil.sha256(rawRefreshToken)
         refreshTokenRepository.revokeByTokenHash(tokenHash)
     }
+
+    // a user with a visitor row is a visitor, otherwise an exhibitor
+    private fun accountTypeOf(user: UserEntity) =
+        if (visitorRepository.existsByUserId(user.id!!)) AccountType.VISITOR else AccountType.EXHIBITOR
 
     private fun issueRefreshToken(user: UserEntity): String {
         val rawToken = generateOpaqueToken()

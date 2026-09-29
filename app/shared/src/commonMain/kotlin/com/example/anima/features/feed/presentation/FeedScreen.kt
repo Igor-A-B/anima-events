@@ -23,7 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import org.koin.compose.viewmodel.koinViewModel
 import anima.app.shared.generated.resources.Res
 import anima.app.shared.generated.resources.core_error_generic
 import anima.app.shared.generated.resources.feed_empty
@@ -43,7 +43,7 @@ import com.example.anima.navigation.bottomnav.AnimaBottomNavDefaults
 @Composable
 fun FeedScreen(
     onNavigateToEvent: (String) -> Unit = {},
-    viewModel: FeedViewModel = viewModel(),
+    viewModel: FeedViewModel = koinViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -93,7 +93,7 @@ private fun FeedContent(
                         modifier = Modifier.align(Alignment.Center),
                     )
 
-                    uiState.error.isNotBlank() -> FeedMessage(
+                    uiState.hasError -> FeedMessage(
                         text = stringResource(Res.string.core_error_generic),
                         modifier = Modifier.align(Alignment.Center),
                     )

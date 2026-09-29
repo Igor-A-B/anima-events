@@ -14,8 +14,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import org.koin.compose.viewmodel.koinViewModel
 import com.example.anima.core.components.AnimaScaffold
 import com.example.anima.core.components.AnimaScaffoldInsets
 import com.example.anima.core.theme.AnimaTheme
@@ -26,25 +27,29 @@ import com.example.anima.features.eventdetail.presentation.components.EventFoote
 import com.example.anima.features.eventdetail.presentation.components.EventInfoGrid
 import com.example.anima.features.eventdetail.presentation.components.EventOrganizer
 
+private val FOOTER_RESERVE = 112.dp
+
 @Composable
 fun EventDetailScreen(
     eventId: String,
     onNavigateBack: () -> Unit = {},
-    viewModel: EventDetailViewModel = viewModel(),
+    viewModel: EventDetailViewModel = koinViewModel(),
 ) {
-    val event by viewModel.event.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(eventId) {
         viewModel.loadEvent(eventId)
     }
 
-    event?.let { safeEvent ->
+    uiState.event?.let { safeEvent ->
         EventDetailContent(
             event = safeEvent,
+            subscription = uiState.subscription,
+            actionError = uiState.actionError,
             onNavigateBack = onNavigateBack,
             onShare = {},
             onFavorite = {},
-            onParticipate = {},
+            onSubscribe = viewModel::onSubscribeClick,
         )
     }
 }
@@ -52,18 +57,21 @@ fun EventDetailScreen(
 @Composable
 private fun EventDetailContent(
     event: Event,
+    subscription: SubscriptionUi,
+    actionError: Boolean,
     onNavigateBack: () -> Unit,
     onShare: () -> Unit,
     onFavorite: () -> Unit,
-    onParticipate: () -> Unit,
+    onSubscribe: () -> Unit,
 ) {
     AnimaScaffold(insets = AnimaScaffoldInsets.Standalone) {
         Box(modifier = Modifier.fillMaxSize()) {
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
+                // room for the floating footer
                 contentPadding = PaddingValues(
-                    bottom = AnimaTheme.spacing.huge,
+                    bottom = if (subscription == SubscriptionUi.Hidden) AnimaTheme.spacing.huge else FOOTER_RESERVE,
                 ),
             ) {
                 item {
@@ -105,13 +113,17 @@ private fun EventDetailContent(
                 }
             }
 
-            EventFooter(
-                onParticipate = onParticipate,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(horizontal = AnimaTheme.spacing.xl)
-                    .padding(bottom = AnimaTheme.spacing.sm),
-            )
+            if (subscription != SubscriptionUi.Hidden) {
+                EventFooter(
+                    state = subscription,
+                    hasError = actionError,
+                    onClick = onSubscribe,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(horizontal = AnimaTheme.spacing.xl)
+                        .padding(bottom = AnimaTheme.spacing.sm),
+                )
+            }
         }
     }
 }

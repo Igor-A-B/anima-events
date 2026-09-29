@@ -22,7 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import org.koin.compose.viewmodel.koinViewModel
 import anima.app.shared.generated.resources.Res
 import anima.app.shared.generated.resources.core_error_generic
 import anima.app.shared.generated.resources.profile_change
@@ -70,7 +70,7 @@ import com.example.anima.navigation.bottomnav.AnimaBottomNavDefaults
 @Composable
 fun ProfileScreen(
     onNavigateToEvent: (String) -> Unit = {},
-    viewModel: ProfileViewModel = viewModel(),
+    viewModel: ProfileViewModel = koinViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 

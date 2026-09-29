@@ -72,10 +72,14 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.androidx.navigation.compose)
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose.viewmodel)
+            implementation(libs.multiplatform.settings)
             // ktor dependecies
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.contentNeg)
             implementation(libs.ktor.client.logging)
+            implementation(libs.ktor.client.auth)
             implementation(libs.ktor.serialization.json)
         }
         commonTest.dependencies {

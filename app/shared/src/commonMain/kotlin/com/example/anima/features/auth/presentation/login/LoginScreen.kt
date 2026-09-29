@@ -22,12 +22,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import org.koin.compose.viewmodel.koinViewModel
 import anima.app.shared.generated.resources.Res
 import anima.app.shared.generated.resources.core_button_enter
+import anima.app.shared.generated.resources.core_error_generic
+import anima.app.shared.generated.resources.login_email_hint
+import anima.app.shared.generated.resources.login_error_invalid_credentials
 import anima.app.shared.generated.resources.login_no_account
 import anima.app.shared.generated.resources.login_password_hint
 import anima.app.shared.generated.resources.login_register
@@ -41,14 +46,13 @@ import com.example.anima.core.components.icon.lucide.LucideEyeOff
 import com.example.anima.core.components.icon.lucide.LucideLock
 import com.example.anima.core.theme.AnimaTheme
 import com.example.anima.features.auth.presentation.login.components.BiometricButton
-import com.example.anima.features.auth.presentation.login.components.UserAccountCard
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun LoginScreen(
     onNavigateToRegister: () -> Unit = {},
     onLoginSuccess: () -> Unit = {},
-    viewModel: LoginViewModel = viewModel(),
+    viewModel: LoginViewModel = koinViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var passwordVisible by remember { mutableStateOf(false) }
@@ -67,11 +71,14 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(AnimaTheme.spacing.xxl))
 
-            UserAccountCard(
-                name = uiState.account.name,
-                email = uiState.account.maskedEmail,
-                onSwitch = viewModel::onSwitchAccount,
+            AnimaTextField(
+                value = uiState.email,
+                onValueChange = viewModel::onEmailChanged,
+                placeholder = stringResource(Res.string.login_email_hint),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             )
+
+            Spacer(modifier = Modifier.height(AnimaTheme.spacing.lg))
 
             Spacer(modifier = Modifier.height(AnimaTheme.spacing.huge))
 
@@ -101,6 +108,18 @@ fun LoginScreen(
                 visualTransformation = if (passwordVisible) VisualTransformation.None
                 else PasswordVisualTransformation(),
             )
+
+            uiState.error?.let { error ->
+                Spacer(modifier = Modifier.height(AnimaTheme.spacing.md))
+                Text(
+                    text = stringResource(
+                        if (error == LoginError.INVALID_CREDENTIALS) Res.string.login_error_invalid_credentials
+                        else Res.string.core_error_generic,
+                    ),
+                    style = AnimaTheme.typography.bodySmall,
+                    color = AnimaTheme.colors.error,
+                )
+            }
 
             Spacer(modifier = Modifier.height(AnimaTheme.spacing.huge))
 

@@ -1,5 +1,6 @@
 package com.anima.features.auth.services
 
+import com.anima.features.user.models.AccountType
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTVerificationException
@@ -19,12 +20,13 @@ class JwtService(
 ) {
     private val algorithm = Algorithm.HMAC256(secret)
 
-    fun generateAccessToken(userId: UUID, email: String): String {
+    fun generateAccessToken(userId: UUID, email: String, accountType: AccountType): String {
         val now = Instant.now()
         return JWT.create()
             .withIssuer(issuer)
             .withSubject(userId.toString())
             .withClaim("email", email)
+            .withClaim("accountType", accountType.name)
             .withIssuedAt(Date.from(now))
             .withExpiresAt(Date.from(now.plusSeconds(accessTokenExpirationMinutes * 60)))
             .sign(algorithm)

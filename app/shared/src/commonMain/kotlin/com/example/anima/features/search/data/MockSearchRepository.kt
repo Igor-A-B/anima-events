@@ -1,25 +1,24 @@
 package com.example.anima.features.search.data
 
 import com.anima.features.event.models.Event
-import com.example.anima.features.feed.data.FeedRepository
 import com.example.anima.features.feed.data.MockFeedRepository
 import com.example.anima.features.search.domain.SearchFilters
 import kotlinx.coroutines.delay
 
 /**
  * Search over the same mock catalogue the feed uses.
- * It reads through FeedRepository. The sections are flattened and
+ * It reads through MockFeedRepository. The sections are flattened and
  * de-duplicated: an event can sit in more than one feed row, but it must appear
  * only once in a result grid.
  */
 class MockSearchRepository(
-    private val feedRepository: FeedRepository = MockFeedRepository(),
+    private val feedRepository: MockFeedRepository = MockFeedRepository(),
 ) : SearchRepository {
 
     override suspend fun search(query: String, filters: SearchFilters): List<Event> {
         delay(300)
 
-        return feedRepository.getSections()
+        return feedRepository.getSections(null)
             .flatMap { section -> section.events }
             .distinctBy { event -> event.id }
             .filter { event -> event.matches(query, filters) }

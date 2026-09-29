@@ -188,4 +188,10 @@
     <string name="profile_logout">Sair da conta</string>
     <string name="profile_delete_account">Excluir conta</string>
 
+    <string name="event_detail_subscription_confirmed">Confirmado (toque para cancelar)</string>
+    <string name="event_detail_subscribe_again">Participar novamente</string>
+    <string name="event_detail_subscription_loading">Aguarde...</string>
+    <string name="event_detail_subscription_attended">Você participou</string>
+    <string name="event_detail_subscription_error">Não foi possível atualizar sua participação. Tente novamente.</string>
+    <string name="login_error_invalid_credentials">E-mail ou senha incorretos.</string>
 </resources>

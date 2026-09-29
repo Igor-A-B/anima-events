@@ -1,7 +1,5 @@
 package com.example.anima.features.profile.data.repository
 
-import com.example.anima.features.auth.data.MockAccount
-import com.example.anima.features.auth.data.MockSession
 import com.example.anima.features.auth.presentation.register.AccountType
 import com.anima.features.event.models.Event
 import com.anima.features.event.models.EventCategory
@@ -12,16 +10,16 @@ import com.example.anima.features.profile.domain.repository.ProfileRepository
 import kotlinx.coroutines.delay
 
 // fake data
-// the account comes from whoever the login signed in as
+// the account type comes from whoever the login signed in as
 class MockProfileRepository(
-    private val account: MockAccount = MockSession.account.value,
+    private val accountType: AccountType = AccountType.VISITOR,
 ) : ProfileRepository {
 
     override suspend fun getProfile(): UserProfile {
         // fake network latency
         delay(600)
 
-        return when (account.accountType) {
+        return when (accountType) {
             AccountType.EXHIBITOR -> exhibitor
             AccountType.VISITOR -> visitor
         }
