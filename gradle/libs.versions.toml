@@ -21,8 +21,12 @@ hibernate = "6.6.4.Final"
 postgres = "42.7.4"
 hikari = "5.1.0"
 navigation = "2.9.0-beta01"
+springBoot = "4.1.0"
+auth0 = "4.6.1"
+bcrypt = "0.10.2"
 
 [libraries]
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
@@ -37,15 +41,17 @@ compose-components-resources = { module = "org.jetbrains.compose.components:comp
 compose-uiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "composeMultiplatform" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 
-ktor-serverCore = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
-ktor-serverNetty = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" }
-ktor-serverTestHost = { module = "io.ktor:ktor-server-test-host-jvm", version.ref = "ktor" }
+spring-boot-dependencies = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "springBoot" }
+spring-boot-starterWeb = { module = "org.springframework.boot:spring-boot-starter-web" }
+spring-boot-starterSecurity = { module = "org.springframework.boot:spring-boot-starter-security" }
+spring-boot-starterTest = { module = "org.springframework.boot:spring-boot-starter-test" }
+spring-boot-starterDataJpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa", version.ref = "springBoot" }
 
 hibernate-core = { module = "org.hibernate.orm:hibernate-core", version.ref = "hibernate" }
 jakarta-persistence = { module = "jakarta.persistence:jakarta.persistence-api", version = "3.2.0" }
-
 postgres-driver = { module = "org.postgresql:postgresql", version.ref = "postgres" }
 hikari-cp = { module = "com.zaxxer:HikariCP", version.ref = "hikari" }
+
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
@@ -58,6 +64,8 @@ androidx-navigation-compose = { module = "org.jetbrains.androidx.navigation:navi
 
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+auth0 = { module = "com.auth0:java-jwt", version.ref = "auth0" }
+bcrypt = { module = "at.favre.lib:bcrypt", version.ref = "bcrypt" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -68,3 +76,5 @@ kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
+springBoot = { id = "org.springframework.boot", version.ref = "springBoot" }
+kotlinSpring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
