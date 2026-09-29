@@ -1,6 +1,6 @@
 package com.example.anima.features.profile.domain.repository
 
-import com.example.anima.features.event.models.Event
+import com.anima.features.event.models.Event
 import com.example.anima.features.profile.domain.model.UserProfile
 
 // TODO: swap the implementation to go from mock to API

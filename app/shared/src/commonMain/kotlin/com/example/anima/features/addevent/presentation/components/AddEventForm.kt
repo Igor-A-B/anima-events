@@ -37,7 +37,7 @@ import com.example.anima.core.components.icon.lucide.LucideTicket
 import com.example.anima.core.components.icon.lucide.LucideUsers
 import com.example.anima.core.theme.AnimaTheme
 import com.example.anima.features.addevent.domain.model.EventDraft
-import com.example.anima.features.event.models.EventCategory
+import com.anima.features.event.models.EventCategory
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

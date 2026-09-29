@@ -1,6 +1,6 @@
 package com.example.anima.features.feed.presentation
 
-import com.example.anima.features.event.models.EventCategory
+import com.anima.features.event.models.EventCategory
 import com.example.anima.features.feed.domain.FeedSection
 
 data class FeedUiState(

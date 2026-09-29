@@ -3,9 +3,9 @@ package com.example.anima.features.profile.data.repository
 import com.example.anima.features.auth.data.MockAccount
 import com.example.anima.features.auth.data.MockSession
 import com.example.anima.features.auth.presentation.register.AccountType
-import com.example.anima.features.event.models.Event
-import com.example.anima.features.event.models.EventCategory
-import com.example.anima.features.event.models.EventStatus
+import com.anima.features.event.models.Event
+import com.anima.features.event.models.EventCategory
+import com.anima.features.event.models.EventStatus
 import com.example.anima.features.profile.domain.model.ExhibitorContact
 import com.example.anima.features.profile.domain.model.UserProfile
 import com.example.anima.features.profile.domain.repository.ProfileRepository

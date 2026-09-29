@@ -21,8 +21,8 @@ import anima.app.shared.generated.resources.feed_live
 import anima.app.shared.generated.resources.feed_status_finished
 import anima.app.shared.generated.resources.profile_event_published
 import com.example.anima.core.theme.AnimaTheme
-import com.example.anima.features.event.models.Event
-import com.example.anima.features.event.models.EventStatus
+import com.anima.features.event.models.Event
+import com.anima.features.event.models.EventStatus
 import com.example.anima.features.feed.presentation.components.eventCoverBrush
 import org.jetbrains.compose.resources.stringResource
 

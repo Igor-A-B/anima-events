@@ -1,6 +1,6 @@
 package com.example.anima.features.search.domain
 
-import com.example.anima.features.event.models.EventCategory
+import com.anima.features.event.models.EventCategory
 
 /** Price bucket. Maps to whether the event has a ticket price at all. */
 enum class PriceFilter {

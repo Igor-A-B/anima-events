@@ -1,6 +1,6 @@
 package com.example.anima.features.feed.domain
 
-import com.example.anima.features.event.models.Event
+import com.anima.features.event.models.Event
 
 // section for events
 enum class FeedSectionType {

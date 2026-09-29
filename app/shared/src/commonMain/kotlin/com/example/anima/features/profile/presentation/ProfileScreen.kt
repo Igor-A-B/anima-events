@@ -53,7 +53,7 @@ import com.example.anima.core.components.icon.lucide.LucideEyeOff
 import com.example.anima.core.components.icon.lucide.LucideLogOut
 import com.example.anima.core.components.icon.lucide.LucideTrash2
 import com.example.anima.core.theme.AnimaTheme
-import com.example.anima.features.event.models.Event
+import com.anima.features.event.models.Event
 import com.example.anima.features.profile.domain.model.UserProfile
 import com.example.anima.features.profile.presentation.components.ProfileDivider
 import com.example.anima.features.profile.presentation.components.ProfileEventRow

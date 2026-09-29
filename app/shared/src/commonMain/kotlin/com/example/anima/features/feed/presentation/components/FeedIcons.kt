@@ -10,7 +10,7 @@ import com.example.anima.core.components.icon.lucide.LucidePalette
 import com.example.anima.core.components.icon.lucide.LucidePartyPopper
 import com.example.anima.core.components.icon.lucide.LucideSport
 import com.example.anima.core.components.icon.lucide.LucideTheater
-import com.example.anima.features.event.models.EventCategory
+import com.anima.features.event.models.EventCategory
 
 // map the domain enum to an icon, so the domain stays free of compose
 val EventCategory.icon: ImageVector

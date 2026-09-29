@@ -19,7 +19,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.anima.core.components.AnimaScaffold
 import com.example.anima.core.components.AnimaScaffoldInsets
 import com.example.anima.core.theme.AnimaTheme
-import com.example.anima.features.event.models.Event
+import com.anima.features.event.models.Event
 import com.example.anima.features.eventdetail.presentation.components.EventAbout
 import com.example.anima.features.eventdetail.presentation.components.EventCover
 import com.example.anima.features.eventdetail.presentation.components.EventFooter

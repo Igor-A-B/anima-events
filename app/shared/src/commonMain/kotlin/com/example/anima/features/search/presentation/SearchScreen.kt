@@ -27,8 +27,8 @@ import anima.app.shared.generated.resources.search_results_count
 import com.example.anima.core.components.AnimaScaffold
 import com.example.anima.core.components.AnimaScaffoldInsets
 import com.example.anima.core.theme.AnimaTheme
-import com.example.anima.features.event.models.Event
-import com.example.anima.features.event.models.EventCategory
+import com.anima.features.event.models.Event
+import com.anima.features.event.models.EventCategory
 import com.example.anima.features.search.domain.DateFilter
 import com.example.anima.features.search.domain.PriceFilter
 import com.example.anima.features.search.presentation.components.SearchField

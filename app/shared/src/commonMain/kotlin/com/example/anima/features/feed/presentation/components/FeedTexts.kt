@@ -14,7 +14,7 @@ import anima.app.shared.generated.resources.feed_section_nearby_title
 import anima.app.shared.generated.resources.feed_section_now_title
 import anima.app.shared.generated.resources.feed_section_participating_title
 import anima.app.shared.generated.resources.feed_section_recommended_title
-import com.example.anima.features.event.models.EventCategory
+import com.anima.features.event.models.EventCategory
 
 import com.example.anima.features.feed.domain.FeedSectionType
 import org.jetbrains.compose.resources.stringResource

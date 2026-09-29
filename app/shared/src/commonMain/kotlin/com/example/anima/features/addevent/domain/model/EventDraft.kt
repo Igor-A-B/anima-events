@@ -1,6 +1,6 @@
 package com.example.anima.features.addevent.domain.model
 
-import com.example.anima.features.event.models.EventCategory
+import com.anima.features.event.models.EventCategory
 
 data class EventDraft(
     val photoUri: String? = null,

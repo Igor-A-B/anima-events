@@ -23,7 +23,7 @@ import com.example.anima.core.components.icon.lucide.LucideArrowLeft
 import com.example.anima.core.components.icon.lucide.LucideHeart
 import com.example.anima.core.components.icon.lucide.LucideShare
 import com.example.anima.core.theme.AnimaTheme
-import com.example.anima.features.event.models.EventCategory
+import com.anima.features.event.models.EventCategory
 import com.example.anima.features.feed.presentation.components.label
 import org.jetbrains.compose.resources.stringResource
 

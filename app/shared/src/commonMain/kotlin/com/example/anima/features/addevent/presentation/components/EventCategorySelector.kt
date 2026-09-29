@@ -10,7 +10,7 @@ import com.example.anima.core.components.chip.AnimaChipDefaults
 import com.example.anima.core.components.chip.AnimaChipSize
 import com.example.anima.core.components.icon.AnimaIcon
 import com.example.anima.core.theme.AnimaTheme
-import com.example.anima.features.event.models.EventCategory
+import com.anima.features.event.models.EventCategory
 import com.example.anima.features.feed.presentation.components.icon
 import com.example.anima.features.feed.presentation.components.label
 

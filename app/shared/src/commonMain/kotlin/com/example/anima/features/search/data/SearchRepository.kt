@@ -1,6 +1,6 @@
 package com.example.anima.features.search.data
 
-import com.example.anima.features.event.models.Event
+import com.anima.features.event.models.Event
 import com.example.anima.features.search.domain.SearchFilters
 
 // search data contract
