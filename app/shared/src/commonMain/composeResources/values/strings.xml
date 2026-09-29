@@ -195,4 +195,6 @@
     <string name="event_detail_subscription_attended">You attended</string>
     <string name="event_detail_subscription_error">Couldn't update your subscription. Try again.</string>
     <string name="login_error_invalid_credentials">Wrong email or password.</string>
+    <string name="register_error_email_taken">This email is already registered.</string>
+    <string name="register_error_validation">Check your details and try again.</string>
 </resources>

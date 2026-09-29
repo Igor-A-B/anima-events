@@ -7,6 +7,11 @@ import com.anima.features.user.entities.UserEntity
 import com.anima.features.user.models.AccountType
 import com.anima.features.user.repositories.UserRepository
 import com.anima.features.visitor.repositories.VisitorRepository
+import com.anima.features.visitor.entities.VisitorEntity
+import com.anima.features.exhibitor.entities.ExhibitorEntity
+import com.anima.features.exhibitor.repositories.ExhibitorRepository
+import com.anima.features.auth.dtos.RegisterRequestDto
+import com.anima.features.auth.exceptions.EmailAlreadyExistsException
 import com.anima.features.auth.dtos.TokenResponseDto
 import com.anima.features.auth.exceptions.InvalidCredentialsException
 import com.anima.features.auth.exceptions.InvalidRefreshTokenException
@@ -24,9 +29,15 @@ class AuthService(
     private val refreshTokenRepository: RefreshTokenRepository,
     private val jwtService: JwtService,
     private val visitorRepository: VisitorRepository,
+    private val exhibitorRepository: ExhibitorRepository,
     @Value($$"${jwt.refresh-token-expiration-days}") private val refreshTokenExpirationDays: Long
 ) {
     private val secureRandom = SecureRandom()
+
+    private companion object {
+        const val MIN_PASSWORD_LENGTH = 8
+        val EMAIL_REGEX = Regex("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")
+    }
 
     @Transactional
     fun login(email: String, rawPassword: String): TokenResponseDto {
@@ -45,6 +56,31 @@ class AuthService(
         val refreshToken = issueRefreshToken(user)
 
         return TokenResponseDto(accessToken, refreshToken)
+    }
+
+    @Transactional
+    fun register(request: RegisterRequestDto): TokenResponseDto {
+        val name = request.name.trim()
+        val email = request.email.trim().lowercase()
+        require(name.isNotBlank()) { "Name is required" }
+        require(EMAIL_REGEX.matches(email)) { "Invalid email" }
+        require(request.password.length >= MIN_PASSWORD_LENGTH) { "Password must have at least $MIN_PASSWORD_LENGTH characters" }
+        if (userRepository.existsByEmail(email)) throw EmailAlreadyExistsException()
+
+        val user = userRepository.save(UserEntity().apply {
+            this.name = name
+            this.email = email
+            passwordHash = BCrypt.withDefaults().hashToString(10, request.password.toCharArray())
+        })
+        when (request.accountType) {
+            AccountType.VISITOR -> visitorRepository.save(VisitorEntity().apply { this.user = user })
+            AccountType.EXHIBITOR -> exhibitorRepository.save(ExhibitorEntity().apply { this.user = user })
+        }
+
+        return TokenResponseDto(
+            jwtService.generateAccessToken(user.id!!, user.email, request.accountType),
+            issueRefreshToken(user),
+        )
     }
 
     @Transactional

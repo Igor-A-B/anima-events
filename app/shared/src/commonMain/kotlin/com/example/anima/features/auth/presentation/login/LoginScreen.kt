@@ -30,9 +30,7 @@ import androidx.compose.ui.unit.dp
 import org.koin.compose.viewmodel.koinViewModel
 import anima.app.shared.generated.resources.Res
 import anima.app.shared.generated.resources.core_button_enter
-import anima.app.shared.generated.resources.core_error_generic
 import anima.app.shared.generated.resources.login_email_hint
-import anima.app.shared.generated.resources.login_error_invalid_credentials
 import anima.app.shared.generated.resources.login_no_account
 import anima.app.shared.generated.resources.login_password_hint
 import anima.app.shared.generated.resources.login_register
@@ -44,6 +42,7 @@ import com.example.anima.core.components.icon.AnimaIcon
 import com.example.anima.core.components.icon.lucide.LucideEye
 import com.example.anima.core.components.icon.lucide.LucideEyeOff
 import com.example.anima.core.components.icon.lucide.LucideLock
+import com.example.anima.core.error.messageRes
 import com.example.anima.core.theme.AnimaTheme
 import com.example.anima.features.auth.presentation.login.components.BiometricButton
 import org.jetbrains.compose.resources.stringResource
@@ -112,10 +111,7 @@ fun LoginScreen(
             uiState.error?.let { error ->
                 Spacer(modifier = Modifier.height(AnimaTheme.spacing.md))
                 Text(
-                    text = stringResource(
-                        if (error == LoginError.INVALID_CREDENTIALS) Res.string.login_error_invalid_credentials
-                        else Res.string.core_error_generic,
-                    ),
+                    text = stringResource(error.messageRes()),
                     style = AnimaTheme.typography.bodySmall,
                     color = AnimaTheme.colors.error,
                 )

@@ -194,4 +194,6 @@
     <string name="event_detail_subscription_attended">Você participou</string>
     <string name="event_detail_subscription_error">Não foi possível atualizar sua participação. Tente novamente.</string>
     <string name="login_error_invalid_credentials">E-mail ou senha incorretos.</string>
+    <string name="register_error_email_taken">Este e-mail já está cadastrado.</string>
+    <string name="register_error_validation">Confira seus dados e tente novamente.</string>
 </resources>

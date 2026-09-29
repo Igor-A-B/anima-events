@@ -14,15 +14,16 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
 import anima.app.shared.generated.resources.Res
 import anima.app.shared.generated.resources.core_button_enter
 import anima.app.shared.generated.resources.core_button_next
 import com.example.anima.core.components.AnimaScaffold
 import com.example.anima.core.components.button.AnimaButton
+import com.example.anima.core.error.messageRes
 import com.example.anima.core.theme.AnimaTheme
 import com.example.anima.features.auth.presentation.register.components.RegisterHeader
 import com.example.anima.features.auth.presentation.register.components.steps.AccountTypeStep
@@ -32,12 +33,13 @@ import com.example.anima.features.auth.presentation.register.components.steps.Pa
 import com.example.anima.features.auth.presentation.register.components.steps.SuccessStep
 import com.example.anima.navigation.horizontalSlideTransition
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun RegisterScreen(
     onNavigateBack: () -> Unit = {},
     onRegisterComplete: () -> Unit = {},
-    viewModel: RegisterViewModel = viewModel(),
+    viewModel: RegisterViewModel = koinViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -101,6 +103,16 @@ fun RegisterScreen(
                 }
             }
 
+            // TODO(snackbar): replace with a snackbar fed by viewModel.events
+            uiState.error?.let { error ->
+                Text(
+                    text = stringResource(error.messageRes()),
+                    style = AnimaTheme.typography.bodySmall,
+                    color = AnimaTheme.colors.error,
+                )
+                Spacer(modifier = Modifier.height(AnimaTheme.spacing.sm))
+            }
+
             AnimaButton(
                 text = stringResource(
                     when {
@@ -109,14 +121,14 @@ fun RegisterScreen(
                     }
                 ),
                 onClick = {
-                    if (uiState.isLastStep) {
-                        viewModel.onSubmit()
-                        onRegisterComplete()
-                    } else {
-                        viewModel.onNextStep()
+                    when {
+                        uiState.isLastStep -> onRegisterComplete()
+                        // the password is the last input, the account is created before the success step
+                        uiState.step == uiState.totalSteps - 1 -> viewModel.onSubmit(onSuccess = viewModel::onNextStep)
+                        else -> viewModel.onNextStep()
                     }
                 },
-                enabled = uiState.canAdvance,
+                enabled = uiState.canAdvance && !uiState.isLoading,
                 modifier = Modifier.fillMaxWidth(),
             )
 

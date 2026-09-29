@@ -1,6 +1,6 @@
 package com.example.anima.features.profile.domain.model
 
-import com.example.anima.features.auth.presentation.register.AccountType
+import com.anima.features.user.models.AccountType
 import com.anima.features.event.models.Event
 
 data class ExhibitorContact(
