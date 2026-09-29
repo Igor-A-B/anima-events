@@ -12,6 +12,10 @@ application {
     mainClass = "com.anima.ApplicationKt"
 }
 
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
+
 dependencies {
     api(project(":core"))
     implementation(platform(libs.spring.boot.dependencies))

@@ -8,6 +8,8 @@ import com.anima.features.user.repositories.UserRepository
 import com.anima.features.auth.dtos.TokenResponseDto
 import com.anima.features.auth.exceptions.InvalidCredentialsException
 import com.anima.features.auth.exceptions.InvalidRefreshTokenException
+import com.anima.features.auth.exceptions.TooManyAttemptsException
+import com.anima.features.auth.ratelimit.RateLimiter
 import com.anima.utils.TokenHashUtil
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -15,6 +17,13 @@ import org.springframework.transaction.annotation.Transactional
 import java.security.SecureRandom
 import java.time.Instant
 import java.util.Base64
+import java.util.Locale
+
+private const val MAX_EMAIL_LENGTH = 254
+private const val MAX_PASSWORD_LENGTH = 128
+private const val MAX_REFRESH_TOKEN_LENGTH = 256
+private const val MAX_ACTIVE_REFRESH_TOKENS = 10
+private const val BCRYPT_COST = 12
 
 @Service
 class AuthService(
@@ -25,18 +34,29 @@ class AuthService(
 ) {
     private val secureRandom = SecureRandom()
 
+    // 5 failed logins per email in 15 minutes locks that email for the rest of the window
+    private val loginFailures = RateLimiter(maxAttempts = 5, windowMillis = 15 * 60_000)
+
+    // verified against when the email is unknown, so both paths spend the same bcrypt time
+    private val dummyHash = BCrypt.withDefaults().hashToString(BCRYPT_COST, "not-a-real-password".toCharArray())
+
     @Transactional
     fun login(email: String, rawPassword: String): TokenResponseDto {
-        val userOpt = userRepository.findByEmail(email)
-        if (userOpt.isEmpty) throw InvalidCredentialsException()
+        if (email.length > MAX_EMAIL_LENGTH || rawPassword.length > MAX_PASSWORD_LENGTH) throw InvalidCredentialsException()
 
-        val user = userOpt.get()
+        val key = email.trim().lowercase(Locale.ROOT)
+        if (loginFailures.isBlocked(key)) throw TooManyAttemptsException()
 
+        val user = userRepository.findByEmail(key).orElse(null)
         val passwordOk = BCrypt.verifyer()
-            .verify(rawPassword.toCharArray(), user.passwordHash)
+            .verify(rawPassword.toCharArray(), user?.passwordHash ?: dummyHash)
             .verified
 
-        if (!passwordOk) throw InvalidCredentialsException()
+        if (user == null || !passwordOk) {
+            loginFailures.hit(key)
+            throw InvalidCredentialsException()
+        }
+        loginFailures.reset(key)
 
         val accessToken = jwtService.generateAccessToken(user.id!!, user.email)
         val refreshToken = issueRefreshToken(user)
@@ -44,36 +64,54 @@ class AuthService(
         return TokenResponseDto(accessToken, refreshToken)
     }
 
-    @Transactional
+    // a failed refresh must not roll back the family revocation done on token reuse
+    @Transactional(noRollbackFor = [InvalidRefreshTokenException::class])
     fun refresh(rawRefreshToken: String): TokenResponseDto {
+        if (rawRefreshToken.length > MAX_REFRESH_TOKEN_LENGTH) throw InvalidRefreshTokenException()
+
         val tokenHash = TokenHashUtil.sha256(rawRefreshToken)
-        val stored = refreshTokenRepository.findByTokenHash(tokenHash)
-            ?.takeIf { !it.revoked && it.expiresAt.isAfter(Instant.now()) }
-            ?: throw InvalidRefreshTokenException()
+        val stored = refreshTokenRepository.findByTokenHash(tokenHash) ?: throw InvalidRefreshTokenException()
+        val now = Instant.now()
+        // read while still attached, the revoke below clears the persistence context
+        val user = stored.user
+        val userId = user.id!!
+        val email = user.email
 
-        // token rotation
-        refreshTokenRepository.revokeByTokenHash(tokenHash)
+        // token rotation: exactly one caller can flip the token from active to revoked
+        if (!refreshTokenRepository.revokeIfActive(tokenHash, now)) {
+            // a known token that was already used (or lost the race) is a replay, assume it leaked
+            if (refreshTokenRepository.findByTokenHash(tokenHash)?.revoked == true) {
+                refreshTokenRepository.deleteAllByUserId(userId)
+            }
+            throw InvalidRefreshTokenException()
+        }
 
-        val accessToken = jwtService.generateAccessToken(stored.user.id!!, stored.user.email)
-        val newRefreshToken = issueRefreshToken(stored.user)
+        val accessToken = jwtService.generateAccessToken(userId, email)
+        val newRefreshToken = issueRefreshToken(user)
 
         return TokenResponseDto(accessToken, newRefreshToken)
     }
 
     fun logout(rawRefreshToken: String) {
+        if (rawRefreshToken.length > MAX_REFRESH_TOKEN_LENGTH) return
         val tokenHash = TokenHashUtil.sha256(rawRefreshToken)
         refreshTokenRepository.revokeByTokenHash(tokenHash)
     }
 
     private fun issueRefreshToken(user: UserEntity): String {
         val rawToken = generateOpaqueToken()
+        val now = Instant.now()
         refreshTokenRepository.save(
             RefreshTokenEntity(
                 tokenHash = TokenHashUtil.sha256(rawToken),
                 user = user,
-                expiresAt = Instant.now().plusSeconds(refreshTokenExpirationDays * 24 * 60 * 60)
+                expiresAt = now.plusSeconds(refreshTokenExpirationDays * 24 * 60 * 60)
             )
         )
+        // oldest sessions are dropped once a user goes over the cap
+        val active = refreshTokenRepository.findActiveByUserId(user.id!!, now)
+        active.take((active.size - MAX_ACTIVE_REFRESH_TOKENS).coerceAtLeast(0))
+            .forEach { refreshTokenRepository.deleteById(it.id!!) }
         return rawToken
     }
 

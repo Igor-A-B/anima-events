@@ -39,7 +39,7 @@ class PersistenceConfig {
             setJpaPropertyMap(
                 mapOf(
                     "hibernate.hbm2ddl.auto" to "update",
-                    "hibernate.show_sql" to "true",
+                    "hibernate.show_sql" to "false",
                 )
             )
         }
