@@ -53,6 +53,6 @@ val appModule = module {
     viewModel { FeedViewModel(get(), get()) }
     viewModel { SearchViewModel(get()) }
     viewModel { EventDetailViewModel(get(), get(), get(), get(), get()) }
-    viewModel { ProfileViewModel(get(), get(), get()) }
+    viewModel { ProfileViewModel(get(), get(), get(), get()) }
     viewModel { AddEventViewModel(get(), get()) }
 }

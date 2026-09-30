@@ -9,6 +9,7 @@ import com.example.anima.features.addevent.data.ExhibitorEventRepository
 import com.example.anima.core.network.ApiException
 import com.example.anima.features.auth.data.SessionRepository
 import com.example.anima.features.profile.domain.repository.ProfileRepository
+import com.example.anima.features.subscription.data.SubscriptionRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +24,7 @@ class ProfileViewModel(
     private val repository: ProfileRepository,
     private val session: SessionRepository,
     private val exhibitorEvents: ExhibitorEventRepository,
+    private val subscriptions: SubscriptionRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -39,20 +41,26 @@ class ProfileViewModel(
             exhibitorEvents.myEvents
                 .onEach { events -> _uiState.update { it.copy(createdEvents = events) } }
                 .launchIn(viewModelScope)
-            loadEvents()
+        } else {
+            // follows subscribe and cancel made elsewhere
+            subscriptions.subscriptions
+                .onEach { list -> _uiState.update { it.copy(participatingEvents = participatingEvents(list)) } }
+                .launchIn(viewModelScope)
         }
+        loadEvents()
     }
 
-    private fun loadEvents() {
+    fun loadEvents() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoadingEvents = true) }
+            _uiState.update { it.copy(isLoadingEvents = true, eventsError = false) }
             try {
-                exhibitorEvents.refresh()
+                if (_uiState.value.isExhibitor) exhibitorEvents.refresh() else subscriptions.refresh()
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                // the section just stays empty, the rest of the profile still works
-                AppLog.e("Profile", "could not load the created events", e)
+                // only the section fails, the rest of the profile still works
+                AppLog.e("Profile", "could not load the events", e)
+                _uiState.update { it.copy(eventsError = true) }
             } finally {
                 _uiState.update { it.copy(isLoadingEvents = false) }
             }

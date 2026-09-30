@@ -31,7 +31,10 @@ import anima.app.shared.generated.resources.profile_field_name
 import anima.app.shared.generated.resources.profile_field_password
 import anima.app.shared.generated.resources.profile_logout
 import anima.app.shared.generated.resources.profile_password_mask
+import anima.app.shared.generated.resources.profile_event_going
+import anima.app.shared.generated.resources.profile_event_published
 import anima.app.shared.generated.resources.profile_events_empty
+import anima.app.shared.generated.resources.profile_events_empty_visitor
 import anima.app.shared.generated.resources.profile_section_account
 import anima.app.shared.generated.resources.profile_section_events
 import anima.app.shared.generated.resources.profile_section_security
@@ -77,6 +80,8 @@ fun ProfileScreen(
     onSignedOut: () -> Unit = {},
     // exhibitor only, opens one of their events in the edit form
     onEditEvent: (String) -> Unit = {},
+    // visitor only, opens the detail of an event they take part in
+    onOpenEvent: (String) -> Unit = {},
     viewModel: ProfileViewModel = koinViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -89,7 +94,8 @@ fun ProfileScreen(
         onChangeName = { /* TODO: edit sheet comes with the validations */ },
         onChangePassword = viewModel::onOpenPasswordDialog,
         onLogout = { viewModel.onLogout(onSignedOut) },
-        onEventClick = { event -> onEditEvent(event.id) },
+        onEventClick = { event -> if (uiState.isExhibitor) onEditEvent(event.id) else onOpenEvent(event.id) },
+        onRetryEvents = viewModel::loadEvents,
         // TODO implement?
         // onToggleDocument = viewModel::onToggleDocumentVisibility,
         // onSeeAllEvents = viewModel::onSeeAllEvents,
@@ -116,6 +122,7 @@ private fun ProfileContent(
     onChangePassword: () -> Unit,
     onLogout: () -> Unit,
     onEventClick: (Event) -> Unit,
+    onRetryEvents: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     AnimaScaffold(insets = AnimaScaffoldInsets.WithChrome) {
@@ -146,6 +153,7 @@ private fun ProfileContent(
                     onChangePassword = onChangePassword,
                     onLogout = onLogout,
                     onEventClick = onEventClick,
+                    onRetryEvents = onRetryEvents,
                 )
             }
         }
@@ -161,6 +169,7 @@ private fun ProfileList(
     onChangePassword: () -> Unit,
     onLogout: () -> Unit,
     onEventClick: (Event) -> Unit,
+    onRetryEvents: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val change = stringResource(Res.string.profile_change)
@@ -284,35 +293,49 @@ private fun ProfileList(
         //     }
         // }
 
-        // tapping an event opens it in the form, to edit or delete it
-        if (uiState.isExhibitor) {
-            item(key = "events") {
-                ProfileSection(title = stringResource(Res.string.profile_section_events)) {
-                    Column(modifier = Modifier.padding(AnimaTheme.spacing.sm)) {
-                        when {
-                            uiState.createdEvents.isNotEmpty() -> uiState.createdEvents.forEach { event ->
-                                ProfileEventRow(
-                                    event = event,
-                                    onClick = { onEventClick(event) },
-                                )
-                            }
-
-                            uiState.isLoadingEvents -> CircularProgressIndicator(
-                                color = AnimaTheme.colors.primary,
-                                strokeWidth = 2.dp,
-                                modifier = Modifier
-                                    .align(Alignment.CenterHorizontally)
-                                    .padding(AnimaTheme.spacing.sm)
-                                    .size(20.dp),
-                            )
-
-                            else -> Text(
-                                text = stringResource(Res.string.profile_events_empty),
-                                style = AnimaTheme.typography.bodyMedium,
-                                color = AnimaTheme.colors.onSurfaceVariant,
-                                modifier = Modifier.padding(AnimaTheme.spacing.sm),
+        // an exhibitor taps an event to edit or delete it, a visitor taps it to see the details
+        item(key = "events") {
+            ProfileSection(title = stringResource(Res.string.profile_section_events)) {
+                Column(modifier = Modifier.padding(AnimaTheme.spacing.sm)) {
+                    when {
+                        uiState.myEvents.isNotEmpty() -> uiState.myEvents.forEach { event ->
+                            ProfileEventRow(
+                                event = event,
+                                onClick = { onEventClick(event) },
+                                upcomingLabel = stringResource(
+                                    if (uiState.isExhibitor) Res.string.profile_event_published
+                                    else Res.string.profile_event_going
+                                ),
                             )
                         }
+
+                        uiState.isLoadingEvents -> CircularProgressIndicator(
+                            color = AnimaTheme.colors.primary,
+                            strokeWidth = 2.dp,
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(AnimaTheme.spacing.sm)
+                                .size(20.dp),
+                        )
+
+                        uiState.eventsError -> Text(
+                            text = stringResource(Res.string.core_error_generic),
+                            style = AnimaTheme.typography.bodyMedium,
+                            color = AnimaTheme.colors.onSurfaceVariant,
+                            modifier = Modifier
+                                .clickable(onClick = onRetryEvents)
+                                .padding(AnimaTheme.spacing.sm),
+                        )
+
+                        else -> Text(
+                            text = stringResource(
+                                if (uiState.isExhibitor) Res.string.profile_events_empty
+                                else Res.string.profile_events_empty_visitor
+                            ),
+                            style = AnimaTheme.typography.bodyMedium,
+                            color = AnimaTheme.colors.onSurfaceVariant,
+                            modifier = Modifier.padding(AnimaTheme.spacing.sm),
+                        )
                     }
                 }
             }

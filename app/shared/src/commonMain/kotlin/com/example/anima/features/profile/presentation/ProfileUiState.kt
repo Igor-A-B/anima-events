@@ -18,6 +18,10 @@ data class ProfileUiState(
     // exhibitor only, the events they organize
     val createdEvents: List<Event> = emptyList(),
     val isLoadingEvents: Boolean = false,
+    // visitor only, the events they take part in
+    val participatingEvents: List<Event> = emptyList(),
+    // the last load of the events section failed, the section offers a retry
+    val eventsError: Boolean = false,
     // TODO implement?
     // the document is masked until the user asks to see it
     // val isDocumentVisible: Boolean = false,
@@ -26,6 +30,9 @@ data class ProfileUiState(
     // val isLoadingEvents: Boolean = false,
 ) {
     val isExhibitor: Boolean = accountType == AccountType.EXHIBITOR
+
+    // hosted events for an exhibitor, joined events for a visitor
+    val myEvents: List<Event> = if (isExhibitor) createdEvents else participatingEvents
 
     // TODO implement?
     // val hasMoreEvents: Boolean = profile != null &&

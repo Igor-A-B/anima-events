@@ -199,6 +199,8 @@
     <string name="profile_see_all">Ver todos</string>
     <string name="profile_event_published">Publicado</string>
     <string name="profile_events_empty">Aún no has creado eventos</string>
+    <string name="profile_events_empty_visitor">Aún no participas en eventos</string>
+    <string name="profile_event_going">Voy</string>
 
     <!-- Perfil: sesion -->
     <string name="profile_logout">Cerrar sesión</string>

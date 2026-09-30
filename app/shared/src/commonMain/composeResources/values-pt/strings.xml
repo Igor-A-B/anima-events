@@ -198,6 +198,8 @@
     <string name="profile_see_all">Ver todos</string>
     <string name="profile_event_published">Publicado</string>
     <string name="profile_events_empty">Você ainda não criou eventos</string>
+    <string name="profile_events_empty_visitor">Você ainda não participa de eventos</string>
+    <string name="profile_event_going">Vou</string>
 
     <!-- Perfil: sessao -->
     <string name="profile_logout">Sair da conta</string>

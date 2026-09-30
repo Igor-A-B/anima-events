@@ -32,6 +32,8 @@ fun ProfileEventRow(
     event: Event,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    // what an upcoming event shows on the pill, live and ended keep their own
+    upcomingLabel: String = stringResource(Res.string.profile_event_published),
 ) {
     Row(
         modifier = modifier
@@ -68,13 +70,14 @@ fun ProfileEventRow(
             )
         }
 
-        EventStatusPill(status = event.status)
+        EventStatusPill(status = event.status, upcomingLabel = upcomingLabel)
     }
 }
 
 @Composable
 private fun EventStatusPill(
     status: EventStatus,
+    upcomingLabel: String,
     modifier: Modifier = Modifier,
 ) {
     val background = when (status) {
@@ -91,7 +94,7 @@ private fun EventStatusPill(
     val text = when (status) {
         EventStatus.OCCURRING -> stringResource(Res.string.feed_live)
         EventStatus.FINISHED -> stringResource(Res.string.feed_status_finished)
-        EventStatus.UPCOMING -> stringResource(Res.string.profile_event_published)
+        EventStatus.UPCOMING -> upcomingLabel
     }
 
     Text(

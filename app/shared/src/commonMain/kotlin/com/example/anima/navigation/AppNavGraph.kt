@@ -68,6 +68,10 @@ fun NavGraphBuilder.appNavGraph(navController: NavHostController) {
                 onEditEvent = { eventId ->
                     navController.navigate(EditEvent(eventId))
                 },
+                // the visitor opens an event they take part in
+                onOpenEvent = { eventId ->
+                    navController.navigate(EventDetail(eventId))
+                },
             )
         }
 
