@@ -3,6 +3,7 @@ package com.example.anima.core.network
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.call.body
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.ResponseException
 import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -25,8 +26,16 @@ private data class ErrorBody(val error: String = "")
 
 private val json = Json { ignoreUnknownKeys = true }
 
+private const val REQUEST_TIMEOUT_MS = 15_000L
+
 private fun HttpClientConfig<*>.baseSetup() {
     expectSuccess = true
+    // a timeout reaches the validator below and becomes an ApiException with no status
+    install(HttpTimeout) {
+        requestTimeoutMillis = REQUEST_TIMEOUT_MS
+        connectTimeoutMillis = REQUEST_TIMEOUT_MS
+        socketTimeoutMillis = REQUEST_TIMEOUT_MS
+    }
     install(ContentNegotiation) { json(json) }
     // INFO logs method, url and status, never bodies, so passwords and tokens stay out of the log
     install(Logging) {
