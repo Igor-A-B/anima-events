@@ -42,6 +42,7 @@ import com.example.anima.core.components.icon.lucide.LucideUsers
 import com.example.anima.core.components.picker.AnimaDatePicker
 import com.example.anima.core.components.picker.AnimaTimePicker
 import com.example.anima.core.components.textfield.AnimaTextField
+import com.example.anima.core.image.PickedImage
 import com.example.anima.core.theme.AnimaTheme
 import com.example.anima.features.addevent.domain.model.EventDraft
 import com.anima.features.event.models.EventCategory
@@ -62,7 +63,10 @@ fun AddEventForm(
     onPriceChanged: (String) -> Unit,
     onCapacityChanged: (String) -> Unit,
     onAboutChanged: (String) -> Unit,
+    photo: PickedImage?,
     onPickPhoto: () -> Unit,
+    onTakePhoto: (() -> Unit)?,
+    onRemovePhoto: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
@@ -91,7 +95,12 @@ fun AddEventForm(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.xl),
     ) {
-        EventPhotoPicker(onPickPhoto = onPickPhoto)
+        EventPhotoPicker(
+            photo = photo,
+            onPickPhoto = onPickPhoto,
+            onTakePhoto = onTakePhoto,
+            onRemovePhoto = onRemovePhoto,
+        )
 
         AnimaTextField(
             value = draft.name,

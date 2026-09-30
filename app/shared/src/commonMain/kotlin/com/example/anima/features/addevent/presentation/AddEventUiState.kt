@@ -1,9 +1,12 @@
 package com.example.anima.features.addevent.presentation
 
+import com.example.anima.core.image.PickedImage
 import com.example.anima.features.addevent.domain.model.EventDraft
 
 data class AddEventUiState(
     val draft: EventDraft = EventDraft(),
+    // picked or taken, uploaded once the event is saved
+    val photo: PickedImage? = null,
     // null when creating, the event being edited otherwise
     val eventId: String? = null,
     // loading the stored values of the event being edited

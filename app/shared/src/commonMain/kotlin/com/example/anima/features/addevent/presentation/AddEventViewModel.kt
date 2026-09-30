@@ -9,10 +9,13 @@ import anima.app.shared.generated.resources.add_event_error_date
 import anima.app.shared.generated.resources.add_event_error_forbidden
 import anima.app.shared.generated.resources.add_event_error_validation
 import anima.app.shared.generated.resources.add_event_updated
+import anima.app.shared.generated.resources.core_error_image_unsupported
 import com.anima.features.event.models.EventCategory
 import com.example.anima.core.error.AppExceptionBus
 import com.example.anima.core.error.Severity
+import com.example.anima.core.image.PickedImage
 import com.example.anima.core.network.ApiException
+import com.example.anima.features.eventdetail.data.EventImageRepository
 import com.example.anima.features.addevent.data.ExhibitorEventRepository
 import com.example.anima.features.addevent.domain.model.toDraft
 import com.example.anima.features.addevent.domain.model.toRequest
@@ -27,6 +30,7 @@ import kotlinx.coroutines.launch
 class AddEventViewModel(
     private val repository: ExhibitorEventRepository,
     private val bus: AppExceptionBus,
+    private val images: EventImageRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(AddEventUiState())
     val uiState: StateFlow<AddEventUiState> = _uiState.asStateFlow()
@@ -49,8 +53,16 @@ class AddEventViewModel(
         }
     }
 
-    fun onPhotoSelected(uri: String) {
-        _uiState.update { it.copy(draft = it.draft.copy(photoUri = uri)) }
+    fun onPhotoPicked(photo: PickedImage) {
+        _uiState.update { it.copy(photo = photo) }
+    }
+
+    fun onPhotoRemoved() {
+        _uiState.update { it.copy(photo = null) }
+    }
+
+    fun onUnsupportedPhoto() {
+        bus.show(Res.string.core_error_image_unsupported, Severity.ERROR)
     }
 
     fun onNameChanged(name: String) {
@@ -105,13 +117,12 @@ class AddEventViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isSubmitting = true) }
             try {
-                if (state.eventId == null) {
-                    repository.create(request)
-                    bus.show(Res.string.add_event_created, Severity.SUCCESS)
+                val saved = if (state.eventId == null) {
+                    repository.create(request).also { bus.show(Res.string.add_event_created, Severity.SUCCESS) }
                 } else {
-                    repository.update(state.eventId, request)
-                    bus.show(Res.string.add_event_updated, Severity.SUCCESS)
+                    repository.update(state.eventId, request).also { bus.show(Res.string.add_event_updated, Severity.SUCCESS) }
                 }
+                state.photo?.let { uploadPhoto(saved.id, it) }
                 // a fresh form for the next event, the create screen stays in the back stack
                 _uiState.value = AddEventUiState()
                 onSuccess()
@@ -121,6 +132,17 @@ class AddEventViewModel(
                 _uiState.update { it.copy(isSubmitting = false) }
                 report(e)
             }
+        }
+    }
+
+    // the event is already saved, a failed upload is only reported
+    private suspend fun uploadPhoto(eventId: String, photo: PickedImage) {
+        try {
+            images.upload(eventId, photo)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            report(e)
         }
     }
 

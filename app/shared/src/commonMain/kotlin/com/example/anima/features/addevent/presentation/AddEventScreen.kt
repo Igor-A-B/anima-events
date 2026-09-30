@@ -31,6 +31,8 @@ import com.example.anima.core.components.button.AnimaIconButton
 import com.example.anima.core.components.icon.AnimaIcon
 import com.example.anima.core.components.icon.lucide.LucideArrowLeft
 import com.example.anima.core.components.icon.lucide.LucideTrash2
+import com.example.anima.core.image.rememberCameraCapture
+import com.example.anima.core.image.rememberImagePicker
 import com.example.anima.core.theme.AnimaTheme
 import com.example.anima.features.addevent.presentation.components.AddEventForm
 import com.example.anima.features.addevent.presentation.components.DeleteEventDialog
@@ -47,6 +49,15 @@ fun AddEventScreen(
     viewModel: AddEventViewModel = koinViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    val pickPhoto = rememberImagePicker(
+        onPicked = viewModel::onPhotoPicked,
+        onUnsupported = viewModel::onUnsupportedPhoto,
+    )
+    val takePhoto = rememberCameraCapture(
+        onCaptured = viewModel::onPhotoPicked,
+        onFailed = viewModel::onUnsupportedPhoto,
+    )
 
     LaunchedEffect(eventId) {
         viewModel.load(eventId)
@@ -139,8 +150,10 @@ fun AddEventScreen(
                         onPriceChanged = viewModel::onPriceChanged,
                         onCapacityChanged = viewModel::onCapacityChanged,
                         onAboutChanged = viewModel::onAboutChanged,
-                        // TODO: upload the photo and keep its url in draft.photoUri
-                        onPickPhoto = {},
+                        photo = uiState.photo,
+                        onPickPhoto = pickPhoto,
+                        onTakePhoto = takePhoto,
+                        onRemovePhoto = viewModel::onPhotoRemoved,
                         modifier = Modifier.padding(
                             horizontal = AnimaTheme.spacing.xl
                         ),
