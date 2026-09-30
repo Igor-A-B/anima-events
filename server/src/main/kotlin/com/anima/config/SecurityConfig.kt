@@ -13,18 +13,21 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.filter.OncePerRequestFilter
 
-// reads "Authorization: Bearer <access token>" and sets the user id as the principal name
+// reads "Authorization: Bearer <access token>", sets the user id as the principal name
+// and the accountType claim as a ROLE_ authority
 class JwtAuthFilter(private val jwtService: JwtService) : OncePerRequestFilter() {
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
         val token = request.getHeader("Authorization")?.takeIf { it.startsWith("Bearer ") }?.substring(7)
         token?.let { jwtService.validateAndDecode(it) }?.ifPresent {
+            val role = it.getClaim("accountType").asString()?.let { type -> SimpleGrantedAuthority("ROLE_$type") }
             SecurityContextHolder.getContext().authentication =
-                UsernamePasswordAuthenticationToken(it.subject, null, emptyList())
+                UsernamePasswordAuthenticationToken(it.subject, null, listOfNotNull(role))
         }
         chain.doFilter(request, response)
     }
