@@ -15,6 +15,9 @@
     <!-- Error messages -->
     <string name="core_error_generic">An unexpected error occurred. Please try again.</string>
     <string name="core_error_network">No internet connection.</string>
+    <string name="core_error_forbidden">You don't have permission to do that.</string>
+    <string name="core_error_file_too_large">The file is too large.</string>
+    <string name="core_error_image_unsupported">Unsupported image. Use JPG, PNG or WebP.</string>
 
     <!-- FEATURE: Login -->
     <string name="login_title">Welcome Back!</string>
@@ -214,6 +217,8 @@
     <string name="event_detail_subscription_loading">Please wait...</string>
     <string name="event_detail_subscription_attended">You attended</string>
     <string name="event_detail_subscription_error">Couldn't update your subscription. Try again.</string>
+    <string name="event_detail_add_image">Add image</string>
+    <string name="event_detail_image_added">Image added</string>
     <string name="login_error_invalid_credentials">Wrong email or password.</string>
     <string name="register_error_email_taken">This email is already registered.</string>
     <string name="register_error_validation">Check your details and try again.</string>

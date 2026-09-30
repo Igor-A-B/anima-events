@@ -15,6 +15,9 @@
     <!-- Error messages -->
     <string name="core_error_generic">Ocorreu um erro inesperado. Tente novamente.</string>
     <string name="core_error_network">Sem conexão com a internet.</string>
+    <string name="core_error_forbidden">Você não tem permissão para fazer isso.</string>
+    <string name="core_error_file_too_large">O arquivo é grande demais.</string>
+    <string name="core_error_image_unsupported">Imagem não suportada. Use JPG, PNG ou WebP.</string>
 
     <!-- FEATURE: Login -->
     <string name="login_title">Bem-vindo(a) de volta!</string>
@@ -213,6 +216,8 @@
     <string name="event_detail_subscription_loading">Aguarde...</string>
     <string name="event_detail_subscription_attended">Você participou</string>
     <string name="event_detail_subscription_error">Não foi possível atualizar sua participação. Tente novamente.</string>
+    <string name="event_detail_add_image">Adicionar imagem</string>
+    <string name="event_detail_image_added">Imagem adicionada</string>
     <string name="login_error_invalid_credentials">E-mail ou senha incorretos.</string>
     <string name="register_error_email_taken">Este e-mail já está cadastrado.</string>
     <string name="register_error_validation">Confira seus dados e tente novamente.</string>

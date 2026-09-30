@@ -9,10 +9,14 @@ import com.anima.features.event.exceptions.ExhibitorOnlyException
 import com.anima.features.event.models.DateFilter
 import com.anima.features.event.models.Event
 import com.anima.features.event.models.EventCategory
+import com.anima.features.event.models.EventImage
 import com.anima.features.event.models.FeedSectionType
 import com.anima.features.event.models.PriceFilter
+import com.anima.features.event.services.EventImageService
 import com.anima.features.event.services.EventService
+import com.anima.features.storage.services.ImageUpload
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -23,13 +27,18 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
 import java.security.Principal
 import java.util.UUID
 
 @RestController
 @RequestMapping("/events")
-class EventRoute(private val eventService: EventService) {
+class EventRoute(
+    private val eventService: EventService,
+    private val eventImageService: EventImageService,
+) {
     @PostMapping
     fun create(principal: Principal, @RequestBody request: CreateEventRequestDto): ResponseEntity<Event> =
         ResponseEntity.status(HttpStatus.CREATED).body(eventService.create(UUID.fromString(principal.name), request))
@@ -73,6 +82,12 @@ class EventRoute(private val eventService: EventService) {
     @PutMapping("/{id}")
     fun update(principal: Principal, @PathVariable id: UUID, @RequestBody request: UpdateEventRequestDto): Event =
         eventService.update(UUID.fromString(principal.name), id, request)
+
+    // multipart/form-data with the image in the "file" part; curator only
+    @PostMapping("/{id}/images", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    fun addImage(principal: Principal, @PathVariable id: UUID, @RequestPart("file") file: MultipartFile): ResponseEntity<EventImage> =
+        ResponseEntity.status(HttpStatus.CREATED)
+            .body(eventImageService.add(UUID.fromString(principal.name), id, ImageUpload.from(file)))
 
     @DeleteMapping("/{id}")
     fun delete(principal: Principal, @PathVariable id: UUID): ResponseEntity<Void> {

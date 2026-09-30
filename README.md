@@ -55,3 +55,15 @@ docker compose restart server
 ```
 
 With `SPRING_PROFILES_ACTIVE=dev` the seeder puts the sample events back on the next start.
+
+## Firebase Storage emulator (event images, profile photos)
+
+Local storage for uploaded images runs on the Firebase Storage emulator, project `anima-events` (storage only).
+
+- Start it: `docker compose up -d firebase` (the `server` service starts it too). Storage is on `:9199`, the emulator UI on http://localhost:4000/storage.
+- Data persists in `.local-emulator/` (gitignored). It is imported on start and exported when the container stops, so stop it with `docker compose stop firebase` rather than killing it.
+- Running the server outside docker: set `STORAGE_EMULATOR_HOST=http://127.0.0.1:9199` (see `.env.example`). Without it the server uses the real bucket with application default credentials.
+- Uploads go through the backend only (`storage.rules` denies client writes). Files are stored under `events/{eventId}/` and `users/{userId}/`.
+- Upload an event image (curator only, max 10MB, jpeg/png/webp):
+  `curl -H "Authorization: Bearer $TOKEN" -F "file=@photo.jpg;type=image/jpeg" localhost:8080/events/{id}/images`
+- Android debug builds also run `adb reverse tcp:9199 tcp:9199`, so image urls load on a USB phone.

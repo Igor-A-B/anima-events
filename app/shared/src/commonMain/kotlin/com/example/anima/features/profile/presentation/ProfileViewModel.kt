@@ -2,9 +2,11 @@ package com.example.anima.features.profile.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.anima.core.error.AppError
 import com.example.anima.core.error.toAppError
 import com.example.anima.core.log.AppLog
 import com.example.anima.features.addevent.data.ExhibitorEventRepository
+import com.example.anima.core.network.ApiException
 import com.example.anima.features.auth.data.SessionRepository
 import com.example.anima.features.profile.domain.repository.ProfileRepository
 import kotlinx.coroutines.CancellationException
@@ -104,7 +106,9 @@ class ProfileViewModel(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                _uiState.update { it.copy(isChangingPassword = false, passwordError = e.toAppError()) }
+                // on this call a 403 means the current password is wrong
+                val error = if ((e as? ApiException)?.status == 403) AppError.INCORRECT_PASSWORD else e.toAppError()
+                _uiState.update { it.copy(isChangingPassword = false, passwordError = error) }
             }
         }
     }
