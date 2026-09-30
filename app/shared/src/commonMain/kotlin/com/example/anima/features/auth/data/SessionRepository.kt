@@ -67,7 +67,7 @@ class SessionRepository(
         try {
             auth.refresh(RefreshRequestDto(current.refreshToken)).also(::store)
         } catch (e: ApiException) {
-            if (e.status == 401) logout()
+            if (e.status == 401 || e.status == 403) logout()
             null
         }
     }

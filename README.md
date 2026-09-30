@@ -40,6 +40,7 @@ If you face any issues, please report them on [YouTrack](https://youtrack.jetbra
 ## API url on Android
 
 - Emulator: works with no setup (`http://10.0.2.2:8080`).
-- Debug on a real phone: add `api.baseUrl=http://<your-LAN-IP>:8080` to `local.properties`. With no value it uses `http://localhost:8080`, which needs `adb reverse tcp:8080 tcp:8080`. Debug builds allow cleartext http.
+- Debug on a real phone (USB): works with no setup. Every debug build runs `adb reverse tcp:8080 tcp:8080`, so the phone's `localhost:8080` reaches this machine.
+- Debug over Wi-Fi: set `api.baseUrl=http://<your-LAN-IP>:8080` in `local.properties` and open port 8080 in your firewall (e.g. `sudo ufw allow 8080/tcp`). Debug builds allow cleartext http.
 - Release: pass `API_BASE_URL=https://...` as a Gradle property or env var. The build fails without it, and release builds are https only.
 - Logs: `adb logcat -s System.out` shows the requests and failures.

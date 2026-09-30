@@ -69,3 +69,14 @@ android {
         buildConfig = true
     }
 }
+// a real phone reaches the dev server through usb: its localhost:8080 is forwarded to this machine
+// runs on every debug build because adb drops the forward when it restarts; skipped when api.baseUrl is set
+val adbPath = (localProperties.getProperty("sdk.dir") ?: System.getenv("ANDROID_HOME") ?: "") + "/platform-tools/adb"
+val useAdbReverse = localProperties.getProperty("api.baseUrl") == null && File(adbPath).exists()
+val adbReverse by tasks.registering(Exec::class) {
+    enabled = useAdbReverse
+    commandLine(adbPath, "reverse", "tcp:8080", "tcp:8080")
+    // no device connected is fine, the emulator doesn't need it
+    isIgnoreExitValue = true
+}
+tasks.matching { it.name == "preDebugBuild" }.configureEach { dependsOn(adbReverse) }
