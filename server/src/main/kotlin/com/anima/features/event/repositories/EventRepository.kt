@@ -11,5 +11,6 @@ interface EventRepository {
     fun findById(id: UUID): Optional<EventEntity>
     fun search(spec: Specification<EventEntity>, pageable: Pageable): Page<EventEntity>
     fun save(event: EventEntity): EventEntity
+    fun findAllByOrganizerId(organizerId: UUID): List<EventEntity>
     fun deleteById(id: UUID)
 }

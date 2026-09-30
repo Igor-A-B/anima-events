@@ -31,7 +31,9 @@ import anima.app.shared.generated.resources.profile_field_name
 import anima.app.shared.generated.resources.profile_field_password
 import anima.app.shared.generated.resources.profile_logout
 import anima.app.shared.generated.resources.profile_password_mask
+import anima.app.shared.generated.resources.profile_events_empty
 import anima.app.shared.generated.resources.profile_section_account
+import anima.app.shared.generated.resources.profile_section_events
 import anima.app.shared.generated.resources.profile_section_security
 import anima.app.shared.generated.resources.profile_title
 // TODO implement? these belong to the sections commented out below
@@ -44,7 +46,6 @@ import anima.app.shared.generated.resources.profile_title
 //import anima.app.shared.generated.resources.profile_hide
 //import anima.app.shared.generated.resources.profile_reveal
 //import anima.app.shared.generated.resources.profile_section_contact
-//import anima.app.shared.generated.resources.profile_section_events
 //import anima.app.shared.generated.resources.profile_see_all
 import com.example.anima.core.components.AnimaScaffold
 import com.example.anima.core.components.AnimaScaffoldInsets
@@ -53,16 +54,16 @@ import com.example.anima.core.components.icon.lucide.LucideLogOut
 import com.example.anima.core.theme.AnimaTheme
 import com.example.anima.features.profile.domain.model.UserProfile
 import com.example.anima.features.profile.presentation.components.ChangePasswordDialog
+import com.anima.features.event.models.Event
 import com.example.anima.features.profile.presentation.components.ProfileDivider
+import com.example.anima.features.profile.presentation.components.ProfileEventRow
 import com.example.anima.features.profile.presentation.components.ProfileHeader
 import com.example.anima.features.profile.presentation.components.ProfileRow
 import com.example.anima.features.profile.presentation.components.ProfileSection
 // TODO implement?
-//import com.anima.features.event.models.Event
 //import com.example.anima.core.components.icon.lucide.LucideEye
 //import com.example.anima.core.components.icon.lucide.LucideEyeOff
 //import com.example.anima.core.components.icon.lucide.LucideTrash2
-//import com.example.anima.features.profile.presentation.components.ProfileEventRow
 //import com.example.anima.features.profile.presentation.components.VerificationCard
 //import com.example.anima.features.profile.presentation.components.documentLabel
 //import com.example.anima.features.profile.presentation.components.maskDocument
@@ -74,7 +75,8 @@ import com.example.anima.navigation.bottomnav.AnimaBottomNavDefaults
 fun ProfileScreen(
     // called after the session ends, by logout or by a password change
     onSignedOut: () -> Unit = {},
-    // TODO implement? onNavigateToEvent: (String) -> Unit = {},
+    // exhibitor only, opens one of their events in the edit form
+    onEditEvent: (String) -> Unit = {},
     viewModel: ProfileViewModel = koinViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -85,10 +87,10 @@ fun ProfileScreen(
         onChangeName = { /* TODO: edit sheet comes with the validations */ },
         onChangePassword = viewModel::onOpenPasswordDialog,
         onLogout = { viewModel.onLogout(onSignedOut) },
+        onEventClick = { event -> onEditEvent(event.id) },
         // TODO implement?
         // onToggleDocument = viewModel::onToggleDocumentVisibility,
         // onSeeAllEvents = viewModel::onSeeAllEvents,
-        // onEventClick = { event -> onNavigateToEvent(event.id) },
         // onValidateAccount = { /* TODO: verification flow not planned yet */ },
         // onDeleteAccount = { /* TODO: needs a confirmation dialog */ },
     )
@@ -111,6 +113,7 @@ private fun ProfileContent(
     onChangeName: () -> Unit,
     onChangePassword: () -> Unit,
     onLogout: () -> Unit,
+    onEventClick: (Event) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     AnimaScaffold(insets = AnimaScaffoldInsets.WithChrome) {
@@ -140,6 +143,7 @@ private fun ProfileContent(
                     onChangeName = onChangeName,
                     onChangePassword = onChangePassword,
                     onLogout = onLogout,
+                    onEventClick = onEventClick,
                 )
             }
         }
@@ -154,6 +158,7 @@ private fun ProfileList(
     onChangeName: () -> Unit,
     onChangePassword: () -> Unit,
     onLogout: () -> Unit,
+    onEventClick: (Event) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val change = stringResource(Res.string.profile_change)
@@ -276,33 +281,40 @@ private fun ProfileList(
         //         }
         //     }
         // }
-        //
-        // if (uiState.isExhibitor) {
-        //     item(key = "events") {
-        //         ProfileSection(
-        //             title = stringResource(Res.string.profile_section_events),
-        //             trailing = {
-        //                 if (uiState.hasMoreEvents) {
-        //                     EventsTrailing(
-        //                         shown = profile.createdEvents.size,
-        //                         total = profile.createdEventCount,
-        //                         isLoading = uiState.isLoadingEvents,
-        //                         onSeeAll = onSeeAllEvents,
-        //                     )
-        //                 }
-        //             },
-        //         ) {
-        //             Column(modifier = Modifier.padding(AnimaTheme.spacing.sm)) {
-        //                 profile.createdEvents.forEach { event ->
-        //                     ProfileEventRow(
-        //                         event = event,
-        //                         onClick = { onEventClick(event) },
-        //                     )
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+
+        // tapping an event opens it in the form, to edit or delete it
+        if (uiState.isExhibitor) {
+            item(key = "events") {
+                ProfileSection(title = stringResource(Res.string.profile_section_events)) {
+                    Column(modifier = Modifier.padding(AnimaTheme.spacing.sm)) {
+                        when {
+                            uiState.createdEvents.isNotEmpty() -> uiState.createdEvents.forEach { event ->
+                                ProfileEventRow(
+                                    event = event,
+                                    onClick = { onEventClick(event) },
+                                )
+                            }
+
+                            uiState.isLoadingEvents -> CircularProgressIndicator(
+                                color = AnimaTheme.colors.primary,
+                                strokeWidth = 2.dp,
+                                modifier = Modifier
+                                    .align(Alignment.CenterHorizontally)
+                                    .padding(AnimaTheme.spacing.sm)
+                                    .size(20.dp),
+                            )
+
+                            else -> Text(
+                                text = stringResource(Res.string.profile_events_empty),
+                                style = AnimaTheme.typography.bodyMedium,
+                                color = AnimaTheme.colors.onSurfaceVariant,
+                                modifier = Modifier.padding(AnimaTheme.spacing.sm),
+                            )
+                        }
+                    }
+                }
+            }
+        }
 
         item(key = "session") {
             Column(verticalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.lg)) {

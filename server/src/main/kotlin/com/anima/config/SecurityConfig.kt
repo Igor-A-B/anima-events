@@ -42,6 +42,8 @@ class SecurityConfig {
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests {
                 it.requestMatchers("/auth/**").permitAll()
+                    // the organizer's own reads, matched before the public GET rule below
+                    .requestMatchers(HttpMethod.GET, "/events/mine", "/events/*/form").authenticated()
                     .requestMatchers(HttpMethod.GET, "/events", "/events/**").permitAll()
                     .anyRequest().authenticated()
             }

@@ -38,4 +38,6 @@ data class Event(
     val coverSeed: Int = 0,
     val description: String = "",
     val organizerName: String = "",
+    val address: String? = null,
+    val imageUrl: String? = null,
 )

@@ -37,7 +37,22 @@ fun NavGraphBuilder.appNavGraph(navController: NavHostController) {
         composable<AddEvent> {
             AddEventScreen(
                 onNavigateBack = { navController.popBackStack() },
-                onEventCreated = { navController.popBackStack() },
+                onEventSaved = { navController.popBackStack() },
+            )
+        }
+
+        composable<EditEvent>(
+            enterTransition = { slideInHorizontally { it } + fadeIn(tween(300)) },
+            exitTransition = { slideOutHorizontally { it } + fadeOut(tween(300)) },
+            popEnterTransition = { slideInHorizontally { -it } + fadeIn(tween(300)) },
+            popExitTransition = { slideOutHorizontally { it } + fadeOut(tween(300)) },
+        ) { backStackEntry ->
+            val route: EditEvent = backStackEntry.toRoute()
+            AddEventScreen(
+                eventId = route.eventId,
+                onNavigateBack = { navController.popBackStack() },
+                onEventSaved = { navController.popBackStack() },
+                onEventDeleted = { navController.popBackStack() },
             )
         }
 
@@ -49,10 +64,10 @@ fun NavGraphBuilder.appNavGraph(navController: NavHostController) {
                         popUpTo<AppGraph> { inclusive = true }
                     }
                 },
-                // TODO implement?
-                // onNavigateToEvent = { eventId ->
-                //     navController.navigate(EventDetail(eventId))
-                // },
+                // the exhibitor manages their events from the profile
+                onEditEvent = { eventId ->
+                    navController.navigate(EditEvent(eventId))
+                },
             )
         }
 

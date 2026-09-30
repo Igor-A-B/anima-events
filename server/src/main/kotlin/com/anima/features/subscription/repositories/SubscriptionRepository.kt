@@ -10,4 +10,5 @@ interface SubscriptionRepository {
     fun findAllByVisitorId(visitorId: String): List<SubscriptionEntity>
     fun countByEventIdAndStatusIn(eventId: UUID, statuses: Collection<SubscriptionStatus>): Long
     fun save(subscription: SubscriptionEntity): SubscriptionEntity
+    fun deleteAllByEventId(eventId: UUID)
 }

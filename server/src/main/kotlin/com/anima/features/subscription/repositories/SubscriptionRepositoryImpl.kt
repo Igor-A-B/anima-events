@@ -15,10 +15,12 @@ class SubscriptionRepositoryImpl(private val jpa: SubscriptionJpaRepository) : S
     override fun countByEventIdAndStatusIn(eventId: UUID, statuses: Collection<SubscriptionStatus>): Long =
         jpa.countByEventIdAndStatusIn(eventId, statuses)
     override fun save(subscription: SubscriptionEntity): SubscriptionEntity = jpa.save(subscription)
+    override fun deleteAllByEventId(eventId: UUID) = jpa.deleteAllByEventId(eventId)
 }
 
 interface SubscriptionJpaRepository : JpaRepository<SubscriptionEntity, UUID> {
     fun findByVisitorIdAndEventId(visitorId: String, eventId: UUID): Optional<SubscriptionEntity>
     fun findAllByVisitorId(visitorId: String): List<SubscriptionEntity>
     fun countByEventIdAndStatusIn(eventId: UUID, statuses: Collection<SubscriptionStatus>): Long
+    fun deleteAllByEventId(eventId: UUID)
 }

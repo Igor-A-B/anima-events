@@ -15,7 +15,11 @@ class EventRepositoryImpl(private val jpa: EventJpaRepository) : EventRepository
     override fun findById(id: UUID): Optional<EventEntity> = jpa.findById(id)
     override fun search(spec: Specification<EventEntity>, pageable: Pageable): Page<EventEntity> = jpa.findAll(spec, pageable)
     override fun save(event: EventEntity): EventEntity = jpa.save(event)
+    override fun findAllByOrganizerId(organizerId: UUID): List<EventEntity> =
+        jpa.findAllByOrganizerIdOrderByStartsAtDesc(organizerId)
     override fun deleteById(id: UUID) = jpa.deleteById(id)
 }
 
-interface EventJpaRepository : JpaRepository<EventEntity, UUID>, JpaSpecificationExecutor<EventEntity>
+interface EventJpaRepository : JpaRepository<EventEntity, UUID>, JpaSpecificationExecutor<EventEntity> {
+    fun findAllByOrganizerIdOrderByStartsAtDesc(organizerId: UUID): List<EventEntity>
+}

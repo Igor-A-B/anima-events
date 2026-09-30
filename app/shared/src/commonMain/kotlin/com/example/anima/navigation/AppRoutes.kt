@@ -33,3 +33,7 @@ data object Profile
 // arguments are constructor parameters
 @Serializable
 data class EventDetail(val eventId: String)
+
+// same screen as AddEvent, AddEvent stays an object because the bottom nav points at it
+@Serializable
+data class EditEvent(val eventId: String)
