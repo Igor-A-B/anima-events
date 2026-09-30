@@ -2,7 +2,8 @@ package com.example.anima.features.profile.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.anima.features.profile.data.repository.MockProfileRepository
+import com.example.anima.core.error.toAppError
+import com.example.anima.features.auth.data.SessionRepository
 import com.example.anima.features.profile.domain.repository.ProfileRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -13,10 +14,13 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ProfileViewModel(
-    private val repository: ProfileRepository = MockProfileRepository(),
+    private val repository: ProfileRepository,
+    private val session: SessionRepository,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ProfileUiState())
+    private val _uiState = MutableStateFlow(
+        ProfileUiState(accountType = session.session.value?.accountType ?: ProfileUiState().accountType)
+    )
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
     private var loadJob: Job? = null
@@ -48,32 +52,53 @@ class ProfileViewModel(
         }
     }
 
-    fun onToggleDocumentVisibility() {
-        _uiState.update { it.copy(isDocumentVisible = !it.isDocumentVisible) }
+    fun onOpenPasswordDialog() {
+        _uiState.update { it.copy(isPasswordDialogOpen = true, passwordError = null) }
     }
 
-    fun onSeeAllEvents() {
-        val state = _uiState.value
-        if (state.isLoadingEvents || !state.hasMoreEvents) return
+    fun onDismissPasswordDialog() {
+        if (_uiState.value.isChangingPassword) return
+        _uiState.update { it.copy(isPasswordDialogOpen = false, passwordError = null) }
+    }
+
+    // the server rolls everything back on failure, so the old password keeps working
+    // on success every session is ended, this one included, so the user signs in again
+    fun onChangePassword(currentPassword: String, newPassword: String, onDone: () -> Unit) {
+        if (_uiState.value.isChangingPassword) return
 
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoadingEvents = true) }
-
-            runCatching { repository.getAllCreatedEvents() }
-                .onSuccess { events ->
-                    _uiState.update { current ->
-                        current.copy(
-                            isLoadingEvents = false,
-                            isShowingAllEvents = true,
-                            profile = current.profile?.copy(createdEvents = events),
-                        )
-                    }
-                }
-                .onFailure { throwable ->
-                    if (throwable is CancellationException) throw throwable
-
-                    _uiState.update { it.copy(isLoadingEvents = false) }
-                }
+            _uiState.update { it.copy(isChangingPassword = true, passwordError = null) }
+            try {
+                repository.changePassword(currentPassword, newPassword)
+                _uiState.update { it.copy(isChangingPassword = false, isPasswordDialogOpen = false) }
+                session.signOut()
+                onDone()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isChangingPassword = false, passwordError = e.toAppError()) }
+            }
         }
     }
+
+    fun onLogout(onDone: () -> Unit) {
+        if (_uiState.value.isSigningOut) return
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isSigningOut = true) }
+            try {
+                session.signOut()
+            } finally {
+                _uiState.update { it.copy(isSigningOut = false) }
+            }
+            onDone()
+        }
+    }
+
+    // TODO implement?
+    // fun onToggleDocumentVisibility() {
+    //     _uiState.update { it.copy(isDocumentVisible = !it.isDocumentVisible) }
+    // }
+    //
+    // fun onSeeAllEvents() { ... loads repository.getAllCreatedEvents() ... }
 }

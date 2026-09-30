@@ -188,6 +188,14 @@
     <string name="profile_logout">Sair da conta</string>
     <string name="profile_delete_account">Excluir conta</string>
 
+    <!-- Profile: change password dialog -->
+    <string name="profile_password_title">Alterar senha</string>
+    <string name="profile_password_current_hint">Senha atual</string>
+    <string name="profile_password_new_hint">Nova senha (mín. 8 caracteres)</string>
+    <string name="profile_password_save">Salvar</string>
+    <string name="profile_cancel">Cancelar</string>
+    <string name="profile_password_error_incorrect">A senha atual está incorreta.</string>
+
     <string name="event_detail_subscription_confirmed">Confirmado (toque para cancelar)</string>
     <string name="event_detail_subscribe_again">Participar novamente</string>
     <string name="event_detail_subscription_loading">Aguarde...</string>

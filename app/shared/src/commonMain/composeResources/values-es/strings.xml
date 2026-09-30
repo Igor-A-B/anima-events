@@ -189,6 +189,14 @@
     <string name="profile_logout">Cerrar sesión</string>
     <string name="profile_delete_account">Eliminar cuenta</string>
 
+    <!-- Profile: change password dialog -->
+    <string name="profile_password_title">Cambiar contraseña</string>
+    <string name="profile_password_current_hint">Contraseña actual</string>
+    <string name="profile_password_new_hint">Nueva contraseña (mín. 8 caracteres)</string>
+    <string name="profile_password_save">Guardar</string>
+    <string name="profile_cancel">Cancelar</string>
+    <string name="profile_password_error_incorrect">La contraseña actual es incorrecta.</string>
+
     <string name="event_detail_subscription_confirmed">Confirmado (toca para cancelar)</string>
     <string name="event_detail_subscribe_again">Ir de nuevo</string>
     <string name="event_detail_subscription_loading">Espera...</string>

@@ -26,12 +26,14 @@ import com.example.anima.core.components.icon.lucide.LucideCircleUser
 import com.example.anima.core.components.icon.lucide.LucideStore
 import com.example.anima.core.components.icon.lucide.LucideUser
 import com.example.anima.core.theme.AnimaTheme
+import com.anima.features.user.models.AccountType
 import com.example.anima.features.profile.domain.model.UserProfile
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun ProfileHeader(
     profile: UserProfile,
+    accountType: AccountType,
     onPickPhoto: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -64,7 +66,7 @@ fun ProfileHeader(
             )
         }
 
-        AccountTypePill(profile = profile)
+        AccountTypePill(accountType = accountType)
     }
 }
 
@@ -116,7 +118,7 @@ private fun AvatarPlaceholder(
 
 @Composable
 private fun AccountTypePill(
-    profile: UserProfile,
+    accountType: AccountType,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -131,14 +133,14 @@ private fun AccountTypePill(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AnimaIcon(
-            imageVector = if (profile.isExhibitor) LucideStore else LucideUser,
+            imageVector = if (accountType == AccountType.EXHIBITOR) LucideStore else LucideUser,
             contentDescription = null,
             tint = AnimaTheme.colors.primaryVariant,
             size = ProfileHeaderDefaults.PillIconSize,
         )
 
         Text(
-            text = profile.accountType.label().uppercase(),
+            text = accountType.label().uppercase(),
             style = AnimaTheme.typography.labelSmall,
             color = AnimaTheme.colors.primaryVariant,
         )

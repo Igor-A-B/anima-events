@@ -15,8 +15,8 @@ import com.example.anima.features.feed.data.FeedRepository
 import com.example.anima.features.feed.presentation.FeedViewModel
 import com.example.anima.features.subscription.data.ApiSubscriptionRepository
 import com.example.anima.features.subscription.data.SubscriptionRepository
-import com.anima.features.user.models.AccountType
-import com.example.anima.features.profile.data.repository.MockProfileRepository
+import com.example.anima.features.profile.data.repository.ApiProfileRepository
+import com.example.anima.features.profile.domain.repository.ProfileRepository
 import com.example.anima.features.profile.presentation.ProfileViewModel
 import io.ktor.client.HttpClient
 import org.koin.core.module.dsl.viewModel
@@ -31,14 +31,11 @@ val appModule = module {
 
     single<FeedRepository> { ApiFeedRepository(get()) }
     single<SubscriptionRepository> { ApiSubscriptionRepository(get()) }
+    single<ProfileRepository> { ApiProfileRepository(get()) }
 
     viewModel { LoginViewModel(get()) }
     viewModel { RegisterViewModel(get()) }
     viewModel { FeedViewModel(get(), get()) }
     viewModel { EventDetailViewModel(get(), get(), get()) }
-    // TODO: profile is still mock data, only the account type comes from the session
-    viewModel {
-        val accountType = get<SessionRepository>().session.value?.accountType ?: AccountType.VISITOR
-        ProfileViewModel(MockProfileRepository(accountType))
-    }
+    viewModel { ProfileViewModel(get(), get()) }
 }

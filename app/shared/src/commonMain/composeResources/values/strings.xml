@@ -189,6 +189,14 @@
     <string name="profile_logout">Log out</string>
     <string name="profile_delete_account">Delete account</string>
 
+    <!-- Profile: change password dialog -->
+    <string name="profile_password_title">Change password</string>
+    <string name="profile_password_current_hint">Current password</string>
+    <string name="profile_password_new_hint">New password (8+ characters)</string>
+    <string name="profile_password_save">Save</string>
+    <string name="profile_cancel">Cancel</string>
+    <string name="profile_password_error_incorrect">The current password is wrong.</string>
+
     <string name="event_detail_subscription_confirmed">Going (tap to cancel)</string>
     <string name="event_detail_subscribe_again">I'm going again</string>
     <string name="event_detail_subscription_loading">Please wait...</string>

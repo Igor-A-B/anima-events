@@ -37,6 +37,18 @@ class SessionRepository(
         store(auth.register(request.copy(name = request.name.trim(), email = request.email.trim())))
     }
 
+    // revokes the refresh token on the server, the local session ends even if that call fails
+    suspend fun signOut() {
+        val refreshToken = storage.load()?.refreshToken
+        try {
+            if (refreshToken != null) auth.logout(RefreshRequestDto(refreshToken))
+        } catch (e: ApiException) {
+            // nothing to do, the tokens are dropped below anyway
+        } finally {
+            logout()
+        }
+    }
+
     fun logout() {
         storage.clear()
         _session.value = null

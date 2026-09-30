@@ -43,9 +43,16 @@ fun NavGraphBuilder.appNavGraph(navController: NavHostController) {
 
         composable<Profile> {
             ProfileScreen(
-                onNavigateToEvent = { eventId ->
-                    navController.navigate(EventDetail(eventId))
+                onSignedOut = {
+                    navController.navigate(AuthGraph) {
+                        // clears the signed in flow from the back stack
+                        popUpTo<AppGraph> { inclusive = true }
+                    }
                 },
+                // TODO implement?
+                // onNavigateToEvent = { eventId ->
+                //     navController.navigate(EventDetail(eventId))
+                // },
             )
         }
 
