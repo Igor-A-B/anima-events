@@ -1,6 +1,6 @@
 package com.example.anima.features.auth.data
 
-import com.example.anima.features.auth.presentation.register.AccountType
+import com.anima.features.user.models.AccountType
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlinx.serialization.json.Json

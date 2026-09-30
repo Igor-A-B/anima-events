@@ -2,14 +2,11 @@ package com.example.anima.features.auth.data
 
 import com.anima.features.auth.dtos.LoginRequestDto
 import com.anima.features.auth.dtos.RefreshRequestDto
+import com.anima.features.auth.dtos.RegisterRequestDto
+import com.anima.features.user.models.AccountType
 import com.anima.features.auth.dtos.TokenResponseDto
 import com.example.anima.core.network.ApiException
 import com.example.anima.core.network.SessionTokens
-import com.example.anima.features.auth.presentation.register.AccountType
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,9 +17,9 @@ import kotlin.time.Clock
 data class Session(val userId: String, val accountType: AccountType)
 
 // who is signed in, backed by the tokens on disk
-// plainClient has no auth plugin, so login and refresh never loop
+// the auth repository has no auth plugin, so login and refresh never loop
 class SessionRepository(
-    private val plainClient: HttpClient,
+    private val auth: AuthRepository,
     private val storage: TokenStorage,
 ) : SessionTokens {
 
@@ -32,10 +29,12 @@ class SessionRepository(
 
     // throws ApiException, 401 means wrong email or password
     suspend fun login(email: String, password: String) {
-        val tokens = plainClient.post("auth/login") {
-            setBody(LoginRequestDto(email.trim(), password))
-        }.body<TokenResponseDto>()
-        store(tokens)
+        store(auth.login(LoginRequestDto(email.trim(), password)))
+    }
+
+    // throws ApiException, 409 means the email is taken, 400 means invalid data
+    suspend fun register(request: RegisterRequestDto) {
+        store(auth.register(request.copy(name = request.name.trim(), email = request.email.trim())))
     }
 
     fun logout() {
@@ -54,9 +53,7 @@ class SessionRepository(
     override suspend fun refresh(): TokenResponseDto? = refreshLock.withLock {
         val current = storage.load() ?: return null
         try {
-            plainClient.post("auth/refresh") {
-                setBody(RefreshRequestDto(current.refreshToken))
-            }.body<TokenResponseDto>().also(::store)
+            auth.refresh(RefreshRequestDto(current.refreshToken)).also(::store)
         } catch (e: ApiException) {
             if (e.status == 401) logout()
             null

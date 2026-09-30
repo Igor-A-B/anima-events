@@ -3,6 +3,8 @@ package com.anima.features.auth.routes
 import com.anima.features.auth.services.AuthService
 import com.anima.features.auth.dtos.LoginRequestDto
 import com.anima.features.auth.dtos.RefreshRequestDto
+import com.anima.features.auth.dtos.RegisterRequestDto
+import com.anima.features.auth.exceptions.EmailAlreadyExistsException
 import com.anima.features.auth.dtos.TokenResponseDto
 import com.anima.features.auth.exceptions.InvalidCredentialsException
 import com.anima.features.auth.exceptions.InvalidRefreshTokenException
@@ -23,6 +25,10 @@ class AuthRoute(private val authService: AuthService) {
         return ResponseEntity.ok(TokenResponseDto(tokens.accessToken, tokens.refreshToken))
     }
 
+    @PostMapping("/register")
+    fun register(@RequestBody request: RegisterRequestDto): ResponseEntity<TokenResponseDto> =
+        ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request))
+
     @PostMapping("/refresh")
     fun refresh(@RequestBody request: RefreshRequestDto): ResponseEntity<TokenResponseDto> {
         val tokens = authService.refresh(request.refreshToken)
@@ -39,4 +45,13 @@ class AuthRoute(private val authService: AuthService) {
     fun handleAuthErrors(ex: RuntimeException): ResponseEntity<Map<String, String>> =
         ResponseEntity.status(HttpStatus.UNAUTHORIZED)
             .body(mapOf("error" to (ex.message ?: HttpStatus.UNAUTHORIZED.name)))
+
+    @ExceptionHandler(EmailAlreadyExistsException::class)
+    fun handleEmailTaken(ex: RuntimeException): ResponseEntity<Map<String, String>> =
+        ResponseEntity.status(HttpStatus.CONFLICT)
+            .body(mapOf("error" to (ex.message ?: HttpStatus.CONFLICT.name)))
+
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun handleInvalid(ex: IllegalArgumentException): ResponseEntity<Map<String, String>> =
+        ResponseEntity.badRequest().body(mapOf("error" to (ex.message ?: HttpStatus.BAD_REQUEST.name)))
 }

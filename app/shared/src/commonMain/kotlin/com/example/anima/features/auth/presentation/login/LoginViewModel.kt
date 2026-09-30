@@ -2,7 +2,9 @@ package com.example.anima.features.auth.presentation.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.anima.core.network.ApiException
+import com.example.anima.core.error.UiEvent
+import com.example.anima.core.error.UiEventEmitter
+import com.example.anima.core.error.toAppError
 import com.example.anima.features.auth.data.SessionRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,6 +16,8 @@ import kotlinx.coroutines.launch
 class LoginViewModel(
     private val session: SessionRepository,
 ) : ViewModel() {
+
+    val events = UiEventEmitter()
 
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
@@ -39,7 +43,8 @@ class LoginViewModel(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                val error = if (e is ApiException && e.status == 401) LoginError.INVALID_CREDENTIALS else LoginError.GENERIC
+                val error = e.toAppError()
+                events.emit(UiEvent.ShowError(error))
                 _uiState.update { it.copy(isLoading = false, error = error) }
             }
         }

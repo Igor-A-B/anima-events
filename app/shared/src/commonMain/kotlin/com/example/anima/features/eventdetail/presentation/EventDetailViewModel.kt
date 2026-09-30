@@ -6,7 +6,7 @@ import com.anima.features.event.models.Event
 import com.anima.features.event.models.EventStatus
 import com.anima.features.subscription.models.SubscriptionStatus
 import com.example.anima.features.auth.data.SessionRepository
-import com.example.anima.features.auth.presentation.register.AccountType
+import com.anima.features.user.models.AccountType
 import com.example.anima.features.feed.data.FeedRepository
 import com.example.anima.features.subscription.data.SubscriptionRepository
 import kotlinx.coroutines.CancellationException
