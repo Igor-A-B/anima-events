@@ -1,6 +1,8 @@
 package com.example.anima.core.error
 
 import anima.app.shared.generated.resources.Res
+import anima.app.shared.generated.resources.core_error_file_too_large
+import anima.app.shared.generated.resources.core_error_forbidden
 import anima.app.shared.generated.resources.core_error_generic
 import anima.app.shared.generated.resources.core_error_network
 import anima.app.shared.generated.resources.login_error_invalid_credentials
@@ -15,6 +17,8 @@ fun AppError.messageRes(): StringResource = when (this) {
     AppError.INCORRECT_PASSWORD -> Res.string.profile_password_error_incorrect
     AppError.EMAIL_ALREADY_EXISTS -> Res.string.register_error_email_taken
     AppError.VALIDATION -> Res.string.register_error_validation
+    AppError.FORBIDDEN -> Res.string.core_error_forbidden
+    AppError.FILE_TOO_LARGE -> Res.string.core_error_file_too_large
     AppError.NETWORK -> Res.string.core_error_network
     AppError.UNKNOWN -> Res.string.core_error_generic
 }

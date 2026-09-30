@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.compose.viewmodel.koinViewModel
+import com.example.anima.core.image.rememberImagePicker
 import com.example.anima.core.components.AnimaScaffold
 import com.example.anima.core.components.AnimaScaffoldInsets
 import com.example.anima.core.theme.AnimaTheme
@@ -41,11 +42,19 @@ fun EventDetailScreen(
         viewModel.loadEvent(eventId)
     }
 
+    val pickImage = rememberImagePicker(
+        onPicked = viewModel::onImagePicked,
+        onUnsupported = viewModel::onUnsupportedImage,
+    )
+
     uiState.event?.let { safeEvent ->
         EventDetailContent(
             event = safeEvent,
             subscription = uiState.subscription,
             actionError = uiState.actionError,
+            isCurator = uiState.isCurator,
+            isUploadingImage = uiState.isUploadingImage,
+            onAddImage = pickImage,
             onNavigateBack = onNavigateBack,
             onShare = {},
             onFavorite = {},
@@ -59,6 +68,9 @@ private fun EventDetailContent(
     event: Event,
     subscription: SubscriptionUi,
     actionError: Boolean,
+    isCurator: Boolean,
+    isUploadingImage: Boolean,
+    onAddImage: () -> Unit,
     onNavigateBack: () -> Unit,
     onShare: () -> Unit,
     onFavorite: () -> Unit,
@@ -80,6 +92,10 @@ private fun EventDetailContent(
                         title = event.title,
                         category = event.category,
                         price = event.price,
+                        imageUrl = event.imageUrls.firstOrNull(),
+                        canAddImage = isCurator,
+                        isUploadingImage = isUploadingImage,
+                        onAddImage = onAddImage,
                         onBack = onNavigateBack,
                         onShare = onShare,
                         onFavorite = onFavorite

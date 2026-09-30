@@ -17,4 +17,7 @@ data class EventDetailUiState(
     val event: Event? = null,
     val subscription: SubscriptionUi = SubscriptionUi.Hidden,
     val actionError: Boolean = false,
+    // the signed in user organizes this event, so they can add images
+    val isCurator: Boolean = false,
+    val isUploadingImage: Boolean = false,
 )

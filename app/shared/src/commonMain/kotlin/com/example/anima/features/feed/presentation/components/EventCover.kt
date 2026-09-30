@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -26,6 +27,7 @@ import anima.app.shared.generated.resources.feed_interested
 import anima.app.shared.generated.resources.feed_live
 import anima.app.shared.generated.resources.feed_price_free
 import anima.app.shared.generated.resources.feed_status_finished
+import coil3.compose.AsyncImage
 import com.example.anima.core.components.icon.AnimaIcon
 import com.example.anima.core.components.icon.lucide.LucideUsers
 import com.example.anima.core.theme.AnimaTheme
@@ -33,7 +35,7 @@ import com.anima.features.event.models.Event
 import com.anima.features.event.models.EventStatus
 import org.jetbrains.compose.resources.stringResource
 
-// gradients for the cover image until an image loader is added
+// gradients for events without images, and while the image loads
 private val coverPalettes: List<List<Color>> = listOf(
     listOf(Color(0xFFBC1F4B), Color(0xFF4A0E22)),
     listOf(Color(0xFF7A2A8C), Color(0xFF241046)),
@@ -63,6 +65,16 @@ fun EventCover(
             .height(height)
             .background(eventCoverBrush(event.coverSeed)),
     ) {
+        // the first image is the cover, the gradient stays behind it as placeholder and fallback
+        event.imageUrls.firstOrNull()?.let { url ->
+            AsyncImage(
+                model = url,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.matchParentSize(),
+            )
+        }
+
         // scrim: keeps the title readable over any gradient
         Box(
             modifier = Modifier

@@ -5,6 +5,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.example.anima.core.components.snackbar.AnimaSnackbarHost
+import coil3.ImageLoader
+import coil3.compose.setSingletonImageLoaderFactory
+import coil3.network.ktor3.KtorNetworkFetcherFactory
 import androidx.navigation.compose.rememberNavController
 import com.example.anima.core.theme.AnimaTheme
 import com.example.anima.navigation.AppNavHost
@@ -17,6 +20,12 @@ import org.koin.compose.koinInject
 
 @Composable
 fun App() {
+    // event images are public urls, loaded with coil's own ktor client (not the api one, no token, no base url)
+    setSingletonImageLoaderFactory { context ->
+        ImageLoader.Builder(context)
+            .components { add(KtorNetworkFetcherFactory()) }
+            .build()
+    }
     KoinApplication(application = { modules(appModule) }) {
         AnimaTheme {
             val navController = rememberNavController()

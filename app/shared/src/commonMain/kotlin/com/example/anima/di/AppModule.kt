@@ -1,6 +1,7 @@
 package com.example.anima.di
 
 import com.example.anima.core.error.AppExceptionBus
+import com.example.anima.core.image.ImageUploader
 import com.example.anima.core.network.createApiClient
 import com.example.anima.core.network.createPlainClient
 import com.example.anima.features.auth.data.SessionRepository
@@ -10,6 +11,8 @@ import com.example.anima.features.auth.data.SettingsTokenStorage
 import com.example.anima.features.auth.data.TokenStorage
 import com.example.anima.features.auth.presentation.login.LoginViewModel
 import com.example.anima.features.auth.presentation.register.RegisterViewModel
+import com.example.anima.features.eventdetail.data.ApiEventImageRepository
+import com.example.anima.features.eventdetail.data.EventImageRepository
 import com.example.anima.features.eventdetail.presentation.EventDetailViewModel
 import com.example.anima.features.feed.data.ApiFeedRepository
 import com.example.anima.features.feed.data.FeedRepository
@@ -34,10 +37,12 @@ val appModule = module {
     single<FeedRepository> { ApiFeedRepository(get()) }
     single<SubscriptionRepository> { ApiSubscriptionRepository(get()) }
     single<ProfileRepository> { ApiProfileRepository(get()) }
+    single { ImageUploader(get()) }
+    single<EventImageRepository> { ApiEventImageRepository(get()) }
 
     viewModel { LoginViewModel(get(), get()) }
     viewModel { RegisterViewModel(get(), get()) }
     viewModel { FeedViewModel(get(), get()) }
-    viewModel { EventDetailViewModel(get(), get(), get()) }
+    viewModel { EventDetailViewModel(get(), get(), get(), get(), get()) }
     viewModel { ProfileViewModel(get(), get()) }
 }

@@ -10,7 +10,11 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
+import io.ktor.http.contentType
 import com.example.anima.core.log.AppLog
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
@@ -38,7 +42,7 @@ private fun HttpClientConfig<*>.baseSetup() {
     }
     defaultRequest {
         url(apiBaseUrl.trimEnd('/') + "/")
-        headers.append("Content-Type", "application/json")
+        // no default Content-Type: it would override the multipart boundary on uploads, json bodies go through jsonBody()
     }
     // turns every failure into an ApiException the view models can handle
     HttpResponseValidator {
@@ -53,6 +57,12 @@ private fun HttpClientConfig<*>.baseSetup() {
             throw ApiException(null, cause.message ?: "network error")
         }
     }
+}
+
+// a json request body, ContentNegotiation serializes it because of the content type
+inline fun <reified T> HttpRequestBuilder.jsonBody(body: T) {
+    contentType(ContentType.Application.Json)
+    setBody(body)
 }
 
 // no auth plugin, used for login and refresh so a refresh can't trigger a refresh
