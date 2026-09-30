@@ -1,9 +1,17 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeCompiler)
 }
+
+// debug builds read the server url from local.properties (api.baseUrl), release builds from API_BASE_URL
+val localProperties = Properties().apply {
+    rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use(::load)
+}
+val debugApiUrl = localProperties.getProperty("api.baseUrl") ?: "http://localhost:8080"
+val releaseApiUrl = providers.gradleProperty("API_BASE_URL").orElse(providers.environmentVariable("API_BASE_URL"))
 
 kotlin {
     compilerOptions {
@@ -36,7 +44,15 @@ android {
         }
     }
     buildTypes {
+        debug {
+            buildConfigField("String", "API_BASE_URL", "\"$debugApiUrl\"")
+        }
         release {
+            // a release must never ship with a dev url
+            val url = releaseApiUrl.orNull ?: if (gradle.startParameter.taskNames.any { it.contains("release", true) }) {
+                throw GradleException("Set API_BASE_URL (gradle property or env var) to build a release")
+            } else ""
+            buildConfigField("String", "API_BASE_URL", "\"$url\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -50,5 +66,6 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }

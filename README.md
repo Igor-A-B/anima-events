@@ -37,3 +37,9 @@ Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-mu
 
 We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public Slack channel [#compose-web](https://slack-chats.kotlinlang.org/c/compose-web).
 If you face any issues, please report them on [YouTrack](https://youtrack.jetbrains.com/newIssue?project=CMP).
+## API url on Android
+
+- Emulator: works with no setup (`http://10.0.2.2:8080`).
+- Debug on a real phone: add `api.baseUrl=http://<your-LAN-IP>:8080` to `local.properties`. With no value it uses `http://localhost:8080`, which needs `adb reverse tcp:8080 tcp:8080`. Debug builds allow cleartext http.
+- Release: pass `API_BASE_URL=https://...` as a Gradle property or env var. The build fails without it, and release builds are https only.
+- Logs: `adb logcat -s System.out` shows the requests and failures.

@@ -7,7 +7,11 @@ import io.ktor.client.plugins.ResponseException
 import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.http.HttpHeaders
+import com.example.anima.core.log.AppLog
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
@@ -24,7 +28,14 @@ private val json = Json { ignoreUnknownKeys = true }
 private fun HttpClientConfig<*>.baseSetup() {
     expectSuccess = true
     install(ContentNegotiation) { json(json) }
-    install(Logging)
+    // INFO logs method, url and status, never bodies, so passwords and tokens stay out of the log
+    install(Logging) {
+        logger = object : Logger {
+            override fun log(message: String) = AppLog.i("Http", message)
+        }
+        level = LogLevel.INFO
+        sanitizeHeader { it == HttpHeaders.Authorization }
+    }
     defaultRequest {
         url(apiBaseUrl.trimEnd('/') + "/")
         headers.append("Content-Type", "application/json")
@@ -34,8 +45,11 @@ private fun HttpClientConfig<*>.baseSetup() {
         handleResponseExceptionWithRequest { cause, _ ->
             if (cause is ResponseException) {
                 val message = runCatching { cause.response.body<ErrorBody>().error }.getOrDefault("")
-                throw ApiException(cause.response.status.value, message.ifBlank { cause.message ?: "" })
+                val status = cause.response.status.value
+                AppLog.e("Http", "${cause.response.call.request.url} failed with $status: $message")
+                throw ApiException(status, message.ifBlank { cause.message ?: "" })
             }
+            AppLog.e("Http", "request failed before a response", cause)
             throw ApiException(null, cause.message ?: "network error")
         }
     }
