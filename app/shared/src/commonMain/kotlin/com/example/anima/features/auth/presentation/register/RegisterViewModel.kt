@@ -4,8 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anima.features.auth.dtos.RegisterRequestDto
 import com.anima.features.user.models.AccountType
-import com.example.anima.core.error.UiEvent
-import com.example.anima.core.error.UiEventEmitter
+import com.example.anima.core.error.AppExceptionBus
 import com.example.anima.core.error.toAppError
 import com.example.anima.features.auth.data.SessionRepository
 import kotlinx.coroutines.CancellationException
@@ -17,9 +16,8 @@ import kotlinx.coroutines.launch
 
 class RegisterViewModel(
     private val session: SessionRepository,
+    private val bus: AppExceptionBus,
 ) : ViewModel() {
-
-    val events = UiEventEmitter()
 
     private val _uiState = MutableStateFlow(RegisterUiState())
     val uiState: StateFlow<RegisterUiState> = _uiState.asStateFlow()
@@ -75,9 +73,8 @@ class RegisterViewModel(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                val error = e.toAppError()
-                _uiState.update { it.copy(isLoading = false, error = error) }
-                events.emit(UiEvent.ShowError(error))
+                _uiState.update { it.copy(isLoading = false, error = e.toAppError()) }
+                bus.report(e)
             }
         }
     }
