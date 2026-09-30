@@ -32,6 +32,7 @@ import com.example.anima.core.components.AnimaScaffoldInsets
 import com.example.anima.core.theme.AnimaTheme
 import com.anima.features.event.models.Event
 import com.anima.features.event.models.EventCategory
+import com.anima.features.event.models.FeedSectionType
 import com.example.anima.features.feed.domain.FeedSection
 import com.example.anima.features.feed.presentation.components.CategoryFilterRow
 import com.example.anima.features.feed.presentation.components.FeedHeader
@@ -52,6 +53,7 @@ fun FeedScreen(
         onCategorySelected = viewModel::onCategorySelected,
         onEventClick = { event -> onNavigateToEvent(event.id) },
         onSeeAllClick = { /* TODO: navegar para a listagem completa da secao */ },
+        onLoadMore = viewModel::loadMore,
     )
 }
 
@@ -62,6 +64,7 @@ private fun FeedContent(
     onCategorySelected: (EventCategory?) -> Unit,
     onEventClick: (Event) -> Unit,
     onSeeAllClick: (FeedSection) -> Unit,
+    onLoadMore: (FeedSectionType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     AnimaScaffold(insets = AnimaScaffoldInsets.WithChrome) {
@@ -117,6 +120,8 @@ private fun FeedContent(
                                 section = section,
                                 onEventClick = onEventClick,
                                 onSeeAllClick = onSeeAllClick,
+                                onLoadMore = { onLoadMore(section.type) },
+                                isLoadingMore = section.type in uiState.loadingMore,
                             )
                         }
                     }

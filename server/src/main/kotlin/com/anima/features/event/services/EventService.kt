@@ -70,13 +70,13 @@ class EventService(
         lat: Double?,
         lng: Double?,
         userId: UUID?,
-        page: Int,
+        cursor: String?,
         size: Int,
     ): EventPageDto {
         val now = LocalDateTime.now()
         val liveStart = now.minusHours(LIVE_HOURS)
         val specs = mutableListOf<Specification<EventEntity>>()
-        var sort = Sort.by("startsAt")
+        val sort = Sort.by("startsAt", "id")
 
         when (section) {
             FeedSectionType.HAPPENING_NOW -> specs += Specification { r, _, cb ->
@@ -119,8 +119,23 @@ class EventService(
             }
         }
 
-        val result = events.search(Specification.allOf(specs), PageRequest.of(page.coerceAtLeast(0), size.coerceIn(1, 50), sort))
-        return EventPageDto(result.content.map { it.toEvent(attendeesOf(it), lat, lng) }, result.number, result.size, result.totalElements)
+        // keyset pagination: continue right after the last event of the previous page
+        if (!cursor.isNullOrBlank()) {
+            val after = EventCursor.decode(cursor)
+            specs += Specification { r, _, cb ->
+                cb.or(
+                    cb.greaterThan(r.get("startsAt"), after.startsAt),
+                    cb.and(cb.equal(r.get<LocalDateTime>("startsAt"), after.startsAt), cb.greaterThan(r.get("id"), after.id)),
+                )
+            }
+        }
+
+        // one extra row tells whether there is a next page
+        val limit = size.coerceIn(1, 50)
+        val rows = events.search(Specification.allOf(specs), PageRequest.of(0, limit + 1, sort)).content
+        val page = rows.take(limit)
+        val nextCursor = if (rows.size > limit) page.last().let { EventCursor(it.startsAt, it.id!!).encode() } else null
+        return EventPageDto(page.map { it.toEvent(attendeesOf(it), lat, lng) }, nextCursor)
     }
 
     private fun attendeesOf(event: EventEntity) =
