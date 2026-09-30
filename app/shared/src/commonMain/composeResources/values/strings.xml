@@ -138,6 +138,10 @@
     <!-- FEATURE: Add event -->
     <string name="add_event_title">Create event</string>
     <string name="add_event_photo_picker">Add photo</string>
+    <string name="add_event_photo_take">Take photo</string>
+    <string name="add_event_photo_replace">Replace</string>
+    <string name="add_event_photo_too_large">Photo too large. The limit is 10 MB.</string>
+    <string name="add_event_photo_remove">Remove</string>
     <string name="add_event_name_hint">Event name</string>
     <string name="add_event_date_hint">Date</string>
     <string name="add_event_time_hint">Time</string>

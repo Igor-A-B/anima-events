@@ -27,15 +27,22 @@ fun rememberImagePicker(
     val launcher = rememberFilePickerLauncher(type = FileKitType.Image) { file ->
         if (file == null) return@rememberFilePickerLauncher
         val name = file.name
-        val mimeType = PickedImage.mimeTypeOf(name)
-        if (mimeType == null) {
-            AppLog.i("ImagePicker", "unsupported image type: $name")
-            currentOnUnsupported()
-            return@rememberFilePickerLauncher
-        }
         scope.launch {
             try {
-                currentOnPicked(PickedImage(file.readBytes(), name, mimeType))
+                val bytes = file.readBytes()
+                val byName = PickedImage.mimeTypeOf(name)
+                if (byName != null) {
+                    currentOnPicked(PickedImage(bytes, name, byName))
+                    return@launch
+                }
+                // no usable extension (content uris), trust the content instead
+                val sniffed = PickedImage.sniff(bytes)
+                if (sniffed == null) {
+                    AppLog.i("ImagePicker", "unsupported image type: $name")
+                    currentOnUnsupported()
+                    return@launch
+                }
+                currentOnPicked(PickedImage(bytes, "photo.${sniffed.first}", sniffed.second))
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
