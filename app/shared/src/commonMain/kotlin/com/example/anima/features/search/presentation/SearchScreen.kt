@@ -79,8 +79,7 @@ private fun SearchContent(
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(top = AnimaTheme.spacing.lg)
-                .padding(bottom = AnimaBottomNavDefaults.ContentReserve,),
+                .padding(top = AnimaTheme.spacing.lg),
             verticalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.lg),
         ) {
             SearchField(
@@ -132,8 +131,10 @@ private fun SearchContent(
                             .fillMaxSize()
                             // results fade while the next search runs, instead of vanishing
                             .alpha(if (uiState.isLoading) LOADING_CONTENT_ALPHA else 1f),
+                        // the nav floats over the grid, so the last row scrolls clear of it
                         contentPadding = PaddingValues(
                             start = AnimaTheme.spacing.lg,
+                            bottom = AnimaBottomNavDefaults.ContentReserve,
                         ),
                         horizontalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.md),
                         verticalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.md),

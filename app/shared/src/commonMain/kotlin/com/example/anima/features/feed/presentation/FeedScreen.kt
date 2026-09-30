@@ -1,6 +1,5 @@
 package com.example.anima.features.feed.presentation
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -70,7 +69,6 @@ private fun FeedContent(
     AnimaScaffold(insets = AnimaScaffoldInsets.WithChrome) {
         Column(
             modifier = modifier
-                .background(AnimaTheme.colors.background)
                 .fillMaxSize()
                 .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))
                 .padding(top = AnimaTheme.spacing.lg),
