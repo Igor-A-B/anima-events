@@ -112,7 +112,7 @@ class AuthService(
         val stored = refreshTokenRepository.findByTokenHash(tokenHash) ?: throw InvalidRefreshTokenException()
         val now = Instant.now()
         // read while still attached, the revoke below clears the persistence context
-        val user = stored.user
+        val user = stored.user!!
         val userId = user.id!!
         val email = user.email
 
@@ -145,11 +145,11 @@ class AuthService(
         val rawToken = generateOpaqueToken()
         val now = Instant.now()
         refreshTokenRepository.save(
-            RefreshTokenEntity(
-                tokenHash = TokenHashUtil.sha256(rawToken),
-                user = user,
+            RefreshTokenEntity().apply {
+                tokenHash = TokenHashUtil.sha256(rawToken)
+                this.user = user
                 expiresAt = now.plusSeconds(refreshTokenExpirationDays * 24 * 60 * 60)
-            )
+            }
         )
         // oldest sessions are dropped once a user goes over the cap
         val active = refreshTokenRepository.findActiveByUserId(user.id!!, now)

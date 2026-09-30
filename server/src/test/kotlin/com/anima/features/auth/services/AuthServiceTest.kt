@@ -28,14 +28,14 @@ private class FakeUsers(private val users: List<UserEntity>) : UserRepository {
 private class FakeTokens : RefreshTokenRepository {
     val rows = mutableListOf<RefreshTokenEntity>()
     override fun findByTokenHash(tokenHash: String) = rows.find { it.tokenHash == tokenHash }
-    override fun findAllByUserId(userId: UUID) = rows.filter { it.user.id == userId }
+    override fun findAllByUserId(userId: UUID) = rows.filter { it.user?.id == userId }
     override fun save(token: RefreshTokenEntity): RefreshTokenEntity {
         token.id = UUID.randomUUID()
         rows += token
         return token
     }
     override fun deleteById(id: UUID) { rows.removeIf { it.id == id } }
-    override fun deleteAllByUserId(userId: UUID) { rows.removeIf { it.user.id == userId } }
+    override fun deleteAllByUserId(userId: UUID) { rows.removeIf { it.user?.id == userId } }
     override fun revokeByTokenHash(tokenHash: String) { findByTokenHash(tokenHash)?.revoked = true }
     override fun revokeIfActive(tokenHash: String, now: Instant): Boolean {
         val t = findByTokenHash(tokenHash)?.takeIf { !it.revoked && it.expiresAt.isAfter(now) } ?: return false
@@ -43,7 +43,7 @@ private class FakeTokens : RefreshTokenRepository {
         return true
     }
     override fun findActiveByUserId(userId: UUID, now: Instant) =
-        rows.filter { it.user.id == userId && !it.revoked && it.expiresAt.isAfter(now) }.sortedBy { it.createdAt }
+        rows.filter { it.user?.id == userId &&!it.revoked && it.expiresAt.isAfter(now) }.sortedBy { it.createdAt }
     override fun deleteExpired(now: Instant) = 0
 }
 
