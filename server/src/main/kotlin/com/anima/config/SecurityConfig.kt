@@ -42,6 +42,8 @@ class SecurityConfig {
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests {
                 it.requestMatchers("/auth/**").permitAll()
+                    // the error forward runs without the jwt filter, so a server error would otherwise answer 401
+                    .requestMatchers("/error").permitAll()
                     .requestMatchers(HttpMethod.GET, "/events", "/events/**").permitAll()
                     .anyRequest().authenticated()
             }
