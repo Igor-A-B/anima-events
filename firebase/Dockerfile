@@ -1,8 +1,9 @@
-FROM node:22-slim
+# trixie, bookworm has no java 21
+FROM node:22-trixie-slim
 
-# the storage rules runtime needs java
+# the storage rules runtime needs java, firebase-tools requires 21+
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends openjdk-17-jre-headless \
+    && apt-get install -y --no-install-recommends openjdk-21-jre-headless \
     && rm -rf /var/lib/apt/lists/*
 
 RUN npm install -g firebase-tools

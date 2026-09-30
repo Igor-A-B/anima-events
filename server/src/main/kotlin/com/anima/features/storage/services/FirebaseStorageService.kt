@@ -6,6 +6,7 @@ import com.google.cloud.storage.Storage
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.net.URLEncoder
+import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
 
 @Service
@@ -17,7 +18,8 @@ class FirebaseStorageService(
 
     override fun upload(path: String, bytes: ByteArray, contentType: String) {
         val info = BlobInfo.newBuilder(BlobId.of(bucket, path)).setContentType(contentType).build()
-        storage.create(info, bytes)
+        // resumable upload: the emulator can't parse the multipart body that storage.create sends
+        storage.writer(info).use { it.write(ByteBuffer.wrap(bytes)) }
     }
 
     override fun delete(path: String) {
