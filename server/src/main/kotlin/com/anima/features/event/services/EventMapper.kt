@@ -16,7 +16,13 @@ import kotlin.math.sqrt
 internal const val LIVE_HOURS = 3L
 
 // dateLabel/timeLabel/status/distance are display values, computed here instead of stored
-internal fun EventEntity.toEvent(attendees: Int, lat: Double? = null, lng: Double? = null): Event {
+// imageUrl turns a storage path into a url the app can load (StorageService::publicUrl)
+internal fun EventEntity.toEvent(
+    attendees: Int,
+    imageUrl: (String) -> String,
+    lat: Double? = null,
+    lng: Double? = null,
+): Event {
     val now = LocalDateTime.now()
     val status = when {
         startsAt.isAfter(now) -> EventStatus.UPCOMING
@@ -48,6 +54,8 @@ internal fun EventEntity.toEvent(attendees: Int, lat: Double? = null, lng: Doubl
         coverSeed = abs(id.hashCode()),
         description = description,
         organizerName = organizer?.name ?: "",
+        curatorId = organizer?.id?.toString() ?: "",
+        imageUrls = images.map { imageUrl(it.objectPath) },
     )
 }
 

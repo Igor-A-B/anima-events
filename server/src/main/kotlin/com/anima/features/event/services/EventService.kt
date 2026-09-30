@@ -10,6 +10,7 @@ import com.anima.features.event.models.EventCategory
 import com.anima.features.event.models.EventStatus
 import com.anima.features.event.models.FeedSectionType
 import com.anima.features.event.repositories.EventRepository
+import com.anima.features.storage.services.StorageService
 import com.anima.features.subscription.entities.SubscriptionEntity
 import com.anima.features.subscription.models.SubscriptionStatus
 import com.anima.features.subscription.repositories.SubscriptionRepository
@@ -42,19 +43,20 @@ class EventService(
     private val events: EventRepository,
     private val users: UserRepository,
     private val subscriptions: SubscriptionRepository,
+    private val storage: StorageService,
 ) {
     fun create(userId: UUID, request: CreateEventRequestDto): Event {
         val organizer = users.findById(userId).orElseThrow { EventForbiddenException() }
         val entity = EventEntity().apply { this.organizer = organizer }
-        return events.save(entity.fill(request)).let { it.toEvent(attendeesOf(it)) }
+        return events.save(entity.fill(request)).let { it.toEvent(attendeesOf(it), storage::publicUrl) }
     }
 
     @Transactional(readOnly = true)
-    fun get(id: UUID): Event = find(id).let { it.toEvent(attendeesOf(it)) }
+    fun get(id: UUID): Event = find(id).let { it.toEvent(attendeesOf(it), storage::publicUrl) }
 
     fun update(userId: UUID, id: UUID, request: CreateEventRequestDto): Event {
         val entity = findOwned(userId, id)
-        return events.save(entity.fill(request)).let { it.toEvent(attendeesOf(it)) }
+        return events.save(entity.fill(request)).let { it.toEvent(attendeesOf(it), storage::publicUrl) }
     }
 
     fun delete(userId: UUID, id: UUID) {
@@ -135,7 +137,7 @@ class EventService(
         val rows = events.search(Specification.allOf(specs), PageRequest.of(0, limit + 1, sort)).content
         val page = rows.take(limit)
         val nextCursor = if (rows.size > limit) page.last().let { EventCursor(it.startsAt, it.id!!).encode() } else null
-        return EventPageDto(page.map { it.toEvent(attendeesOf(it), lat, lng) }, nextCursor)
+        return EventPageDto(page.map { it.toEvent(attendeesOf(it), storage::publicUrl, lat, lng) }, nextCursor)
     }
 
     private fun attendeesOf(event: EventEntity) =

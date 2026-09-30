@@ -5,6 +5,7 @@ import com.anima.features.event.exceptions.EventNotFoundException
 import com.anima.features.event.models.EventStatus
 import com.anima.features.event.repositories.EventRepository
 import com.anima.features.event.services.toEvent
+import com.anima.features.storage.services.StorageService
 import com.anima.features.subscription.entities.SubscriptionEntity
 import com.anima.features.subscription.exceptions.EventAlreadyFinishedException
 import com.anima.features.subscription.exceptions.NotAVisitorException
@@ -27,6 +28,7 @@ class SubscriptionService(
     private val subscriptions: SubscriptionRepository,
     private val visitors: VisitorRepository,
     private val events: EventRepository,
+    private val storage: StorageService,
 ) {
     // idempotent, a cancelled subscription is reused
     fun subscribe(userId: UUID, eventId: UUID): Subscription {
@@ -35,7 +37,7 @@ class SubscriptionService(
         val existing = subscriptions.findByVisitorIdAndEventId(visitor.id, eventId).orElse(null)
         if (existing != null && existing.status != SubscriptionStatus.CANCELLED) return existing.toModel()
 
-        if (event.toEvent(0).status == EventStatus.FINISHED) throw EventAlreadyFinishedException()
+        if (event.toEvent(0, storage::publicUrl).status == EventStatus.FINISHED) throw EventAlreadyFinishedException()
         val entity = existing ?: SubscriptionEntity().also {
             it.visitor = visitor
             it.event = event
@@ -65,7 +67,7 @@ class SubscriptionService(
         return Subscription(
             id = id.toString(),
             visitorId = visitor!!.id,
-            event = event.toEvent(subscriptions.countByEventIdAndStatusIn(event.id!!, ACTIVE).toInt()),
+            event = event.toEvent(subscriptions.countByEventIdAndStatusIn(event.id!!, ACTIVE).toInt(), storage::publicUrl),
             createdTimestamp = createdTimestamp.toEpochMilli(),
             status = status,
         )

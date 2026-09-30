@@ -6,8 +6,12 @@ import com.anima.features.auth.exceptions.InvalidCredentialsException
 import com.anima.features.auth.exceptions.InvalidRefreshTokenException
 import com.anima.features.auth.exceptions.TooManyAttemptsException
 import com.anima.features.auth.repositories.RefreshTokenRepository
+import com.anima.features.exhibitor.entities.ExhibitorEntity
+import com.anima.features.exhibitor.repositories.ExhibitorRepository
 import com.anima.features.user.entities.UserEntity
 import com.anima.features.user.repositories.UserRepository
+import com.anima.features.visitor.entities.VisitorEntity
+import com.anima.features.visitor.repositories.VisitorRepository
 import com.anima.utils.TokenHashUtil
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -47,6 +51,22 @@ private class FakeTokens : RefreshTokenRepository {
     override fun deleteExpired(now: Instant) = 0
 }
 
+private class FakeVisitors : VisitorRepository {
+    override fun findById(id: String): Optional<VisitorEntity> = Optional.empty()
+    override fun findByUserId(userId: UUID): Optional<VisitorEntity> = Optional.empty()
+    override fun existsByUserId(userId: UUID) = false
+    override fun save(visitor: VisitorEntity) = visitor
+    override fun deleteById(id: String) = Unit
+}
+
+private class FakeExhibitors : ExhibitorRepository {
+    override fun findById(id: String): Optional<ExhibitorEntity> = Optional.empty()
+    override fun findByUserId(userId: UUID): Optional<ExhibitorEntity> = Optional.empty()
+    override fun existsByUserId(userId: UUID) = false
+    override fun save(exhibitor: ExhibitorEntity) = exhibitor
+    override fun deleteById(id: String) = Unit
+}
+
 class AuthServiceTest {
     private val password = "correct horse"
     private val user = UserEntity().apply {
@@ -56,7 +76,7 @@ class AuthServiceTest {
     }
     private val tokens = FakeTokens()
     private val jwt = JwtService("a-test-secret-that-is-long-enough-0123456789", "test", 15)
-    private val service = AuthService(FakeUsers(listOf(user)), tokens, jwt, 30)
+    private val service = AuthService(FakeUsers(listOf(user)), tokens, jwt, FakeVisitors(), FakeExhibitors(), 30)
 
     @Test
     fun `login normalizes the email`() {

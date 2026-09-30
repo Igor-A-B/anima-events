@@ -32,6 +32,7 @@ dependencies {
     implementation(libs.hikari.cp)
     implementation(libs.auth0)
     implementation(libs.bcrypt)
+    implementation(libs.google.cloud.storage)
     implementation(libs.kotlin.reflect)
     // request bodies are kotlin data classes without a default constructor
     implementation(libs.jackson.kotlin)

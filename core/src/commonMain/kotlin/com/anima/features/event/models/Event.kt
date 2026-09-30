@@ -38,4 +38,8 @@ data class Event(
     val coverSeed: Int = 0,
     val description: String = "",
     val organizerName: String = "",
+    // user id of the organizer, lets the app tell if the logged in user curates the event
+    val curatorId: String = "",
+    // oldest first, the first one is the cover
+    val imageUrls: List<String> = emptyList(),
 )
