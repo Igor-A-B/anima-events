@@ -3,6 +3,7 @@ package com.example.anima.features.search.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anima.features.event.models.EventCategory
+import com.example.anima.core.events.EventChanges
 import com.example.anima.features.search.data.SearchRepository
 import com.anima.features.event.models.DateFilter
 import com.anima.features.event.models.PriceFilter
@@ -13,11 +14,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val repository: SearchRepository,
+    eventChanges: EventChanges,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchUiState())
@@ -28,6 +31,10 @@ class SearchViewModel(
 
     init {
         search(debounce = false)
+
+        viewModelScope.launch {
+            eventChanges.version.drop(1).collect { search(debounce = false) }
+        }
     }
 
     fun onQueryChange(query: String) {

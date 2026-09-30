@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anima.features.event.models.EventCategory
 import com.anima.features.event.models.FeedSectionType
+import com.example.anima.core.events.EventChanges
 import com.example.anima.features.feed.data.FeedRepository
 import com.example.anima.features.feed.domain.FeedPage
 import com.example.anima.features.feed.domain.FeedSection
@@ -20,6 +21,7 @@ import kotlinx.coroutines.launch
 class FeedViewModel(
     private val repository: FeedRepository,
     subscriptions: SubscriptionRepository,
+    eventChanges: EventChanges,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FeedUiState())
@@ -32,6 +34,10 @@ class FeedViewModel(
         loadFeed()
 
         // subscribing or cancelling on the detail screen changes the participating row
+        // creating, editing or deleting an event changes every row
+        viewModelScope.launch {
+            eventChanges.version.drop(1).collect { loadFeed() }
+        }
         viewModelScope.launch {
             subscriptions.subscriptions.drop(1).collect { loadSection(FeedSectionType.PARTICIPATING) }
         }

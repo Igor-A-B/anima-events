@@ -1,6 +1,7 @@
 package com.example.anima.di
 
 import com.example.anima.core.error.AppExceptionBus
+import com.example.anima.core.events.EventChanges
 import com.example.anima.core.image.ImageUploader
 import com.example.anima.core.network.createApiClient
 import com.example.anima.core.network.createPlainClient
@@ -34,6 +35,7 @@ import org.koin.dsl.module
 
 val appModule = module {
     single { AppExceptionBus() }
+    single { EventChanges() }
     single<TokenStorage> { SettingsTokenStorage() }
     // login and refresh use the client without the auth plugin
     single<AuthRepository> { ApiAuthRepository(createPlainClient()) }
@@ -44,14 +46,14 @@ val appModule = module {
     single<SearchRepository> { ApiSearchRepository(get()) }
     single<SubscriptionRepository> { ApiSubscriptionRepository(get()) }
     single<ProfileRepository> { ApiProfileRepository(get()) }
-    single<ExhibitorEventRepository> { ApiExhibitorEventRepository(get()) }
+    single<ExhibitorEventRepository> { ApiExhibitorEventRepository(get(), get()) }
     single { ImageUploader(get()) }
-    single<EventImageRepository> { ApiEventImageRepository(get()) }
+    single<EventImageRepository> { ApiEventImageRepository(get(), get()) }
 
     viewModel { LoginViewModel(get(), get()) }
     viewModel { RegisterViewModel(get(), get()) }
-    viewModel { FeedViewModel(get(), get()) }
-    viewModel { SearchViewModel(get()) }
+    viewModel { FeedViewModel(get(), get(), get()) }
+    viewModel { SearchViewModel(get(), get()) }
     viewModel { EventDetailViewModel(get(), get(), get(), get(), get()) }
     viewModel { ProfileViewModel(get(), get(), get()) }
     viewModel { AddEventViewModel(get(), get()) }
