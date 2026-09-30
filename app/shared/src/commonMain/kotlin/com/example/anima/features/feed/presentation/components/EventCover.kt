@@ -28,6 +28,9 @@ import anima.app.shared.generated.resources.feed_live
 import anima.app.shared.generated.resources.feed_price_free
 import anima.app.shared.generated.resources.feed_status_finished
 import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.example.anima.core.components.icon.AnimaIcon
 import com.example.anima.core.components.icon.lucide.LucideUsers
 import com.example.anima.core.theme.AnimaTheme
@@ -48,6 +51,9 @@ private val coverPalettes: List<List<Color>> = listOf(
 fun eventCoverBrush(coverSeed: Int): Brush =
     Brush.linearGradient(coverPalettes[coverSeed.mod(coverPalettes.size)])
 
+// the first image is the cover, null keeps the gradient only
+fun Event.coverImageUrl(): String? = imageUrls.firstOrNull()
+
 // how much room the cover has for its chips
 enum class EventCoverSize { DEFAULT, COMPACT }
 
@@ -66,9 +72,13 @@ fun EventCover(
             .background(eventCoverBrush(event.coverSeed)),
     ) {
         // the first image is the cover, the gradient stays behind it as placeholder and fallback
-        event.imageUrls.firstOrNull()?.let { url ->
+        event.coverImageUrl()?.let { url ->
             AsyncImage(
-                model = url,
+                // crossfade: the image fades in over the gradient once it arrives
+                model = ImageRequest.Builder(LocalPlatformContext.current)
+                    .data(url)
+                    .crossfade(true)
+                    .build(),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.matchParentSize(),

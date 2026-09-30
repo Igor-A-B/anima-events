@@ -8,6 +8,7 @@ import com.example.anima.core.components.snackbar.AnimaSnackbarHost
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.network.ktor3.KtorNetworkFetcherFactory
+import coil3.request.crossfade
 import androidx.navigation.compose.rememberNavController
 import com.example.anima.core.theme.AnimaTheme
 import com.example.anima.navigation.AppNavHost
@@ -24,6 +25,7 @@ fun App() {
     setSingletonImageLoaderFactory { context ->
         ImageLoader.Builder(context)
             .components { add(KtorNetworkFetcherFactory()) }
+            .crossfade(true)
             .build()
     }
     KoinApplication(application = { modules(appModule) }) {
