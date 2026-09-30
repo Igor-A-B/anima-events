@@ -81,7 +81,9 @@ fun ProfileScreen(
 
     ProfileContent(
         uiState = uiState,
-        onPickPhoto = { /* TODO: image upload does not exist yet */ },
+        // TODO: no profile photo endpoint yet; when it exists, launch rememberImagePicker (core/image) here
+        //  and send the PickedImage with ImageUploader.upload("<endpoint>", image) from the view model
+        onPickPhoto = {},
         onChangeName = { /* TODO: edit sheet comes with the validations */ },
         onChangePassword = viewModel::onOpenPasswordDialog,
         onLogout = { viewModel.onLogout(onSignedOut) },

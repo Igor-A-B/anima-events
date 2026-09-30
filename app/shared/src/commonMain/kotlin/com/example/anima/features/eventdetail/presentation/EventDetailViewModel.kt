@@ -5,7 +5,14 @@ import androidx.lifecycle.viewModelScope
 import com.anima.features.event.models.Event
 import com.anima.features.event.models.EventStatus
 import com.anima.features.subscription.models.SubscriptionStatus
+import anima.app.shared.generated.resources.Res
+import anima.app.shared.generated.resources.core_error_image_unsupported
+import anima.app.shared.generated.resources.event_detail_image_added
+import com.example.anima.core.error.AppExceptionBus
+import com.example.anima.core.error.Severity
+import com.example.anima.core.image.PickedImage
 import com.example.anima.features.auth.data.SessionRepository
+import com.example.anima.features.eventdetail.data.EventImageRepository
 import com.anima.features.user.models.AccountType
 import com.example.anima.features.feed.data.FeedRepository
 import com.example.anima.features.subscription.data.SubscriptionRepository
@@ -21,13 +28,16 @@ class EventDetailViewModel(
     private val feedRepository: FeedRepository,
     private val subscriptions: SubscriptionRepository,
     session: SessionRepository,
+    private val images: EventImageRepository,
+    private val bus: AppExceptionBus,
 ) : ViewModel() {
 
     private val event = MutableStateFlow<Event?>(null)
     private val busy = MutableStateFlow(false)
     private val actionError = MutableStateFlow(false)
+    private val uploadingImage = MutableStateFlow(false)
 
-    val uiState: StateFlow<EventDetailUiState> = combine(
+    private val baseState = combine(
         event, subscriptions.subscriptions, session.session, busy, actionError,
     ) { event, subs, session, busy, actionError ->
         val state = when {
@@ -43,7 +53,12 @@ class EventDetailViewModel(
                 }
             }
         }
-        EventDetailUiState(event, state, actionError)
+        val isCurator = event != null && event.curatorId.isNotBlank() && event.curatorId == session?.userId
+        EventDetailUiState(event, state, actionError, isCurator = isCurator)
+    }
+
+    val uiState: StateFlow<EventDetailUiState> = combine(baseState, uploadingImage) { state, uploading ->
+        state.copy(isUploadingImage = uploading)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), EventDetailUiState())
 
     fun loadEvent(id: String) {
@@ -76,5 +91,30 @@ class EventDetailViewModel(
                 busy.value = false
             }
         }
+    }
+
+    fun onImagePicked(image: PickedImage) {
+        val current = event.value ?: return
+        if (uploadingImage.value) return
+
+        viewModelScope.launch {
+            uploadingImage.value = true
+            try {
+                images.upload(current.id, image)
+                // reload so imageUrls has the new one, the upload already worked if this fails
+                runCatching { feedRepository.findById(current.id) }.getOrNull()?.let { event.value = it }
+                bus.show(Res.string.event_detail_image_added, Severity.SUCCESS)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                bus.report(e)
+            } finally {
+                uploadingImage.value = false
+            }
+        }
+    }
+
+    fun onUnsupportedImage() {
+        bus.show(Res.string.core_error_image_unsupported, Severity.ERROR)
     }
 }

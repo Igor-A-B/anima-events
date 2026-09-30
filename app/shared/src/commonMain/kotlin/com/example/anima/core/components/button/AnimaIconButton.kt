@@ -19,6 +19,7 @@ fun AnimaIconButton(
     modifier: Modifier = Modifier,
     size: Dp = AnimaIconButtonDefaults.Size,
     backgroundColor: Color = AnimaTheme.colors.surface,
+    enabled: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     Box(
@@ -26,7 +27,7 @@ fun AnimaIconButton(
             .size(size)
             .clip(AnimaTheme.shapes.full)
             .background(backgroundColor)
-            .clickable { onClick() },
+            .clickable(enabled = enabled) { onClick() },
         contentAlignment = Alignment.Center,
     ) {
         content()

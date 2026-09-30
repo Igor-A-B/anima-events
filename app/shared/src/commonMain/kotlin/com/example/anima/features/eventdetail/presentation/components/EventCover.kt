@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -15,13 +17,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import anima.app.shared.generated.resources.Res
+import anima.app.shared.generated.resources.event_detail_add_image
 import anima.app.shared.generated.resources.event_detail_free
+import coil3.compose.AsyncImage
 import com.example.anima.core.components.button.AnimaIconButton
 import com.example.anima.core.components.icon.AnimaIcon
 import com.example.anima.core.components.icon.lucide.LucideArrowLeft
 import com.example.anima.core.components.icon.lucide.LucideHeart
+import com.example.anima.core.components.icon.lucide.LucideImage
 import com.example.anima.core.components.icon.lucide.LucideShare
 import com.example.anima.core.theme.AnimaTheme
 import com.anima.features.event.models.EventCategory
@@ -43,6 +49,12 @@ fun EventCover(
     title: String,
     category: EventCategory,
     price: String?,
+    // the first event image, the gradient shows while it loads or when there is none
+    imageUrl: String?,
+    // curator only: the add image button, disabled with a spinner while uploading
+    canAddImage: Boolean,
+    isUploadingImage: Boolean,
+    onAddImage: () -> Unit,
     onBack: () -> Unit,
     onShare: () -> Unit,
     onFavorite: () -> Unit,
@@ -70,6 +82,15 @@ fun EventCover(
             .height(340.dp)
             .background(brush = Brush.linearGradient(colors = colors)),
     ) {
+        if (imageUrl != null) {
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.matchParentSize(),
+            )
+        }
+
         // top scrim - buttons
         Box(
             modifier = Modifier
@@ -118,6 +139,28 @@ fun EventCover(
             }
 
             Row(horizontalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.sm)) {
+                if (canAddImage) {
+                    AnimaIconButton(
+                        onClick = onAddImage,
+                        backgroundColor = Color.Black.copy(alpha = 0.3f),
+                        enabled = !isUploadingImage,
+                    ) {
+                        if (isUploadingImage) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(18.dp),
+                                color = Color.White,
+                                strokeWidth = 2.dp,
+                            )
+                        } else {
+                            AnimaIcon(
+                                imageVector = LucideImage,
+                                contentDescription = stringResource(Res.string.event_detail_add_image),
+                                tint = Color.White,
+                            )
+                        }
+                    }
+                }
+
                 AnimaIconButton(
                     onClick = onShare,
                     backgroundColor = Color.Black.copy(alpha = 0.3f),
