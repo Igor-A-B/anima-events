@@ -14,10 +14,10 @@ import anima.app.shared.generated.resources.register_step2_space_title
 import anima.app.shared.generated.resources.register_step2_user_subtitle
 import anima.app.shared.generated.resources.register_step2_user_title
 import anima.app.shared.generated.resources.register_user_name_hint
-import com.example.anima.core.components.form.AnimaTextField
 import com.example.anima.core.components.icon.AnimaIcon
 import com.example.anima.core.components.icon.lucide.LucideStore
 import com.example.anima.core.components.icon.lucide.LucideUser
+import com.example.anima.core.components.textfield.AnimaTextField
 import com.example.anima.core.theme.AnimaTheme
 import com.anima.features.user.models.AccountType
 import org.jetbrains.compose.resources.stringResource

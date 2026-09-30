@@ -13,9 +13,9 @@ import anima.app.shared.generated.resources.Res
 import anima.app.shared.generated.resources.register_email_hint
 import anima.app.shared.generated.resources.register_step3_subtitle
 import anima.app.shared.generated.resources.register_step3_title
-import com.example.anima.core.components.form.AnimaTextField
 import com.example.anima.core.components.icon.AnimaIcon
 import com.example.anima.core.components.icon.lucide.LucideMail
+import com.example.anima.core.components.textfield.AnimaTextField
 import com.example.anima.core.theme.AnimaTheme
 import org.jetbrains.compose.resources.stringResource
 

@@ -17,7 +17,7 @@ import anima.app.shared.generated.resources.profile_password_current_hint
 import anima.app.shared.generated.resources.profile_password_new_hint
 import anima.app.shared.generated.resources.profile_password_save
 import anima.app.shared.generated.resources.profile_password_title
-import com.example.anima.core.components.form.AnimaTextField
+import com.example.anima.core.components.textfield.AnimaTextField
 import com.example.anima.core.error.AppError
 import com.example.anima.core.error.messageRes
 import com.example.anima.core.theme.AnimaTheme

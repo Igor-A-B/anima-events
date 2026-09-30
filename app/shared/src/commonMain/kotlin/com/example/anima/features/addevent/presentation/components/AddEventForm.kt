@@ -10,6 +10,12 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -26,18 +32,20 @@ import anima.app.shared.generated.resources.add_event_location_hint
 import anima.app.shared.generated.resources.add_event_name_hint
 import anima.app.shared.generated.resources.add_event_price_hint
 import anima.app.shared.generated.resources.add_event_time_hint
-import com.example.anima.core.components.form.AnimaTextField
 import com.example.anima.core.components.icon.AnimaIcon
 import com.example.anima.core.components.icon.lucide.LucideBuilding
-import com.example.anima.core.components.icon.lucide.LucideCalendar
-import com.example.anima.core.components.icon.lucide.LucideClock
 import com.example.anima.core.components.icon.lucide.LucideMapPin
 import com.example.anima.core.components.icon.lucide.LucideTag
 import com.example.anima.core.components.icon.lucide.LucideTicket
 import com.example.anima.core.components.icon.lucide.LucideUsers
+import com.example.anima.core.components.picker.AnimaDatePicker
+import com.example.anima.core.components.picker.AnimaTimePicker
+import com.example.anima.core.components.textfield.AnimaTextField
 import com.example.anima.core.theme.AnimaTheme
 import com.example.anima.features.addevent.domain.model.EventDraft
 import com.anima.features.event.models.EventCategory
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -55,13 +63,26 @@ fun AddEventForm(
     onPickPhoto: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val dateFocus = FocusRequester()
-    val timeFocus = FocusRequester()
+    var showDatePicker by remember { mutableStateOf(false) }
+    var showTimePicker by remember { mutableStateOf(false) }
+    var locationKeyboardOpen by remember { mutableStateOf(false) }
+
+
+    val coroutineScope = rememberCoroutineScope()
+
     val locationFocus = FocusRequester()
     val addressFocus = FocusRequester()
     val priceFocus = FocusRequester()
     val capacityFocus = FocusRequester()
     val aboutFocus = FocusRequester()
+
+    LaunchedEffect(locationKeyboardOpen) {
+        if (locationKeyboardOpen) {
+            locationFocus.requestFocus()
+
+            locationKeyboardOpen = false
+        }
+    }
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -73,13 +94,9 @@ fun AddEventForm(
             value = draft.name,
             onValueChange = onNameChanged,
             placeholder = stringResource(Res.string.add_event_name_hint),
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Next
-            ),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             keyboardActions = KeyboardActions(
-                onNext = {
-                    dateFocus.requestFocus()
-                }
+                onNext = { showDatePicker = true }
             ),
             leadingIcon = {
                 AnimaIcon(
@@ -95,54 +112,31 @@ fun AddEventForm(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.md),
         ) {
-            AnimaTextField(
+            AnimaDatePicker(
                 value = draft.date,
-                onValueChange = onDateChanged,
-                placeholder = stringResource(Res.string.add_event_date_hint),
-                modifier = Modifier
-                    .weight(1f)
-                    .focusRequester(dateFocus),
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Next
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = {
-                        timeFocus.requestFocus()
+                onDateSelected = { date ->
+                    onDateChanged(date)
+                    coroutineScope.launch {
+                        delay(100)
+                        showTimePicker = true
                     }
-                ),
-                leadingIcon = {
-                    AnimaIcon(
-                        imageVector = LucideCalendar,
-                        contentDescription = null,
-                        tint = AnimaTheme.colors.onSurfaceVariant,
-                        size = AnimaTheme.spacing.lg,
-                    )
                 },
+                forceShow = showDatePicker,
+                onDismiss = { showDatePicker = false },
+                placeholder = stringResource(Res.string.add_event_date_hint),
+                modifier = Modifier.weight(1f),
             )
 
-            AnimaTextField(
+            AnimaTimePicker(
                 value = draft.time,
-                onValueChange = onTimeChanged,
-                placeholder = stringResource(Res.string.add_event_time_hint),
-                modifier = Modifier
-                    .weight(1f)
-                    .focusRequester(timeFocus),
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Next
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = {
-                        locationFocus.requestFocus()
-                    }
-                ),
-                leadingIcon = {
-                    AnimaIcon(
-                        imageVector = LucideClock,
-                        contentDescription = null,
-                        tint = AnimaTheme.colors.onSurfaceVariant,
-                        size = AnimaTheme.spacing.lg,
-                    )
+                onTimeSelected = { time ->
+                    onTimeChanged(time)
+                    locationKeyboardOpen = true
                 },
+                forceShow = showTimePicker,
+                onDismiss = { showTimePicker = false },
+                placeholder = stringResource(Res.string.add_event_time_hint),
+                modifier = Modifier.weight(1f),
             )
         }
 

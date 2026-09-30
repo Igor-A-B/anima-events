@@ -37,11 +37,11 @@ import anima.app.shared.generated.resources.login_register
 import com.example.anima.core.components.AnimaScaffold
 import com.example.anima.core.components.brand.AnimaBrand
 import com.example.anima.core.components.button.AnimaButton
-import com.example.anima.core.components.form.AnimaTextField
 import com.example.anima.core.components.icon.AnimaIcon
 import com.example.anima.core.components.icon.lucide.LucideEye
 import com.example.anima.core.components.icon.lucide.LucideEyeOff
 import com.example.anima.core.components.icon.lucide.LucideLock
+import com.example.anima.core.components.textfield.AnimaTextField
 import com.example.anima.core.error.messageRes
 import com.example.anima.core.theme.AnimaTheme
 import com.example.anima.features.auth.presentation.login.components.BiometricButton
