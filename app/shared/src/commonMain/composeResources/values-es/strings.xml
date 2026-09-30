@@ -200,6 +200,7 @@
     <string name="profile_event_published">Publicado</string>
     <string name="profile_events_empty">Aún no has creado eventos</string>
     <string name="profile_events_empty_visitor">Aún no participas en eventos</string>
+    <string name="profile_events_retry">No se pudieron cargar tus eventos. Toca para intentar de nuevo</string>
     <string name="profile_event_going">Voy</string>
 
     <!-- Perfil: sesion -->

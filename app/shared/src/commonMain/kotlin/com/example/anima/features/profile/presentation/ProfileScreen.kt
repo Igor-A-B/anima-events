@@ -21,6 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.compose.viewmodel.koinViewModel
 import anima.app.shared.generated.resources.Res
@@ -35,6 +37,7 @@ import anima.app.shared.generated.resources.profile_event_going
 import anima.app.shared.generated.resources.profile_event_published
 import anima.app.shared.generated.resources.profile_events_empty
 import anima.app.shared.generated.resources.profile_events_empty_visitor
+import anima.app.shared.generated.resources.profile_events_retry
 import anima.app.shared.generated.resources.profile_section_account
 import anima.app.shared.generated.resources.profile_section_events
 import anima.app.shared.generated.resources.profile_section_security
@@ -85,6 +88,9 @@ fun ProfileScreen(
     viewModel: ProfileViewModel = koinViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    // the events change on the server too, so the section refreshes when the screen returns
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.onResume() }
 
     ProfileContent(
         uiState = uiState,
@@ -319,7 +325,7 @@ private fun ProfileList(
                         )
 
                         uiState.eventsError -> Text(
-                            text = stringResource(Res.string.core_error_generic),
+                            text = stringResource(Res.string.profile_events_retry),
                             style = AnimaTheme.typography.bodyMedium,
                             color = AnimaTheme.colors.onSurfaceVariant,
                             modifier = Modifier
