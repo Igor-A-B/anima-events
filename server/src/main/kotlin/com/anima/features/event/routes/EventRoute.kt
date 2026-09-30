@@ -43,10 +43,10 @@ class EventRoute(private val eventService: EventService) {
         @RequestParam(required = false) q: String?,
         @RequestParam(required = false) lat: Double?,
         @RequestParam(required = false) lng: Double?,
-        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(required = false) cursor: String?,
         @RequestParam(defaultValue = "20") size: Int,
     ): EventPageDto = eventService.search(
-        section, category, q, lat, lng, principal?.name?.let(UUID::fromString), page, size,
+        section, category, q, lat, lng, principal?.name?.let(UUID::fromString), cursor, size,
     )
 
     @PutMapping("/{id}")

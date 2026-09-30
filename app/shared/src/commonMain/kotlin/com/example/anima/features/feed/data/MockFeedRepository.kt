@@ -4,8 +4,8 @@ package com.example.anima.features.feed.data
 import com.anima.features.event.models.Event
 import com.anima.features.event.models.EventCategory
 import com.anima.features.event.models.EventStatus
+import com.anima.features.event.models.FeedSectionType
 import com.example.anima.features.feed.domain.FeedSection
-import com.example.anima.features.feed.domain.FeedSectionType
 import kotlinx.coroutines.delay
 
 // fake data source for UI development
