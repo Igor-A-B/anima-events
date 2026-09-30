@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -22,12 +24,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import org.koin.compose.viewmodel.koinViewModel
 import anima.app.shared.generated.resources.Res
 import anima.app.shared.generated.resources.core_button_enter
 import anima.app.shared.generated.resources.login_email_hint
@@ -41,11 +41,13 @@ import com.example.anima.core.components.icon.AnimaIcon
 import com.example.anima.core.components.icon.lucide.LucideEye
 import com.example.anima.core.components.icon.lucide.LucideEyeOff
 import com.example.anima.core.components.icon.lucide.LucideLock
+import com.example.anima.core.components.icon.lucide.LucideMail
 import com.example.anima.core.components.textfield.AnimaTextField
 import com.example.anima.core.error.messageRes
 import com.example.anima.core.theme.AnimaTheme
 import com.example.anima.features.auth.presentation.login.components.BiometricButton
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun LoginScreen(
@@ -68,56 +70,63 @@ fun LoginScreen(
         ) {
             AnimaBrand()
 
-            Spacer(modifier = Modifier.height(AnimaTheme.spacing.xxl))
+            Spacer(modifier = Modifier.height(AnimaTheme.spacing.xxxl))
 
-            AnimaTextField(
-                value = uiState.email,
-                onValueChange = viewModel::onEmailChanged,
-                placeholder = stringResource(Res.string.login_email_hint),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            )
-
-            Spacer(modifier = Modifier.height(AnimaTheme.spacing.lg))
-
-            Spacer(modifier = Modifier.height(AnimaTheme.spacing.huge))
-
-            AnimaTextField(
-                value = uiState.password,
-                onValueChange = viewModel::onPasswordChanged,
-                placeholder = stringResource(Res.string.login_password_hint),
-                leadingIcon = {
-                    AnimaIcon(
-                        imageVector = LucideLock,
-                        contentDescription = null,
-                        tint = AnimaTheme.colors.onSurfaceVariant,
-                        size = 20.dp,
-                    )
-                },
-                trailingIcon = {
-                    Box(
-                        modifier = Modifier.clickable { passwordVisible = !passwordVisible },
-                    ) {
+            // fields
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.xxxl),
+            ) {
+                AnimaTextField(
+                    value = uiState.email,
+                    onValueChange = viewModel::onEmailChanged,
+                    placeholder = stringResource(Res.string.login_email_hint),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    leadingIcon = {
                         AnimaIcon(
-                            imageVector = if (passwordVisible) LucideEyeOff else LucideEye,
+                            imageVector = LucideMail,
+                            contentDescription = null,
                             tint = AnimaTheme.colors.onSurfaceVariant,
                             size = 20.dp,
                         )
-                    }
-                },
-                visualTransformation = if (passwordVisible) VisualTransformation.None
-                else PasswordVisualTransformation(),
-            )
-
-            uiState.error?.let { error ->
-                Spacer(modifier = Modifier.height(AnimaTheme.spacing.md))
-                Text(
-                    text = stringResource(error.messageRes()),
-                    style = AnimaTheme.typography.bodySmall,
-                    color = AnimaTheme.colors.error,
+                    },
                 )
+
+                AnimaTextField(
+                    value = uiState.password,
+                    onValueChange = viewModel::onPasswordChanged,
+                    placeholder = stringResource(Res.string.login_password_hint),
+                    leadingIcon = {
+                        AnimaIcon(
+                            imageVector = LucideLock,
+                            contentDescription = null,
+                            tint = AnimaTheme.colors.onSurfaceVariant,
+                            size = 20.dp,
+                        )
+                    },
+                    trailingIcon = {
+                        Box(modifier = Modifier.clickable { passwordVisible = !passwordVisible }) {
+                            AnimaIcon(
+                                imageVector = if (passwordVisible) LucideEyeOff else LucideEye,
+                                tint = AnimaTheme.colors.onSurfaceVariant,
+                                size = 20.dp,
+                            )
+                        }
+                    },
+                    visualTransformation = if (passwordVisible) VisualTransformation.None
+                    else PasswordVisualTransformation(),
+                )
+
+                uiState.error?.let { error ->
+                    Text(
+                        text = stringResource(error.messageRes()),
+                        style = AnimaTheme.typography.bodySmall,
+                        color = AnimaTheme.colors.error,
+                    )
+                }
             }
 
-            Spacer(modifier = Modifier.height(AnimaTheme.spacing.huge))
+            Spacer(modifier = Modifier.height(AnimaTheme.spacing.xxxl))
 
             AnimaButton(
                 text = stringResource(Res.string.core_button_enter),
@@ -144,11 +153,9 @@ fun LoginScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(AnimaTheme.spacing.huge))
+            Spacer(modifier = Modifier.height(AnimaTheme.spacing.xxxl))
 
-            BiometricButton(
-                onClick = { },
-            )
+            BiometricButton(onClick = { })
         }
     }
 }
