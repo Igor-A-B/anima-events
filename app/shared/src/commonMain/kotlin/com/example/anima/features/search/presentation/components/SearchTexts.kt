@@ -10,8 +10,8 @@ import anima.app.shared.generated.resources.search_date_weekend
 import anima.app.shared.generated.resources.search_price_any
 import anima.app.shared.generated.resources.search_price_free
 import anima.app.shared.generated.resources.search_price_paid
-import com.example.anima.features.search.domain.DateFilter
-import com.example.anima.features.search.domain.PriceFilter
+import com.anima.features.event.models.DateFilter
+import com.anima.features.event.models.PriceFilter
 import org.jetbrains.compose.resources.stringResource
 
 // same idea as FeedTexts: the domain enums stay language free

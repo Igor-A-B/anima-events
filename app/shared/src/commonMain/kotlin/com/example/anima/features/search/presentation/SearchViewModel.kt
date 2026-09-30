@@ -3,10 +3,9 @@ package com.example.anima.features.search.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anima.features.event.models.EventCategory
-import com.example.anima.features.search.data.MockSearchRepository
 import com.example.anima.features.search.data.SearchRepository
-import com.example.anima.features.search.domain.DateFilter
-import com.example.anima.features.search.domain.PriceFilter
+import com.anima.features.event.models.DateFilter
+import com.anima.features.event.models.PriceFilter
 import com.example.anima.features.search.domain.SearchFilters
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -18,13 +17,14 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
-    private val repository: SearchRepository = MockSearchRepository(),
+    private val repository: SearchRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchUiState())
     val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
 
     private var searchJob: Job? = null
+    private var moreJob: Job? = null
 
     init {
         search(debounce = false)
@@ -77,17 +77,21 @@ class SearchViewModel(
 
     private fun search(debounce: Boolean) {
         searchJob?.cancel()
+        // a page of the previous search must not land on the new results
+        moreJob?.cancel()
 
         searchJob = viewModelScope.launch {
             if (debounce) delay(QUERY_DEBOUNCE_MILLIS)
 
-            _uiState.update { it.copy(isLoading = true, error = "") }
+            _uiState.update { it.copy(isLoading = true, isLoadingMore = false, error = "") }
 
             val state = _uiState.value
 
             runCatching { repository.search(state.query, state.filters) }
-                .onSuccess { results ->
-                    _uiState.update { it.copy(isLoading = false, results = results) }
+                .onSuccess { page ->
+                    _uiState.update {
+                        it.copy(isLoading = false, results = page.events, nextCursor = page.nextCursor)
+                    }
                 }
                 .onFailure { throwable ->
                     if (throwable is CancellationException) throw throwable
@@ -96,9 +100,37 @@ class SearchViewModel(
                         it.copy(
                             isLoading = false,
                             results = emptyList(),
+                            nextCursor = null,
                             error = throwable.message ?: "unknown error",
                         )
                     }
+                }
+        }
+    }
+
+    // next page, called by the grid when the user scrolls near its end
+    fun loadMore() {
+        val state = _uiState.value
+        val cursor = state.nextCursor ?: return
+        if (state.isLoading || state.isLoadingMore) return
+
+        _uiState.update { it.copy(isLoadingMore = true) }
+
+        moreJob = viewModelScope.launch {
+            runCatching { repository.search(state.query, state.filters, cursor) }
+                .onSuccess { page ->
+                    _uiState.update {
+                        it.copy(
+                            isLoadingMore = false,
+                            results = it.results + page.events.filter { new -> it.results.none { old -> old.id == new.id } },
+                            nextCursor = page.nextCursor,
+                        )
+                    }
+                }
+                .onFailure { throwable ->
+                    if (throwable is CancellationException) throw throwable
+                    // the grid keeps what it has and asks again on the next scroll
+                    _uiState.update { it.copy(isLoadingMore = false) }
                 }
         }
     }

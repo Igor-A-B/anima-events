@@ -5,9 +5,11 @@ import com.anima.features.event.dtos.EventPageDto
 import com.anima.features.event.dtos.UpdateEventRequestDto
 import com.anima.features.event.exceptions.EventForbiddenException
 import com.anima.features.event.exceptions.EventNotFoundException
+import com.anima.features.event.models.DateFilter
 import com.anima.features.event.models.Event
 import com.anima.features.event.models.EventCategory
 import com.anima.features.event.models.FeedSectionType
+import com.anima.features.event.models.PriceFilter
 import com.anima.features.event.services.EventService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -35,18 +37,21 @@ class EventRoute(private val eventService: EventService) {
     fun get(@PathVariable id: UUID): Event = eventService.get(id)
 
     // section is optional, so each feed row can lazy-load itself: /events?section=NEARBY&lat=..&lng=..
+    // the search screen leaves it out and narrows with q, category (repeatable), price and date
     @GetMapping
     fun search(
         principal: Principal?,
         @RequestParam(required = false) section: FeedSectionType?,
-        @RequestParam(required = false) category: EventCategory?,
+        @RequestParam(required = false) category: List<EventCategory>?,
         @RequestParam(required = false) q: String?,
+        @RequestParam(defaultValue = "ANY") price: PriceFilter,
+        @RequestParam(defaultValue = "ANY") date: DateFilter,
         @RequestParam(required = false) lat: Double?,
         @RequestParam(required = false) lng: Double?,
         @RequestParam(required = false) cursor: String?,
         @RequestParam(defaultValue = "20") size: Int,
     ): EventPageDto = eventService.search(
-        section, category, q, lat, lng, principal?.name?.let(UUID::fromString), cursor, size,
+        section, category.orEmpty().toSet(), q, price, date, lat, lng, principal?.name?.let(UUID::fromString), cursor, size,
     )
 
     @PutMapping("/{id}")
