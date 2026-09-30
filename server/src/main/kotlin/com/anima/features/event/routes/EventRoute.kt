@@ -50,9 +50,15 @@ class EventRoute(private val eventService: EventService) {
         @RequestParam(required = false) lng: Double?,
         @RequestParam(required = false) cursor: String?,
         @RequestParam(defaultValue = "20") size: Int,
-    ): EventPageDto = eventService.search(
-        section, category.orEmpty().toSet(), q, price, date, lat, lng, principal?.name?.let(UUID::fromString), cursor, size,
-    )
+    ): ResponseEntity<EventPageDto> {
+        // 401, not 400, so the client refreshes an expired token and retries
+        if (section == FeedSectionType.PARTICIPATING && principal == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+        return ResponseEntity.ok(
+            eventService.search(
+                section, category.orEmpty().toSet(), q, price, date, lat, lng, principal?.name?.let(UUID::fromString), cursor, size,
+            ),
+        )
+    }
 
     @PutMapping("/{id}")
     fun update(principal: Principal, @PathVariable id: UUID, @RequestBody request: UpdateEventRequestDto): Event =
