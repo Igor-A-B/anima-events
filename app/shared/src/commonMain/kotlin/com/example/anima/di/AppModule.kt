@@ -19,6 +19,9 @@ import com.example.anima.features.subscription.data.SubscriptionRepository
 import com.example.anima.features.profile.data.repository.ApiProfileRepository
 import com.example.anima.features.profile.domain.repository.ProfileRepository
 import com.example.anima.features.profile.presentation.ProfileViewModel
+import com.example.anima.features.search.data.ApiSearchRepository
+import com.example.anima.features.search.data.SearchRepository
+import com.example.anima.features.search.presentation.SearchViewModel
 import io.ktor.client.HttpClient
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
@@ -32,12 +35,14 @@ val appModule = module {
     single<HttpClient> { createApiClient(get<SessionRepository>()) }
 
     single<FeedRepository> { ApiFeedRepository(get()) }
+    single<SearchRepository> { ApiSearchRepository(get()) }
     single<SubscriptionRepository> { ApiSubscriptionRepository(get()) }
     single<ProfileRepository> { ApiProfileRepository(get()) }
 
     viewModel { LoginViewModel(get(), get()) }
     viewModel { RegisterViewModel(get(), get()) }
     viewModel { FeedViewModel(get(), get()) }
+    viewModel { SearchViewModel(get()) }
     viewModel { EventDetailViewModel(get(), get(), get()) }
     viewModel { ProfileViewModel(get(), get()) }
 }

@@ -6,14 +6,19 @@ import com.anima.features.event.entities.EventEntity
 import com.anima.features.event.exceptions.EventForbiddenException
 import com.anima.features.event.exceptions.EventNotFoundException
 import com.anima.features.event.models.Event
+import com.anima.features.event.models.DateFilter
 import com.anima.features.event.models.EventCategory
 import com.anima.features.event.models.EventStatus
 import com.anima.features.event.models.FeedSectionType
+import com.anima.features.event.models.PriceFilter
 import com.anima.features.event.repositories.EventRepository
 import com.anima.features.subscription.entities.SubscriptionEntity
 import com.anima.features.subscription.models.SubscriptionStatus
 import com.anima.features.subscription.repositories.SubscriptionRepository
+import com.anima.features.user.entities.UserEntity
 import com.anima.features.user.repositories.UserRepository
+import jakarta.persistence.criteria.Expression
+import jakarta.persistence.criteria.JoinType
 import jakarta.persistence.criteria.Predicate
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -65,8 +70,10 @@ class EventService(
     @Transactional(readOnly = true)
     fun search(
         section: FeedSectionType?,
-        category: EventCategory?,
+        categories: Set<EventCategory>,
         query: String?,
+        price: PriceFilter,
+        date: DateFilter,
         lat: Double?,
         lng: Double?,
         userId: UUID?,
@@ -111,11 +118,30 @@ class EventService(
             }
             null -> Unit
         }
-        if (category != null) specs += Specification { r, _, cb -> cb.equal(r.get<EventCategory>("category"), category) }
+        if (categories.isNotEmpty()) specs += Specification { r, _, cb -> r.get<EventCategory>("category").`in`(categories) }
+        when (price) {
+            // the mapper shows price <= 0 as free, so the filter does too
+            PriceFilter.FREE -> specs += Specification { r, _, cb -> cb.or(cb.isNull(r.get<Double>("price")), cb.le(r.get("price"), 0.0)) }
+            PriceFilter.PAID -> specs += Specification { r, _, cb -> cb.gt(r.get("price"), 0.0) }
+            PriceFilter.ANY -> Unit
+        }
+        date.startsAtRange(now).let { range ->
+            range.from?.let { from -> specs += Specification { r, _, cb -> cb.greaterThanOrEqualTo(r.get("startsAt"), from) } }
+            range.until?.let { until -> specs += Specification { r, _, cb -> cb.lessThan(r.get("startsAt"), until) } }
+        }
         if (!query.isNullOrBlank()) {
-            val like = "%${query.trim().lowercase()}%"
+            val like = "%${query.foldForSearch()}%"
             specs += Specification { r, _, cb ->
-                cb.or(cb.like(cb.lower(r.get("title")), like), cb.like(cb.lower(r.get("venue")), like)) as Predicate
+                // lower + translate folds accents on the column side, so "sao" finds "São"
+                fun folded(field: Expression<String>) =
+                    cb.function("translate", String::class.java, cb.lower(field), cb.literal(ACCENTED), cb.literal(PLAIN))
+                val organizer = r.join<EventEntity, UserEntity>("organizer", JoinType.LEFT)
+                cb.or(
+                    cb.like(folded(r.get("title")), like),
+                    cb.like(folded(r.get("venue")), like),
+                    cb.like(folded(r.get("city")), like),
+                    cb.like(folded(organizer.get("name")), like),
+                ) as Predicate
             }
         }
 
