@@ -50,6 +50,8 @@ class SecurityConfig {
                 it.requestMatchers("/auth/**").permitAll()
                     // the error forward runs without the jwt filter, so a server error would otherwise answer 401
                     .requestMatchers("/error").permitAll()
+                    // the organizer's own reads, matched before the public GET rule below
+                    .requestMatchers(HttpMethod.GET, "/events/mine", "/events/*/form").authenticated()
                     .requestMatchers(HttpMethod.GET, "/events", "/events/**").permitAll()
                     .anyRequest().authenticated()
             }

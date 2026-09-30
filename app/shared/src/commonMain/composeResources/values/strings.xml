@@ -145,6 +145,17 @@
     <string name="add_event_capacity_hint">Maximum capacity</string>
     <string name="add_event_about_label">About the event</string>
     <string name="add_event_about_hint">Describe your event...</string>
+    <string name="add_event_city_hint">City</string>
+    <string name="edit_event_title">Edit event</string>
+    <string name="add_event_delete">Delete event</string>
+    <string name="add_event_delete_confirm_title">Delete this event?</string>
+    <string name="add_event_delete_confirm_text">Its subscriptions are removed too. This can't be undone.</string>
+    <string name="add_event_created">Event created</string>
+    <string name="add_event_updated">Event updated</string>
+    <string name="add_event_deleted">Event deleted</string>
+    <string name="add_event_error_date">Invalid date or time. Use dd/mm/yyyy and hh:mm</string>
+    <string name="add_event_error_validation">Check the event fields</string>
+    <string name="add_event_error_forbidden">Only exhibitors can manage events</string>
 
     <!-- FEATURE: Profile -->
     <string name="profile_title">Profile</string>
@@ -184,6 +195,7 @@
     <string name="profile_events_count">%1$s of %2$s</string>
     <string name="profile_see_all">See all</string>
     <string name="profile_event_published">Published</string>
+    <string name="profile_events_empty">You haven't created any events yet</string>
 
     <!-- Profile: session -->
     <string name="profile_logout">Log out</string>

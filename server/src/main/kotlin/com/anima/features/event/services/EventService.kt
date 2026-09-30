@@ -2,9 +2,11 @@ package com.anima.features.event.services
 
 import com.anima.features.event.dtos.CreateEventRequestDto
 import com.anima.features.event.dtos.EventPageDto
+import com.anima.features.event.dtos.UpdateEventRequestDto
 import com.anima.features.event.entities.EventEntity
 import com.anima.features.event.exceptions.EventForbiddenException
 import com.anima.features.event.exceptions.EventNotFoundException
+import com.anima.features.event.exceptions.ExhibitorOnlyException
 import com.anima.features.event.models.Event
 import com.anima.features.event.models.DateFilter
 import com.anima.features.event.models.EventCategory
@@ -12,6 +14,7 @@ import com.anima.features.event.models.EventStatus
 import com.anima.features.event.models.FeedSectionType
 import com.anima.features.event.models.PriceFilter
 import com.anima.features.event.repositories.EventRepository
+import com.anima.features.exhibitor.repositories.ExhibitorRepository
 import com.anima.features.subscription.entities.SubscriptionEntity
 import com.anima.features.subscription.models.SubscriptionStatus
 import com.anima.features.subscription.repositories.SubscriptionRepository
@@ -47,9 +50,12 @@ class EventService(
     private val events: EventRepository,
     private val users: UserRepository,
     private val subscriptions: SubscriptionRepository,
+    private val exhibitors: ExhibitorRepository,
 ) {
+    // only exhibitors organize events, visitors just subscribe to them
     fun create(userId: UUID, request: CreateEventRequestDto): Event {
-        val organizer = users.findById(userId).orElseThrow { EventForbiddenException() }
+        if (!exhibitors.existsByUserId(userId)) throw ExhibitorOnlyException()
+        val organizer = users.findById(userId).orElseThrow { ExhibitorOnlyException() }
         val entity = EventEntity().apply { this.organizer = organizer }
         return events.save(entity.fill(request)).let { it.toEvent(attendeesOf(it)) }
     }
@@ -57,13 +63,40 @@ class EventService(
     @Transactional(readOnly = true)
     fun get(id: UUID): Event = find(id).let { it.toEvent(attendeesOf(it)) }
 
+    // the organizer's own events, newest first, past ones included
+    @Transactional(readOnly = true)
+    fun mine(userId: UUID): List<Event> =
+        events.findAllByOrganizerId(userId).map { it.toEvent(attendeesOf(it)) }
+
+    // raw stored values for the edit form, Event only has display labels
+    @Transactional(readOnly = true)
+    fun form(userId: UUID, id: UUID): UpdateEventRequestDto = findOwned(userId, id).let {
+        UpdateEventRequestDto(
+            title = it.title,
+            category = it.category,
+            venue = it.venue,
+            city = it.city,
+            startsAt = it.startsAt.toString(),
+            description = it.description,
+            price = it.price,
+            capacity = it.capacity,
+            latitude = it.latitude,
+            longitude = it.longitude,
+            address = it.address,
+            imageUrl = it.imageUrl,
+        )
+    }
+
     fun update(userId: UUID, id: UUID, request: CreateEventRequestDto): Event {
         val entity = findOwned(userId, id)
         return events.save(entity.fill(request)).let { it.toEvent(attendeesOf(it)) }
     }
 
+    // subscriptions point at the event, they go first or the foreign key blocks the delete
     fun delete(userId: UUID, id: UUID) {
-        events.deleteById(findOwned(userId, id).id!!)
+        val eventId = findOwned(userId, id).id!!
+        subscriptions.deleteAllByEventId(eventId)
+        events.deleteById(eventId)
     }
 
     // every filter is optional; section decides the base rule and the order
@@ -186,11 +219,15 @@ class EventService(
         } catch (e: DateTimeParseException) {
             throw IllegalArgumentException("startsAt must be like 2026-10-05T20:00:00")
         }
-        description = r.description
+        require((r.price ?: 0.0) >= 0) { "price can't be negative" }
+        require((r.capacity ?: 1) > 0) { "capacity must be positive" }
+        description = r.description.trim()
         price = r.price
         capacity = r.capacity
         latitude = r.latitude
         longitude = r.longitude
+        address = r.address?.trim()?.ifBlank { null }
+        imageUrl = r.imageUrl?.trim()?.ifBlank { null }
         return this
     }
 }

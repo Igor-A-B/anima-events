@@ -12,7 +12,9 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.PreUpdate
 import jakarta.persistence.Table
+import java.time.Instant
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -30,8 +32,12 @@ class EventEntity {
     @Column(nullable = false)
     var category: EventCategory = EventCategory.PARTY
 
+    // place name, e.g. "Galpao 9"
     @Column(nullable = false)
     var venue: String = ""
+
+    // street and number of the venue
+    var address: String? = null
 
     @Column(nullable = false)
     var city: String = ""
@@ -48,7 +54,22 @@ class EventEntity {
     var latitude: Double? = null
     var longitude: Double? = null
 
+    // cover photo, null until the exhibitor uploads one
+    @Column(length = 2048)
+    var imageUrl: String? = null
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "organizer_id", nullable = false)
     var organizer: UserEntity? = null
+
+    @Column(nullable = false, updatable = false)
+    var createdTimestamp: Instant = Instant.now()
+
+    @Column(nullable = false)
+    var updatedTimestamp: Instant = Instant.now()
+
+    @PreUpdate
+    fun onUpdate() {
+        updatedTimestamp = Instant.now()
+    }
 }

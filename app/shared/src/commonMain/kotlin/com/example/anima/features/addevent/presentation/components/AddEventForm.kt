@@ -27,6 +27,7 @@ import anima.app.shared.generated.resources.add_event_about_label
 import anima.app.shared.generated.resources.add_event_address_hint
 import anima.app.shared.generated.resources.add_event_capacity_hint
 import anima.app.shared.generated.resources.add_event_category_label
+import anima.app.shared.generated.resources.add_event_city_hint
 import anima.app.shared.generated.resources.add_event_date_hint
 import anima.app.shared.generated.resources.add_event_location_hint
 import anima.app.shared.generated.resources.add_event_name_hint
@@ -56,6 +57,7 @@ fun AddEventForm(
     onTimeChanged: (String) -> Unit,
     onLocationChanged: (String) -> Unit,
     onAddressChanged: (String) -> Unit,
+    onCityChanged: (String) -> Unit,
     onCategorySelected: (EventCategory) -> Unit,
     onPriceChanged: (String) -> Unit,
     onCapacityChanged: (String) -> Unit,
@@ -72,6 +74,7 @@ fun AddEventForm(
 
     val locationFocus = FocusRequester()
     val addressFocus = FocusRequester()
+    val cityFocus = FocusRequester()
     val priceFocus = FocusRequester()
     val capacityFocus = FocusRequester()
     val aboutFocus = FocusRequester()
@@ -168,9 +171,32 @@ fun AddEventForm(
             onValueChange = onAddressChanged,
             placeholder = stringResource(Res.string.add_event_address_hint),
             modifier = Modifier.focusRequester(addressFocus),
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(
+                onNext = {
+                    cityFocus.requestFocus()
+                }
+            ),
             leadingIcon = {
                 AnimaIcon(
                     imageVector = LucideBuilding,
+                    contentDescription = null,
+                    tint = AnimaTheme.colors.onSurfaceVariant,
+                    size = AnimaTheme.spacing.lg,
+                )
+            },
+        )
+
+        AnimaTextField(
+            value = draft.city,
+            onValueChange = onCityChanged,
+            placeholder = stringResource(Res.string.add_event_city_hint),
+            modifier = Modifier.focusRequester(cityFocus),
+            leadingIcon = {
+                AnimaIcon(
+                    imageVector = LucideMapPin,
                     contentDescription = null,
                     tint = AnimaTheme.colors.onSurfaceVariant,
                     size = AnimaTheme.spacing.lg,

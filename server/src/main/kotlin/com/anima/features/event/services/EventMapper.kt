@@ -48,6 +48,8 @@ internal fun EventEntity.toEvent(attendees: Int, lat: Double? = null, lng: Doubl
         coverSeed = abs(id.hashCode()),
         description = description,
         organizerName = organizer?.name ?: "",
+        address = address,
+        imageUrl = imageUrl,
     )
 }
 

@@ -1,15 +1,53 @@
 package com.example.anima.features.addevent.presentation
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import anima.app.shared.generated.resources.Res
+import anima.app.shared.generated.resources.add_event_created
+import anima.app.shared.generated.resources.add_event_deleted
+import anima.app.shared.generated.resources.add_event_error_date
+import anima.app.shared.generated.resources.add_event_error_forbidden
+import anima.app.shared.generated.resources.add_event_error_validation
+import anima.app.shared.generated.resources.add_event_updated
 import com.anima.features.event.models.EventCategory
+import com.example.anima.core.error.AppExceptionBus
+import com.example.anima.core.error.Severity
+import com.example.anima.core.network.ApiException
+import com.example.anima.features.addevent.data.ExhibitorEventRepository
+import com.example.anima.features.addevent.domain.model.toDraft
+import com.example.anima.features.addevent.domain.model.toRequest
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class AddEventViewModel : ViewModel() {
+// one form for both creating and editing, load(eventId) switches it to editing
+class AddEventViewModel(
+    private val repository: ExhibitorEventRepository,
+    private val bus: AppExceptionBus,
+) : ViewModel() {
     private val _uiState = MutableStateFlow(AddEventUiState())
     val uiState: StateFlow<AddEventUiState> = _uiState.asStateFlow()
+
+    // called again on recomposition with the same id, only the first call loads
+    fun load(eventId: String?) {
+        if (eventId == null || _uiState.value.eventId == eventId) return
+        _uiState.update { it.copy(eventId = eventId, isLoading = true, loadFailed = false) }
+
+        viewModelScope.launch {
+            try {
+                val draft = repository.getForm(eventId).toDraft()
+                _uiState.update { it.copy(draft = draft, isLoading = false) }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isLoading = false, loadFailed = true) }
+                report(e)
+            }
+        }
+    }
 
     fun onPhotoSelected(uri: String) {
         _uiState.update { it.copy(draft = it.draft.copy(photoUri = uri)) }
@@ -35,6 +73,10 @@ class AddEventViewModel : ViewModel() {
         _uiState.update { it.copy(draft = it.draft.copy(address = address)) }
     }
 
+    fun onCityChanged(city: String) {
+        _uiState.update { it.copy(draft = it.draft.copy(city = city)) }
+    }
+
     fun onCategorySelected(category: EventCategory) {
         _uiState.update { it.copy(draft = it.draft.copy(category = category)) }
     }
@@ -52,7 +94,70 @@ class AddEventViewModel : ViewModel() {
     }
 
     fun onSubmit(onSuccess: () -> Unit) {
-        // when backend ready, call usecase here
-        onSuccess()
+        val state = _uiState.value
+        if (!state.canSubmit) return
+        val request = state.draft.toRequest()
+        if (request == null) {
+            bus.show(Res.string.add_event_error_date, Severity.WARN)
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isSubmitting = true) }
+            try {
+                if (state.eventId == null) {
+                    repository.create(request)
+                    bus.show(Res.string.add_event_created, Severity.SUCCESS)
+                } else {
+                    repository.update(state.eventId, request)
+                    bus.show(Res.string.add_event_updated, Severity.SUCCESS)
+                }
+                // a fresh form for the next event, the create screen stays in the back stack
+                _uiState.value = AddEventUiState()
+                onSuccess()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isSubmitting = false) }
+                report(e)
+            }
+        }
+    }
+
+    fun onDeleteClick() {
+        if (_uiState.value.isEditing) _uiState.update { it.copy(isDeleteDialogOpen = true) }
+    }
+
+    fun onDismissDeleteDialog() {
+        if (!_uiState.value.isDeleting) _uiState.update { it.copy(isDeleteDialogOpen = false) }
+    }
+
+    fun onConfirmDelete(onDeleted: () -> Unit) {
+        val eventId = _uiState.value.eventId ?: return
+        if (_uiState.value.isDeleting) return
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isDeleting = true) }
+            try {
+                repository.delete(eventId)
+                _uiState.update { it.copy(isDeleting = false, isDeleteDialogOpen = false) }
+                bus.show(Res.string.add_event_deleted, Severity.SUCCESS)
+                onDeleted()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isDeleting = false, isDeleteDialogOpen = false) }
+                report(e)
+            }
+        }
+    }
+
+    // the generic mapping reads 403 as a wrong password, here it means not allowed
+    private fun report(e: Exception) {
+        when ((e as? ApiException)?.status) {
+            400 -> bus.show(Res.string.add_event_error_validation, Severity.WARN)
+            403 -> bus.show(Res.string.add_event_error_forbidden, Severity.ERROR)
+            else -> bus.report(e)
+        }
     }
 }

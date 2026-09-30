@@ -5,6 +5,7 @@ import com.anima.features.event.dtos.EventPageDto
 import com.anima.features.event.dtos.UpdateEventRequestDto
 import com.anima.features.event.exceptions.EventForbiddenException
 import com.anima.features.event.exceptions.EventNotFoundException
+import com.anima.features.event.exceptions.ExhibitorOnlyException
 import com.anima.features.event.models.DateFilter
 import com.anima.features.event.models.Event
 import com.anima.features.event.models.EventCategory
@@ -35,6 +36,15 @@ class EventRoute(private val eventService: EventService) {
 
     @GetMapping("/{id}")
     fun get(@PathVariable id: UUID): Event = eventService.get(id)
+
+    // events the caller organizes, for the exhibitor's profile
+    @GetMapping("/mine")
+    fun mine(principal: Principal): List<Event> = eventService.mine(UUID.fromString(principal.name))
+
+    // stored values of an owned event, used to fill the edit form
+    @GetMapping("/{id}/form")
+    fun form(principal: Principal, @PathVariable id: UUID): UpdateEventRequestDto =
+        eventService.form(UUID.fromString(principal.name), id)
 
     // section is optional, so each feed row can lazy-load itself: /events?section=NEARBY&lat=..&lng=..
     // the search screen leaves it out and narrows with q, category (repeatable), price and date
@@ -73,7 +83,7 @@ class EventRoute(private val eventService: EventService) {
     @ExceptionHandler(EventNotFoundException::class)
     fun handleNotFound(ex: RuntimeException) = error(HttpStatus.NOT_FOUND, ex)
 
-    @ExceptionHandler(EventForbiddenException::class)
+    @ExceptionHandler(EventForbiddenException::class, ExhibitorOnlyException::class)
     fun handleForbidden(ex: RuntimeException) = error(HttpStatus.FORBIDDEN, ex)
 
     @ExceptionHandler(IllegalArgumentException::class)

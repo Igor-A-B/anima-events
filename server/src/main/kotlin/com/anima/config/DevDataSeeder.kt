@@ -25,12 +25,16 @@ class DevDataSeeder(
     private val events: EventRepository,
 ) : CommandLineRunner {
     override fun run(vararg args: String) {
-        if (users.existsByEmail("visitor@anima.dev")) return
+        if (!users.existsByEmail("visitor@anima.dev")) {
+            val visitorUser = newUser("John Doe", "visitor@anima.dev")
+            visitors.save(VisitorEntity().apply { user = visitorUser })
+            val exhibitorUser = newUser("Galpao 9", "exhibitor@anima.dev")
+            exhibitors.save(ExhibitorEntity().apply { user = exhibitorUser })
+        }
 
-        val visitorUser = newUser("John Doe", "visitor@anima.dev")
-        visitors.save(VisitorEntity().apply { user = visitorUser })
-        val organizer = newUser("Galpao 9", "exhibitor@anima.dev")
-        exhibitors.save(ExhibitorEntity().apply { user = organizer })
+        // checked on its own, so the events come back after server/db/recreate-events.sql
+        val organizer = users.findByEmail("exhibitor@anima.dev").orElseThrow()
+        if (events.findAllByOrganizerId(organizer.id!!).isNotEmpty()) return
 
         val now = LocalDateTime.now()
         listOf(
@@ -44,6 +48,7 @@ class DevDataSeeder(
                 this.title = title
                 this.category = category
                 venue = "Galpao 9"
+                address = "Rua Augusta, 900"
                 city = "Sao Paulo"
                 this.startsAt = startsAt
                 description = "Evento de exemplo"

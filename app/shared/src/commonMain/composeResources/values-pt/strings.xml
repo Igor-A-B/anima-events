@@ -144,6 +144,17 @@
     <string name="add_event_capacity_hint">Capacidade máxima</string>
     <string name="add_event_about_label">Sobre o evento</string>
     <string name="add_event_about_hint">Descreva seu evento...</string>
+    <string name="add_event_city_hint">Cidade</string>
+    <string name="edit_event_title">Editar evento</string>
+    <string name="add_event_delete">Excluir evento</string>
+    <string name="add_event_delete_confirm_title">Excluir este evento?</string>
+    <string name="add_event_delete_confirm_text">As inscrições também serão removidas. Isso não pode ser desfeito.</string>
+    <string name="add_event_created">Evento criado</string>
+    <string name="add_event_updated">Evento atualizado</string>
+    <string name="add_event_deleted">Evento excluído</string>
+    <string name="add_event_error_date">Data ou horário inválido. Use dd/mm/aaaa e hh:mm</string>
+    <string name="add_event_error_validation">Confira os campos do evento</string>
+    <string name="add_event_error_forbidden">Apenas expositores podem gerenciar eventos</string>
 
     <!-- FEATURE: Perfil -->
     <string name="profile_title">Perfil</string>
@@ -183,6 +194,7 @@
     <string name="profile_events_count">%1$s de %2$s</string>
     <string name="profile_see_all">Ver todos</string>
     <string name="profile_event_published">Publicado</string>
+    <string name="profile_events_empty">Você ainda não criou eventos</string>
 
     <!-- Perfil: sessao -->
     <string name="profile_logout">Sair da conta</string>

@@ -44,3 +44,14 @@ If you face any issues, please report them on [YouTrack](https://youtrack.jetbra
 - Debug over Wi-Fi: set `api.baseUrl=http://<your-LAN-IP>:8080` in `local.properties` and open port 8080 in your firewall (e.g. `sudo ufw allow 8080/tcp`). Debug builds allow cleartext http.
 - Release: pass `API_BASE_URL=https://...` as a Gradle property or env var. The build fails without it, and release builds are https only.
 - Logs: `adb logcat -s System.out` shows the requests and failures.
+
+## Recreating the events table
+
+Hibernate runs with `ddl-auto=update`, which adds new columns but never changes or drops existing ones. After a schema change to `EventEntity`, drop the table and let the server recreate it (subscriptions are dropped with it, since they reference events):
+
+```
+docker exec -i anima-database sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < server/db/recreate-events.sql
+docker compose restart server
+```
+
+With `SPRING_PROFILES_ACTIVE=dev` the seeder puts the sample events back on the next start.

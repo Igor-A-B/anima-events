@@ -1,5 +1,6 @@
 package com.example.anima.features.profile.presentation
 
+import com.anima.features.event.models.Event
 import com.anima.features.user.models.AccountType
 import com.example.anima.core.error.AppError
 import com.example.anima.features.profile.domain.model.UserProfile
@@ -14,6 +15,9 @@ data class ProfileUiState(
     val isChangingPassword: Boolean = false,
     val passwordError: AppError? = null,
     val isSigningOut: Boolean = false,
+    // exhibitor only, the events they organize
+    val createdEvents: List<Event> = emptyList(),
+    val isLoadingEvents: Boolean = false,
     // TODO implement?
     // the document is masked until the user asks to see it
     // val isDocumentVisible: Boolean = false,
