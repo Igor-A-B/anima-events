@@ -1,6 +1,10 @@
 package com.example.anima
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import com.example.anima.core.components.snackbar.AnimaSnackbarHost
 import androidx.navigation.compose.rememberNavController
 import com.example.anima.core.theme.AnimaTheme
 import com.example.anima.navigation.AppNavHost
@@ -20,10 +24,17 @@ fun App() {
             val sessions = koinInject<SessionRepository>()
             val signedIn = remember { sessions.session.value != null }
 
-            AppNavHost(
-                navController = navController,
-                startDestination = if (signedIn) AppGraph else AuthGraph,
-            )
+            Box {
+                AppNavHost(
+                    navController = navController,
+                    startDestination = if (signedIn) AppGraph else AuthGraph,
+                )
+                // global, shows every AppException reported on the bus
+                AnimaSnackbarHost(
+                    bus = koinInject(),
+                    modifier = Modifier.align(Alignment.TopCenter),
+                )
+            }
         }
     }
 }

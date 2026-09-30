@@ -1,5 +1,6 @@
 package com.example.anima.di
 
+import com.example.anima.core.error.AppExceptionBus
 import com.example.anima.core.network.createApiClient
 import com.example.anima.core.network.createPlainClient
 import com.example.anima.features.auth.data.SessionRepository
@@ -23,6 +24,7 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
+    single { AppExceptionBus() }
     single<TokenStorage> { SettingsTokenStorage() }
     // login and refresh use the client without the auth plugin
     single<AuthRepository> { ApiAuthRepository(createPlainClient()) }
@@ -32,8 +34,8 @@ val appModule = module {
     single<FeedRepository> { ApiFeedRepository(get()) }
     single<SubscriptionRepository> { ApiSubscriptionRepository(get()) }
 
-    viewModel { LoginViewModel(get()) }
-    viewModel { RegisterViewModel(get()) }
+    viewModel { LoginViewModel(get(), get()) }
+    viewModel { RegisterViewModel(get(), get()) }
     viewModel { FeedViewModel(get(), get()) }
     viewModel { EventDetailViewModel(get(), get(), get()) }
     // TODO: profile is still mock data, only the account type comes from the session
