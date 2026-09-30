@@ -9,8 +9,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- exact precision (GPS) -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- approximate precision (network) -->
 
-    <!-- camera, to take the event photo on the fly; optional so devices without one can still install -->
-    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- camera, to take the event photo on the fly; optional so devices without one can still install
+         no CAMERA permission: the system camera app takes the picture, declaring it would make the launch crash unless granted -->
     <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <queries>

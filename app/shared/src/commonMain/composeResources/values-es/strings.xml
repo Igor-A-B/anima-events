@@ -139,6 +139,7 @@
     <string name="add_event_photo_picker">Agregar foto</string>
     <string name="add_event_photo_take">Tomar foto</string>
     <string name="add_event_photo_replace">Reemplazar</string>
+    <string name="add_event_photo_too_large">Foto demasiado grande. El limite es 10 MB.</string>
     <string name="add_event_photo_remove">Quitar</string>
     <string name="add_event_name_hint">Nombre del evento</string>
     <string name="add_event_date_hint">Fecha</string>

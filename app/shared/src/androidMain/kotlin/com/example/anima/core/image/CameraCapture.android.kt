@@ -33,5 +33,13 @@ actual fun rememberCameraCapture(
             }
         }
     }
-    return launcher::launch
+    return {
+        try {
+            launcher.launch()
+        } catch (e: Exception) {
+            // no camera app, or the launch was refused
+            AppLog.e("CameraCapture", "couldn't open the camera", e)
+            currentOnFailed()
+        }
+    }
 }

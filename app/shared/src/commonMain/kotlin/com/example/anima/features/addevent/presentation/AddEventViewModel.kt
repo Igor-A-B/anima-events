@@ -8,6 +8,7 @@ import anima.app.shared.generated.resources.add_event_deleted
 import anima.app.shared.generated.resources.add_event_error_date
 import anima.app.shared.generated.resources.add_event_error_forbidden
 import anima.app.shared.generated.resources.add_event_error_validation
+import anima.app.shared.generated.resources.add_event_photo_too_large
 import anima.app.shared.generated.resources.add_event_updated
 import anima.app.shared.generated.resources.core_error_image_unsupported
 import com.anima.features.event.models.EventCategory
@@ -54,6 +55,11 @@ class AddEventViewModel(
     }
 
     fun onPhotoPicked(photo: PickedImage) {
+        // the server refuses more, better to say so before the event is created
+        if (photo.bytes.size > MAX_PHOTO_BYTES) {
+            bus.show(Res.string.add_event_photo_too_large, Severity.WARN)
+            return
+        }
         _uiState.update { it.copy(photo = photo) }
     }
 
@@ -142,7 +148,11 @@ class AddEventViewModel(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            report(e)
+            if ((e as? ApiException)?.status == 413) {
+                bus.show(Res.string.add_event_photo_too_large, Severity.WARN)
+            } else {
+                report(e)
+            }
         }
     }
 
@@ -183,3 +193,5 @@ class AddEventViewModel(
         }
     }
 }
+
+private const val MAX_PHOTO_BYTES = 10 * 1024 * 1024
