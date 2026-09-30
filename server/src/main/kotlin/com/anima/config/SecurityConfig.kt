@@ -6,7 +6,10 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import com.anima.features.auth.ratelimit.AuthRateLimitFilter
 import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
+import org.springframework.security.web.authentication.HttpStatusEntryPoint
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
@@ -39,6 +42,9 @@ class SecurityConfig {
                     .requestMatchers(HttpMethod.GET, "/events", "/events/**").permitAll()
                     .anyRequest().authenticated()
             }
+            // clients refresh their session on 401, Spring's default would answer 403
+            .exceptionHandling { it.authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)) }
+            .addFilterBefore(AuthRateLimitFilter(), UsernamePasswordAuthenticationFilter::class.java)
             .addFilterBefore(JwtAuthFilter(jwtService), UsernamePasswordAuthenticationFilter::class.java)
             .build()
 }

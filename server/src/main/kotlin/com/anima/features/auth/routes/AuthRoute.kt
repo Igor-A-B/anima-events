@@ -8,6 +8,7 @@ import com.anima.features.auth.exceptions.EmailAlreadyExistsException
 import com.anima.features.auth.dtos.TokenResponseDto
 import com.anima.features.auth.exceptions.InvalidCredentialsException
 import com.anima.features.auth.exceptions.InvalidRefreshTokenException
+import com.anima.features.auth.exceptions.TooManyAttemptsException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -54,4 +55,9 @@ class AuthRoute(private val authService: AuthService) {
     @ExceptionHandler(IllegalArgumentException::class)
     fun handleInvalid(ex: IllegalArgumentException): ResponseEntity<Map<String, String>> =
         ResponseEntity.badRequest().body(mapOf("error" to (ex.message ?: HttpStatus.BAD_REQUEST.name)))
+
+    @ExceptionHandler(TooManyAttemptsException::class)
+    fun handleTooManyAttempts(ex: RuntimeException): ResponseEntity<Map<String, String>> =
+        ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+            .body(mapOf("error" to (ex.message ?: HttpStatus.TOO_MANY_REQUESTS.name)))
 }
