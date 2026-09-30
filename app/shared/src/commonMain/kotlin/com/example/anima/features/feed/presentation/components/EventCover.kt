@@ -28,6 +28,9 @@ import anima.app.shared.generated.resources.feed_live
 import anima.app.shared.generated.resources.feed_price_free
 import anima.app.shared.generated.resources.feed_status_finished
 import coil3.compose.AsyncImage
+import com.example.anima.core.image.deviceImageUrl
+import com.example.anima.core.network.apiBaseUrl as deviceApiBaseUrl
+import com.example.anima.core.log.AppLog
 import com.example.anima.core.components.icon.AnimaIcon
 import com.example.anima.core.components.icon.lucide.LucideUsers
 import com.example.anima.core.theme.AnimaTheme
@@ -48,6 +51,10 @@ private val coverPalettes: List<List<Color>> = listOf(
 fun eventCoverBrush(coverSeed: Int): Brush =
     Brush.linearGradient(coverPalettes[coverSeed.mod(coverPalettes.size)])
 
+// the first image is the cover, null keeps the gradient only
+fun Event.coverImageUrl(apiBaseUrl: String = deviceApiBaseUrl): String? =
+    imageUrls.firstOrNull()?.let { deviceImageUrl(it, apiBaseUrl) }
+
 // how much room the cover has for its chips
 enum class EventCoverSize { DEFAULT, COMPACT }
 
@@ -66,9 +73,14 @@ fun EventCover(
             .background(eventCoverBrush(event.coverSeed)),
     ) {
         // the first image is the cover, the gradient stays behind it as placeholder and fallback
-        event.imageUrls.firstOrNull()?.let { url ->
+        event.coverImageUrl()?.let { url ->
             AsyncImage(
+                // fades in over the gradient (loader-level crossfade). The size comes from the
+                // layout: fixed cover height (EventCardDefaults / SearchResultCardDefaults) and a
+                // bounded width, so coil decodes to that size, not the full original.
+                // On failure (404, offline) the gradient stays; coil does not retry on its own.
                 model = url,
+                onError = { AppLog.e("EventCover", "image failed: $url", it.result.throwable) },
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.matchParentSize(),

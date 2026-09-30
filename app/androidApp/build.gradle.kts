@@ -77,7 +77,7 @@ val useAdbReverse = localProperties.getProperty("api.baseUrl") == null && File(a
 fun adbReverseTask(name: String, port: Int) = tasks.register(name, Exec::class) {
     enabled = useAdbReverse
     commandLine(adbPath, "reverse", "tcp:$port", "tcp:$port")
-    // no device connected is fine, the emulator doesn't need it
+    // no device connected is fine. The app also rewrites loopback image urls to the api host (deviceImageUrl), so the emulator doesn't depend on this forward
     isIgnoreExitValue = true
 }
 val adbReverse = adbReverseTask("adbReverse", 8080)

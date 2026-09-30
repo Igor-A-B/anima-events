@@ -1,5 +1,6 @@
 package com.example.anima.features.eventdetail.presentation
 
+import com.example.anima.core.image.deviceImageUrl
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -92,7 +93,7 @@ private fun EventDetailContent(
                         title = event.title,
                         category = event.category,
                         price = event.price,
-                        imageUrl = event.imageUrls.firstOrNull(),
+                        imageUrl = event.imageUrls.firstOrNull()?.let(::deviceImageUrl),
                         canAddImage = isCurator,
                         isUploadingImage = isUploadingImage,
                         onAddImage = onAddImage,
