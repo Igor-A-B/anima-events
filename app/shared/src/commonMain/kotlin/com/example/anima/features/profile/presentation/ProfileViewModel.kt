@@ -9,12 +9,14 @@ import com.example.anima.features.addevent.data.ExhibitorEventRepository
 import com.example.anima.core.network.ApiException
 import com.example.anima.features.auth.data.SessionRepository
 import com.example.anima.features.profile.domain.repository.ProfileRepository
+import com.example.anima.features.subscription.data.SubscriptionRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -23,6 +25,7 @@ class ProfileViewModel(
     private val repository: ProfileRepository,
     private val session: SessionRepository,
     private val exhibitorEvents: ExhibitorEventRepository,
+    private val subscriptions: SubscriptionRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -31,28 +34,51 @@ class ProfileViewModel(
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
     private var loadJob: Job? = null
+    private var eventsJob: Job? = null
+    private var observeJob: Job? = null
 
     init {
         loadProfile()
-        if (_uiState.value.isExhibitor) {
-            // the form updates the list after a create, edit or delete, the profile just follows it
-            exhibitorEvents.myEvents
-                .onEach { events -> _uiState.update { it.copy(createdEvents = events) } }
-                .launchIn(viewModelScope)
-            loadEvents()
-        }
+        loadEvents()
     }
 
-    private fun loadEvents() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoadingEvents = true) }
+    // the repositories outlive the session, so their lists are only shown after a refresh
+    // made by this screen succeeded, otherwise the previous user's events could leak in
+    private fun observeEvents() {
+        if (observeJob != null) return
+        val source = if (_uiState.value.isExhibitor) {
+            // the form updates the list after a create, edit or delete, the profile just follows it
+            exhibitorEvents.myEvents.map { events -> { state: ProfileUiState -> state.copy(createdEvents = events) } }
+        } else {
+            // follows subscribe and cancel made elsewhere
+            subscriptions.subscriptions.map { list ->
+                { state: ProfileUiState -> state.copy(participatingEvents = participatingEvents(list)) }
+            }
+        }
+        observeJob = source
+            .onEach { change -> _uiState.update(change) }
+            .launchIn(viewModelScope)
+    }
+
+    // called when the screen comes back to the front, skipped while a load is already running
+    fun onResume() {
+        if (eventsJob?.isActive != true) loadEvents()
+    }
+
+    fun loadEvents() {
+        eventsJob?.cancel()
+        eventsJob = viewModelScope.launch {
+            // the spinner is only for an empty section, a refresh behind a list stays quiet
+            _uiState.update { it.copy(isLoadingEvents = it.myEvents.isEmpty(), eventsError = false) }
             try {
-                exhibitorEvents.refresh()
+                if (_uiState.value.isExhibitor) exhibitorEvents.refresh() else subscriptions.refresh()
+                observeEvents()
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                // the section just stays empty, the rest of the profile still works
-                AppLog.e("Profile", "could not load the created events", e)
+                // only the section fails, the rest of the profile still works
+                AppLog.e("Profile", "could not load the events", e)
+                _uiState.update { it.copy(eventsError = true) }
             } finally {
                 _uiState.update { it.copy(isLoadingEvents = false) }
             }

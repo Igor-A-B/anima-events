@@ -203,6 +203,9 @@
     <string name="profile_see_all">See all</string>
     <string name="profile_event_published">Published</string>
     <string name="profile_events_empty">You haven't created any events yet</string>
+    <string name="profile_events_empty_visitor">You are not going to any events yet</string>
+    <string name="profile_events_retry">Couldn't load your events. Tap to try again</string>
+    <string name="profile_event_going">Going</string>
 
     <!-- Profile: session -->
     <string name="profile_logout">Log out</string>
