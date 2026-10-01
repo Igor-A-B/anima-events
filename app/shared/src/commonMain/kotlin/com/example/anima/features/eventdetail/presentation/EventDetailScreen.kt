@@ -1,6 +1,5 @@
 package com.example.anima.features.eventdetail.presentation
 
-import com.example.anima.core.image.deviceImageUrl
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,6 +27,7 @@ import com.example.anima.features.eventdetail.presentation.components.EventCover
 import com.example.anima.features.eventdetail.presentation.components.EventFooter
 import com.example.anima.features.eventdetail.presentation.components.EventInfoGrid
 import com.example.anima.features.eventdetail.presentation.components.EventOrganizer
+import com.example.anima.features.feed.presentation.components.coverImageUrl
 
 private val FOOTER_RESERVE = 112.dp
 
@@ -68,7 +68,7 @@ fun EventDetailScreen(
 private fun EventDetailContent(
     event: Event,
     subscription: SubscriptionUi,
-    actionError: Boolean,
+    actionError: SubscriptionError?,
     isCurator: Boolean,
     isUploadingImage: Boolean,
     onAddImage: () -> Unit,
@@ -93,7 +93,7 @@ private fun EventDetailContent(
                         title = event.title,
                         category = event.category,
                         price = event.price,
-                        imageUrl = event.imageUrls.firstOrNull()?.let(::deviceImageUrl),
+                        imageUrl = event.coverImageUrl(),
                         canAddImage = isCurator,
                         isUploadingImage = isUploadingImage,
                         onAddImage = onAddImage,
@@ -119,6 +119,8 @@ private fun EventDetailContent(
                             city = event.city,
                             distanceLabel = event.distanceLabel,
                             attendees = event.attendees,
+                            capacity = event.capacity,
+                            price = event.price,
                         )
 
                         EventOrganizer(
@@ -133,7 +135,7 @@ private fun EventDetailContent(
             if (subscription != SubscriptionUi.Hidden) {
                 EventFooter(
                     state = subscription,
-                    hasError = actionError,
+                    error = actionError,
                     onClick = onSubscribe,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)

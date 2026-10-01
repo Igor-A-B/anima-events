@@ -227,6 +227,12 @@
     <string name="event_detail_subscription_error">Couldn't update your subscription. Try again.</string>
     <string name="event_detail_add_image">Add image</string>
     <string name="event_detail_image_added">Image added</string>
+    <string name="event_detail_price">Price</string>
+    <string name="event_detail_spots_left">Spots left: %1$s</string>
+    <string name="event_detail_full">Full</string>
+    <string name="event_detail_unlimited">No attendee limit</string>
+    <string name="event_detail_subscription_full">Event full</string>
+    <string name="event_detail_subscription_full_error">This event just filled up.</string>
     <string name="login_error_invalid_credentials">Wrong email or password.</string>
     <string name="register_error_email_taken">This email is already registered.</string>
     <string name="register_error_validation">Check your details and try again.</string>

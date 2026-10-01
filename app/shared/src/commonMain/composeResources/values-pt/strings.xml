@@ -226,6 +226,12 @@
     <string name="event_detail_subscription_error">Não foi possível atualizar sua participação. Tente novamente.</string>
     <string name="event_detail_add_image">Adicionar imagem</string>
     <string name="event_detail_image_added">Imagem adicionada</string>
+    <string name="event_detail_price">Preço</string>
+    <string name="event_detail_spots_left">Vagas restantes: %1$s</string>
+    <string name="event_detail_full">Lotado</string>
+    <string name="event_detail_unlimited">Sem limite de vagas</string>
+    <string name="event_detail_subscription_full">Evento lotado</string>
+    <string name="event_detail_subscription_full_error">Este evento acabou de lotar.</string>
     <string name="login_error_invalid_credentials">E-mail ou senha incorretos.</string>
     <string name="register_error_email_taken">Este e-mail já está cadastrado.</string>
     <string name="register_error_validation">Confira seus dados e tente novamente.</string>

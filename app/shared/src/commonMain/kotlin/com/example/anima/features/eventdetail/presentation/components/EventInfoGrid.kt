@@ -19,14 +19,21 @@ import anima.app.shared.generated.resources.Res
 import anima.app.shared.generated.resources.event_detail_attendees
 import anima.app.shared.generated.resources.event_detail_attendees_count
 import anima.app.shared.generated.resources.event_detail_date
+import anima.app.shared.generated.resources.event_detail_free
+import anima.app.shared.generated.resources.event_detail_full
+import anima.app.shared.generated.resources.event_detail_price
+import anima.app.shared.generated.resources.event_detail_spots_left
+import anima.app.shared.generated.resources.event_detail_unlimited
 import anima.app.shared.generated.resources.event_detail_location
 import anima.app.shared.generated.resources.event_detail_time
 import com.example.anima.core.components.icon.AnimaIcon
 import com.example.anima.core.components.icon.lucide.LucideCalendar
 import com.example.anima.core.components.icon.lucide.LucideClock
 import com.example.anima.core.components.icon.lucide.LucideMapPin
+import com.example.anima.core.components.icon.lucide.LucideTicket
 import com.example.anima.core.components.icon.lucide.LucideUsers
 import com.example.anima.core.theme.AnimaTheme
+import androidx.compose.ui.graphics.Color
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -37,6 +44,10 @@ fun EventInfoGrid(
     city: String,
     distanceLabel: String?,
     attendees: Int,
+    // null means unlimited
+    capacity: Int?,
+    // formatted by the server, null means free
+    price: String?,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -78,15 +89,31 @@ fun EventInfoGrid(
                     .fillMaxHeight(),
             )
 
+            val people = stringResource(Res.string.event_detail_attendees_count)
+            val spotsLeft = capacity?.let { (it - attendees).coerceAtLeast(0) }
             EventInfoCard(
                 icon = LucideUsers,
                 label = stringResource(Res.string.event_detail_attendees),
-                value = "$attendees ${stringResource(Res.string.event_detail_attendees_count)}",
+                value = if (capacity != null) "$attendees / $capacity $people" else "$attendees $people",
+                subValue = when {
+                    spotsLeft == null -> stringResource(Res.string.event_detail_unlimited)
+                    spotsLeft == 0 -> stringResource(Res.string.event_detail_full)
+                    else -> stringResource(Res.string.event_detail_spots_left, spotsLeft.toString())
+                },
+                subValueColor = if (spotsLeft == 0) AnimaTheme.colors.error else null,
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight(),
             )
         }
+
+        EventInfoCard(
+            icon = LucideTicket,
+            label = stringResource(Res.string.event_detail_price),
+            value = price ?: stringResource(Res.string.event_detail_free),
+            valueColor = if (price == null) AnimaTheme.colors.success else null,
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 
@@ -97,6 +124,8 @@ private fun EventInfoCard(
     value: String,
     modifier: Modifier = Modifier,
     subValue: String? = null,
+    valueColor: Color? = null,
+    subValueColor: Color? = null,
 ) {
     Column(
         modifier = modifier
@@ -129,7 +158,7 @@ private fun EventInfoCard(
         Text(
             text = value,
             style = AnimaTheme.typography.bodyMedium,
-            color = AnimaTheme.colors.onSurface,
+            color = valueColor ?: AnimaTheme.colors.onSurface,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -138,7 +167,7 @@ private fun EventInfoCard(
             Text(
                 text = subValue,
                 style = AnimaTheme.typography.bodySmall,
-                color = AnimaTheme.colors.onSurfaceVariant,
+                color = subValueColor ?: AnimaTheme.colors.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
