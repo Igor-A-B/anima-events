@@ -168,6 +168,7 @@
     <string name="add_event_about_label">About the event</string>
     <string name="add_event_about_hint">Describe your event...</string>
     <string name="add_event_city_hint">City</string>
+    <string name="add_event_city_no_results">No cities found</string>
     <string name="edit_event_title">Edit event</string>
     <string name="add_event_delete">Delete event</string>
     <string name="add_event_delete_confirm_title">Delete this event?</string>

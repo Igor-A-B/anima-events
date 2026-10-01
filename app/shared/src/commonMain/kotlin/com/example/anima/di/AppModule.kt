@@ -3,6 +3,7 @@ package com.example.anima.di
 import com.example.anima.core.error.AppExceptionBus
 import com.example.anima.core.events.EventChanges
 import com.example.anima.core.image.ImageUploader
+import com.example.anima.core.network.clearBearerTokens
 import com.example.anima.core.network.createApiClient
 import com.example.anima.core.network.createPlainClient
 import com.example.anima.features.addevent.data.ApiExhibitorEventRepository
@@ -40,7 +41,10 @@ val appModule = module {
     // login and refresh use the client without the auth plugin
     single<AuthRepository> { ApiAuthRepository(createPlainClient()) }
     single { SessionRepository(get(), get()) }
-    single<HttpClient> { createApiClient(get<SessionRepository>()) }
+    single<HttpClient> {
+        val session = get<SessionRepository>()
+        createApiClient(session).also { client -> session.onUserChanged = { client.clearBearerTokens() } }
+    }
 
     single<FeedRepository> { ApiFeedRepository(get()) }
     single<SearchRepository> { ApiSearchRepository(get()) }
