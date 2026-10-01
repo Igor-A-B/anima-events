@@ -99,10 +99,11 @@ fun AnimaButton(
                 modifier = buttonModifier,
                 enabled = clickEnabled,
                 shape = shape,
+                // solid, not transparent: the button floats over scrolling content (event detail footer)
                 colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = Color.Transparent,
+                    containerColor = AnimaTheme.colors.background,
                     contentColor = colors.content,
-                    disabledContainerColor = Color.Transparent,
+                    disabledContainerColor = AnimaTheme.colors.background,
                     disabledContentColor = colors.content.copy(alpha = if (loading) 1f else 0.4f),
                 ),
                 border = BorderStroke(
