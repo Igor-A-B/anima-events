@@ -12,6 +12,8 @@ data class ProfileUiState(
     val isLoading: Boolean = true,
     // why the profile could not be loaded, null while loading or after a success
     val error: AppError? = null,
+    // pull to refresh running, the profile and its events stay on screen meanwhile
+    val isRefreshing: Boolean = false,
     val isPasswordDialogOpen: Boolean = false,
     val isChangingPassword: Boolean = false,
     val passwordError: AppError? = null,

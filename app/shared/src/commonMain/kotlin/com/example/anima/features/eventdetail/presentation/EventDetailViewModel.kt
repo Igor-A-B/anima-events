@@ -36,6 +36,9 @@ class EventDetailViewModel(
     private val busy = MutableStateFlow(false)
     private val actionError = MutableStateFlow<AppError?>(null)
     private val uploadingImage = MutableStateFlow(false)
+    private val refreshing = MutableStateFlow(false)
+    // the screen passes the id once, refresh reloads the same event
+    private var eventId: String? = null
 
     private val baseState = combine(
         event, subscriptions.subscriptions, session.session, busy, actionError,
@@ -46,16 +49,39 @@ class EventDetailViewModel(
         EventDetailUiState(event, state, actionError, isCurator = isCurator)
     }
 
-    val uiState: StateFlow<EventDetailUiState> = combine(baseState, uploadingImage) { state, uploading ->
-        state.copy(isUploadingImage = uploading)
+    val uiState: StateFlow<EventDetailUiState> = combine(baseState, uploadingImage, refreshing) { state, uploading, refreshing ->
+        state.copy(isUploadingImage = uploading, isRefreshing = refreshing)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), EventDetailUiState())
 
     fun loadEvent(id: String) {
+        eventId = id
         viewModelScope.launch {
             event.value = runCatching { feedRepository.findById(id) }
                 .onFailure { if (it is CancellationException) throw it else bus.report(it, ErrorContext.LOAD_EVENT) }
                 .getOrNull()
             runCatching { subscriptions.refresh() }
+        }
+    }
+
+    // pull to refresh: a failure keeps the event already shown
+    fun refresh() {
+        val id = eventId ?: return
+        if (refreshing.value) return
+
+        refreshing.value = true
+        viewModelScope.launch {
+            try {
+                runCatching { feedRepository.findById(id) }
+                    .onFailure { if (it is CancellationException) throw it }
+                    .getOrNull()
+                    // a load of another id may have started meanwhile
+                    ?.takeIf { eventId == id }
+                    ?.let { event.value = it }
+                runCatching { subscriptions.refresh() }
+                    .onFailure { if (it is CancellationException) throw it }
+            } finally {
+                refreshing.value = false
+            }
         }
     }
 

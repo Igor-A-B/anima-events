@@ -50,7 +50,14 @@ class FeedViewModel(
 
         moreJobs.values.forEach(Job::cancel)
         _uiState.update {
-            it.copy(selectedCategory = category, sections = emptyList(), failed = emptySet(), loadingMore = emptySet())
+            it.copy(
+                selectedCategory = category,
+                sections = emptyList(),
+                failed = emptySet(),
+                loadingMore = emptySet(),
+                // a new category is a fresh load with its own spinner
+                isRefreshing = false,
+            )
         }
         loadFeed()
     }
@@ -59,21 +66,40 @@ class FeedViewModel(
         FeedSectionType.entries.forEach(::loadSection)
     }
 
+    // pull to refresh: reloads every section behind the current feed, which stays on screen
+    fun refresh() {
+        val state = _uiState.value
+        if (state.isRefreshing || state.isLoading) return
+
+        _uiState.update { it.copy(isRefreshing = true) }
+        loadFeed()
+    }
+
     // every section is searched on its own
     private fun loadSection(type: FeedSectionType) {
         jobs[type]?.cancel()
         moreJobs[type]?.cancel()
-        _uiState.update { it.copy(pending = it.pending + type, failed = it.failed - type, loadingMore = it.loadingMore - type) }
+        _uiState.update {
+            it.copy(
+                pending = it.pending + type,
+                // a refresh keeps the error on screen until the section actually loads
+                failed = if (it.isRefreshing) it.failed else it.failed - type,
+                loadingMore = it.loadingMore - type,
+            )
+        }
 
         jobs[type] = viewModelScope.launch {
             runCatching { repository.getSection(type, _uiState.value.selectedCategory) }
                 .onSuccess { page ->
-                    _uiState.update { it.copy(pending = it.pending - type, sections = it.sections.with(type, page)) }
+                    _uiState.update {
+                        it.settled(type).copy(failed = it.failed - type, sections = it.sections.with(type, page))
+                    }
                 }
                 .onFailure { throwable ->
                     if (throwable is CancellationException) throw throwable
                     val error = throwable.toAppError(ErrorContext.LOAD_FEED)
-                    _uiState.update { it.copy(pending = it.pending - type, failed = it.failed + type, error = error) }
+                    // the section keeps the events it had, a refresh failing leaves them on screen
+                    _uiState.update { it.settled(type).copy(failed = it.failed + type, error = error) }
                 }
         }
     }
@@ -99,6 +125,13 @@ class FeedViewModel(
                     _uiState.update { it.copy(loadingMore = it.loadingMore - type) }
                 }
         }
+    }
+
+    // whoever finishes the last pending section also ends the refresh, so a reload that
+    // cancelled a refreshing section cannot leave the indicator spinning
+    private fun FeedUiState.settled(type: FeedSectionType): FeedUiState {
+        val left = pending - type
+        return copy(pending = left, isRefreshing = isRefreshing && left.isNotEmpty())
     }
 
     // keeps the sections in enum order and drops empty ones

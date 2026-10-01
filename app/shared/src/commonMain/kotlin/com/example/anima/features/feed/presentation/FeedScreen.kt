@@ -1,7 +1,6 @@
 package com.example.anima.features.feed.presentation
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -25,6 +24,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.compose.viewmodel.koinViewModel
 import anima.app.shared.generated.resources.Res
 import anima.app.shared.generated.resources.feed_empty
+import com.example.anima.core.components.AnimaPullToRefresh
+import com.example.anima.core.components.AnimaRefreshableFill
 import com.example.anima.core.components.AnimaScaffold
 import com.example.anima.core.error.AppError
 import com.example.anima.core.error.messageRes
@@ -54,6 +55,7 @@ fun FeedScreen(
         onEventClick = { event -> onNavigateToEvent(event.id) },
         onSeeAllClick = { /* TODO: navegar para a listagem completa da secao */ },
         onLoadMore = viewModel::loadMore,
+        onRefresh = viewModel::refresh,
     )
 }
 
@@ -65,6 +67,7 @@ private fun FeedContent(
     onEventClick: (Event) -> Unit,
     onSeeAllClick: (FeedSection) -> Unit,
     onLoadMore: (FeedSectionType) -> Unit,
+    onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     AnimaScaffold(insets = AnimaScaffoldInsets.WithChrome) {
@@ -83,7 +86,9 @@ private fun FeedContent(
                 onSelect = onCategorySelected,
             )
 
-            Box(
+            AnimaPullToRefresh(
+                isRefreshing = uiState.isRefreshing,
+                onRefresh = onRefresh,
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth(),
@@ -95,15 +100,14 @@ private fun FeedContent(
                         modifier = Modifier.align(Alignment.Center),
                     )
 
-                    uiState.hasError -> FeedMessage(
-                        text = stringResource((uiState.error ?: AppError.UNKNOWN).messageRes()),
-                        modifier = Modifier.align(Alignment.Center),
-                    )
+                    // the messages scroll so they can be pulled too
+                    uiState.hasError -> AnimaRefreshableFill {
+                        FeedMessage(text = stringResource((uiState.error ?: AppError.UNKNOWN).messageRes()))
+                    }
 
-                    uiState.isEmpty -> FeedMessage(
-                        text = stringResource(Res.string.feed_empty),
-                        modifier = Modifier.align(Alignment.Center),
-                    )
+                    uiState.isEmpty -> AnimaRefreshableFill {
+                        FeedMessage(text = stringResource(Res.string.feed_empty))
+                    }
 
                     else -> LazyColumn(
                         modifier = Modifier.fillMaxSize(),
