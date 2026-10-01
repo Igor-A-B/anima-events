@@ -6,14 +6,17 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.anima.core.theme.AnimaTheme
 
@@ -29,6 +32,7 @@ fun AnimaButton(
     variant: AnimaButtonVariant = AnimaButtonVariant.PRIMARY,
     size: AnimaButtonSize = AnimaButtonSize.DEFAULT,
     enabled: Boolean = true,
+    loading: Boolean = false,
 ) {
     val colors = rememberAnimaButtonColors(variant = variant)
 
@@ -46,44 +50,68 @@ fun AnimaButton(
         AnimaButtonSize.COMPACT -> AnimaTheme.typography.titleSmall
     }
 
+    val indicatorSize = when (size) {
+        AnimaButtonSize.DEFAULT -> AnimaButtonDefaults.IndicatorSize
+        AnimaButtonSize.COMPACT -> AnimaButtonDefaults.CompactIndicatorSize
+    }
+
+    val clickEnabled = enabled && !loading
+
+    val buttonModifier = modifier
+        .fillMaxWidth()
+        .height(height)
+
+    val content: @Composable () -> Unit = {
+        if (loading) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(indicatorSize),
+                color = colors.content,
+                strokeWidth = AnimaButtonDefaults.IndicatorStrokeWidth,
+            )
+        } else {
+            Text(text = text, style = textStyle)
+        }
+    }
+
+
     when (variant) {
         AnimaButtonVariant.PRIMARY -> {
             Button(
                 onClick = onClick,
-                modifier = modifier.fillMaxWidth().height(height),
-                enabled = enabled,
+                modifier = buttonModifier,
+                enabled = clickEnabled,
                 shape = shape,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colors.background,
                     contentColor = colors.content,
-                    disabledContainerColor = colors.background.copy(alpha = 0.4f),
-                    disabledContentColor = colors.content.copy(alpha = 0.4f),
+                    disabledContainerColor = colors.background.copy(alpha = if (loading) 1f else 0.4f),
+                    disabledContentColor = colors.content.copy(alpha = if (loading) 1f else 0.4f),
                 ),
                 contentPadding = contentPadding,
             ) {
-                Text(text = text, style = textStyle)
+                content()
             }
         }
 
         AnimaButtonVariant.OUTLINED -> {
             OutlinedButton(
                 onClick = onClick,
-                modifier = modifier.height(height),
-                enabled = enabled,
+                modifier = buttonModifier,
+                enabled = clickEnabled,
                 shape = shape,
                 colors = ButtonDefaults.outlinedButtonColors(
                     containerColor = Color.Transparent,
                     contentColor = colors.content,
                     disabledContainerColor = Color.Transparent,
-                    disabledContentColor = colors.content.copy(alpha = 0.4f),
+                    disabledContentColor = colors.content.copy(alpha = if (loading) 1f else 0.4f),
                 ),
                 border = BorderStroke(
                     width = 1.dp,
-                    color = colors.content.copy(alpha = if (enabled) 1f else 0.4f),
+                    color = colors.content.copy(alpha = if (enabled || loading) 1f else 0.4f),
                 ),
                 contentPadding = contentPadding,
             ) {
-                Text(text = text, style = textStyle)
+                content()
             }
         }
     }
@@ -92,7 +120,6 @@ fun AnimaButton(
 @Composable
 private fun rememberAnimaButtonColors(
     variant: AnimaButtonVariant,
-    // enabled: Boolean,
 ): AnimaButtonColors {
     val background by animateColorAsState(
         targetValue = when (variant) {
@@ -123,4 +150,8 @@ private data class AnimaButtonColors(
 object AnimaButtonDefaults {
     val Height = 54.dp
     val CompactHeight = 36.dp
+
+    val IndicatorSize: Dp = 24.dp
+    val CompactIndicatorSize: Dp = 18.dp
+    val IndicatorStrokeWidth: Dp = 2.dp
 }

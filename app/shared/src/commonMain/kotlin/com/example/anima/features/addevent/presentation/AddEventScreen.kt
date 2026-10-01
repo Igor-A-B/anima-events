@@ -169,6 +169,7 @@ fun AddEventScreen(
                 onClick = {
                     viewModel.onSubmit(onEventSaved)
                 },
+                loading = uiState.isSubmitting,
                 enabled = uiState.canSubmit,
                 modifier = Modifier
                     .fillMaxWidth()

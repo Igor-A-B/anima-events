@@ -123,12 +123,12 @@ fun RegisterScreen(
                 onClick = {
                     when {
                         uiState.isLastStep -> onRegisterComplete()
-                        // the password is the last input, the account is created before the success step
                         uiState.step == uiState.totalSteps - 1 -> viewModel.onSubmit(onSuccess = viewModel::onNextStep)
                         else -> viewModel.onNextStep()
                     }
                 },
-                enabled = uiState.canAdvance && !uiState.isLoading,
+                enabled = uiState.canAdvance,
+                loading = uiState.isLoading,
                 modifier = Modifier.fillMaxWidth(),
             )
 

@@ -40,8 +40,8 @@ fun EventFooter(
             text = state.label(),
             onClick = onClick,
             variant = if (state == SubscriptionUi.Confirmed) AnimaButtonVariant.OUTLINED else AnimaButtonVariant.PRIMARY,
-            // loading and attended are read only
-            enabled = state != SubscriptionUi.Loading && state != SubscriptionUi.Attended,
+            enabled = state != SubscriptionUi.Attended,
+            loading = state == SubscriptionUi.Loading,
         )
     }
 }

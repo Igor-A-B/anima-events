@@ -132,6 +132,7 @@ fun LoginScreen(
                 text = stringResource(Res.string.core_button_enter),
                 onClick = { viewModel.onSubmit(onLoginSuccess) },
                 enabled = uiState.canSubmit,
+                loading = uiState.isLoading,
             )
 
             Spacer(modifier = Modifier.height(AnimaTheme.spacing.md))
