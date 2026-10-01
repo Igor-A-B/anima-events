@@ -3,6 +3,7 @@ package com.anima.features.user.routes
 import com.anima.features.user.dtos.ChangePasswordRequestDto
 import com.anima.features.user.dtos.MeResponseDto
 import com.anima.features.user.exceptions.IncorrectPasswordException
+import com.anima.features.user.exceptions.InvalidSessionException
 import com.anima.features.user.models.AccountType
 import com.anima.features.user.services.UserService
 import org.slf4j.LoggerFactory
@@ -24,17 +25,30 @@ class UserRoute(private val userService: UserService) {
 
     @GetMapping
     fun me(auth: Authentication): ResponseEntity<MeResponseDto> =
-        ResponseEntity.ok(userService.me(UUID.fromString(auth.name), accountTypeOf(auth)))
+        ResponseEntity.ok(userService.me(userIdOf(auth), accountTypeOf(auth)))
 
     @PostMapping("/password")
     fun changePassword(auth: Authentication, @RequestBody request: ChangePasswordRequestDto): ResponseEntity<Void> {
-        userService.changePassword(UUID.fromString(auth.name), request.currentPassword, request.newPassword)
+        userService.changePassword(userIdOf(auth), request.currentPassword, request.newPassword)
         return ResponseEntity.noContent().build()
     }
 
-    // the JwtAuthFilter turns the accountType claim into a ROLE_ authority
+    private fun userIdOf(auth: Authentication): UUID =
+        runCatching { UUID.fromString(auth.name) }.getOrElse { throw InvalidSessionException() }
+
+    // the JwtAuthFilter turns the accountType claim into a ROLE_ authority; other authorities are ignored
     private fun accountTypeOf(auth: Authentication): AccountType =
-        AccountType.valueOf(auth.authorities.firstNotNullOf { it.authority }.removePrefix("ROLE_"))
+        auth.authorities.asSequence()
+            .mapNotNull { it.authority }
+            .filter { it.startsWith(ROLE_PREFIX) }
+            .mapNotNull { role -> AccountType.entries.find { it.name == role.removePrefix(ROLE_PREFIX) } }
+            .firstOrNull()
+            ?: throw InvalidSessionException()
+
+    // the app refreshes on 401 and signs out when that fails too
+    @ExceptionHandler(InvalidSessionException::class)
+    fun handleInvalidSession(ex: InvalidSessionException): ResponseEntity<Map<String, String>> =
+        error(HttpStatus.UNAUTHORIZED, ex.message)
 
     // 403, not 401: a 401 makes the app try a token refresh
     @ExceptionHandler(IncorrectPasswordException::class)
@@ -49,7 +63,11 @@ class UserRoute(private val userService: UserService) {
     @ExceptionHandler(Exception::class)
     fun handleUnexpected(ex: Exception): ResponseEntity<Map<String, String>> {
         log.error("Unexpected error on /me", ex)
-        return error(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong, nothing was changed")
+        return error(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected server error, please try again")
+    }
+
+    private companion object {
+        const val ROLE_PREFIX = "ROLE_"
     }
 
     private fun error(status: HttpStatus, message: String?) =
