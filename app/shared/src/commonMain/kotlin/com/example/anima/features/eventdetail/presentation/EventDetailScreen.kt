@@ -3,7 +3,6 @@ package com.example.anima.features.eventdetail.presentation
 import com.example.anima.core.image.deviceImageUrl
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.compose.viewmodel.koinViewModel
 import com.example.anima.core.image.rememberImagePicker
+import com.example.anima.core.components.AnimaPullToRefresh
 import com.example.anima.core.components.AnimaScaffold
 import com.example.anima.core.components.AnimaScaffoldInsets
 import com.example.anima.core.theme.AnimaTheme
@@ -55,11 +55,13 @@ fun EventDetailScreen(
             actionError = uiState.actionError,
             isCurator = uiState.isCurator,
             isUploadingImage = uiState.isUploadingImage,
+            isRefreshing = uiState.isRefreshing,
             onAddImage = pickImage,
             onNavigateBack = onNavigateBack,
             onShare = {},
             onFavorite = {},
             onSubscribe = viewModel::onSubscribeClick,
+            onRefresh = viewModel::refresh,
         )
     }
 }
@@ -71,14 +73,21 @@ private fun EventDetailContent(
     actionError: Boolean,
     isCurator: Boolean,
     isUploadingImage: Boolean,
+    isRefreshing: Boolean,
     onAddImage: () -> Unit,
     onNavigateBack: () -> Unit,
     onShare: () -> Unit,
     onFavorite: () -> Unit,
     onSubscribe: () -> Unit,
+    onRefresh: () -> Unit,
 ) {
     AnimaScaffold(insets = AnimaScaffoldInsets.Standalone) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        // the footer floats in the same box, only the list feeds the pull gesture
+        AnimaPullToRefresh(
+            isRefreshing = isRefreshing,
+            onRefresh = onRefresh,
+            modifier = Modifier.fillMaxSize(),
+        ) {
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),

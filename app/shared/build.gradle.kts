@@ -89,6 +89,10 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
+        // view model tests need Dispatchers.Main, only the android host tests run them
+        getByName("androidHostTest").dependencies {
+            implementation(libs.kotlinx.coroutines.test)
+        }
         jsMain.dependencies {
             implementation(libs.wrappers.browser)
             // ktor

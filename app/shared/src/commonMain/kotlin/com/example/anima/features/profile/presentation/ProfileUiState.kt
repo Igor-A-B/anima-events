@@ -11,6 +11,8 @@ data class ProfileUiState(
     val accountType: AccountType = AccountType.VISITOR,
     val isLoading: Boolean = true,
     val error: String = "",
+    // pull to refresh running, the profile and its events stay on screen meanwhile
+    val isRefreshing: Boolean = false,
     val isPasswordDialogOpen: Boolean = false,
     val isChangingPassword: Boolean = false,
     val passwordError: AppError? = null,

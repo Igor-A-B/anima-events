@@ -9,6 +9,8 @@ data class SearchUiState(
     val results: List<Event> = emptyList(),
     val nextCursor: String? = null,
     val isLoading: Boolean = true,
+    // pull to refresh running, unlike isLoading the results stay as they are
+    val isRefreshing: Boolean = false,
     val isLoadingMore: Boolean = false,
     val isFiltersSheetVisible: Boolean = false,
     val error: String = "",

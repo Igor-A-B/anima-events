@@ -3,7 +3,6 @@ package com.example.anima.features.profile.presentation
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -53,6 +52,8 @@ import anima.app.shared.generated.resources.profile_title
 //import anima.app.shared.generated.resources.profile_reveal
 //import anima.app.shared.generated.resources.profile_section_contact
 //import anima.app.shared.generated.resources.profile_see_all
+import com.example.anima.core.components.AnimaPullToRefresh
+import com.example.anima.core.components.AnimaRefreshableFill
 import com.example.anima.core.components.AnimaScaffold
 import com.example.anima.core.components.AnimaScaffoldInsets
 import com.example.anima.core.components.icon.AnimaIcon
@@ -102,6 +103,7 @@ fun ProfileScreen(
         onLogout = { viewModel.onLogout(onSignedOut) },
         onEventClick = { event -> if (uiState.isExhibitor) onEditEvent(event.id) else onOpenEvent(event.id) },
         onRetryEvents = viewModel::loadEvents,
+        onRefresh = viewModel::refresh,
         // TODO implement?
         // onToggleDocument = viewModel::onToggleDocumentVisibility,
         // onSeeAllEvents = viewModel::onSeeAllEvents,
@@ -129,10 +131,15 @@ private fun ProfileContent(
     onLogout: () -> Unit,
     onEventClick: (Event) -> Unit,
     onRetryEvents: () -> Unit,
+    onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     AnimaScaffold(insets = AnimaScaffoldInsets.WithChrome) {
-        Box(modifier = modifier.fillMaxSize()) {
+        AnimaPullToRefresh(
+            isRefreshing = uiState.isRefreshing,
+            onRefresh = onRefresh,
+            modifier = modifier.fillMaxSize(),
+        ) {
             val profile = uiState.profile
 
             when {
@@ -141,15 +148,16 @@ private fun ProfileContent(
                     modifier = Modifier.align(Alignment.Center),
                 )
 
-                uiState.error.isNotBlank() || profile == null -> Text(
-                    text = stringResource(Res.string.core_error_generic),
-                    style = AnimaTheme.typography.bodyMedium,
-                    color = AnimaTheme.colors.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(AnimaTheme.spacing.xl),
-                )
+                // scrolls so the error can be pulled too
+                uiState.error.isNotBlank() || profile == null -> AnimaRefreshableFill {
+                    Text(
+                        text = stringResource(Res.string.core_error_generic),
+                        style = AnimaTheme.typography.bodyMedium,
+                        color = AnimaTheme.colors.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(AnimaTheme.spacing.xl),
+                    )
+                }
 
                 else -> ProfileList(
                     profile = profile,

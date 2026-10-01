@@ -20,4 +20,6 @@ data class EventDetailUiState(
     // the signed in user organizes this event, so they can add images
     val isCurator: Boolean = false,
     val isUploadingImage: Boolean = false,
+    // pull to refresh running, the event stays on screen meanwhile
+    val isRefreshing: Boolean = false,
 )

@@ -76,32 +76,62 @@ class SearchViewModel(
 
     fun retry() = search(debounce = false)
 
+    // pull to refresh: same query and filters right away, the results stay while it runs
+    fun refresh() {
+        val state = _uiState.value
+        if (state.isRefreshing || state.isLoading) return
+        search(debounce = false, refresh = true)
+    }
+
     private fun updateFilters(transform: (SearchFilters) -> SearchFilters) {
         _uiState.update { state -> state.copy(filters = transform(state.filters)) }
         // taps are deliberate, so they apply straight away — only typing waits
         search(debounce = false)
     }
 
-    private fun search(debounce: Boolean) {
+    private fun search(debounce: Boolean, refresh: Boolean = false) {
         searchJob?.cancel()
         // a page of the previous search must not land on the new results
         moreJob?.cancel()
+        // typing or a filter cancels a running refresh, so its indicator stops here too
+        _uiState.update { it.copy(isRefreshing = refresh) }
 
         searchJob = viewModelScope.launch {
             if (debounce) delay(QUERY_DEBOUNCE_MILLIS)
 
-            _uiState.update { it.copy(isLoading = true, isLoadingMore = false, error = "") }
+            if (refresh) {
+                _uiState.update { it.copy(isLoadingMore = false) }
+            } else {
+                _uiState.update { it.copy(isLoading = true, isLoadingMore = false, error = "") }
+            }
 
             val state = _uiState.value
 
             runCatching { repository.search(state.query, state.filters) }
                 .onSuccess { page ->
                     _uiState.update {
-                        it.copy(isLoading = false, results = page.events, nextCursor = page.nextCursor)
+                        it.copy(
+                            isLoading = false,
+                            isRefreshing = false,
+                            results = page.events,
+                            nextCursor = page.nextCursor,
+                            error = "",
+                        )
                     }
                 }
                 .onFailure { throwable ->
                     if (throwable is CancellationException) throw throwable
+
+                    // a failed refresh keeps the results it already had
+                    if (refresh) {
+                        _uiState.update {
+                            it.copy(
+                                isRefreshing = false,
+                                error = if (it.results.isEmpty()) throwable.message ?: "unknown error" else it.error,
+                            )
+                        }
+                        return@onFailure
+                    }
 
                     _uiState.update {
                         it.copy(
@@ -119,7 +149,8 @@ class SearchViewModel(
     fun loadMore() {
         val state = _uiState.value
         val cursor = state.nextCursor ?: return
-        if (state.isLoading || state.isLoadingMore) return
+        // during a refresh the cursor is about to be replaced
+        if (state.isLoading || state.isLoadingMore || state.isRefreshing) return
 
         _uiState.update { it.copy(isLoadingMore = true) }
 

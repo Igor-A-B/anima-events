@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 
 class ProfileViewModel(
@@ -85,15 +86,34 @@ class ProfileViewModel(
         }
     }
 
-    fun loadProfile() {
+    // pull to refresh: profile and events reload together, the screen keeps what it shows meanwhile
+    fun refresh() {
+        if (_uiState.value.isRefreshing) return
+
+        _uiState.update { it.copy(isRefreshing = true) }
+        loadProfile(refresh = true)
+        loadEvents()
+        val loads = listOfNotNull(loadJob, eventsJob)
+        viewModelScope.launch {
+            // join also returns when a load is cancelled by a newer one
+            try {
+                loads.joinAll()
+            } finally {
+                _uiState.update { it.copy(isRefreshing = false) }
+            }
+        }
+    }
+
+    // a refresh skips the full screen loader and keeps the profile already shown if it fails
+    fun loadProfile(refresh: Boolean = false) {
         loadJob?.cancel()
 
         loadJob = viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, error = "") }
+            if (!refresh) _uiState.update { it.copy(isLoading = true, error = "") }
 
             runCatching { repository.getProfile() }
                 .onSuccess { profile ->
-                    _uiState.update { it.copy(isLoading = false, profile = profile) }
+                    _uiState.update { it.copy(isLoading = false, profile = profile, error = "") }
                 }
                 .onFailure { throwable ->
                     if (throwable is CancellationException) throw throwable
@@ -101,7 +121,7 @@ class ProfileViewModel(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            error = throwable.message ?: "unknown error",
+                            error = if (refresh && it.profile != null) it.error else throwable.message ?: "unknown error",
                         )
                     }
                 }
