@@ -1,9 +1,7 @@
 package com.example.anima.features.eventdetail.presentation
 
-import com.example.anima.core.image.deviceImageUrl
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.compose.viewmodel.koinViewModel
 import com.example.anima.core.image.rememberImagePicker
+import com.example.anima.core.components.AnimaPullToRefresh
 import com.example.anima.core.components.AnimaScaffold
 import com.example.anima.core.components.AnimaScaffoldInsets
 import com.example.anima.core.theme.AnimaTheme
@@ -26,8 +25,10 @@ import com.anima.features.event.models.Event
 import com.example.anima.features.eventdetail.presentation.components.EventAbout
 import com.example.anima.features.eventdetail.presentation.components.EventCover
 import com.example.anima.features.eventdetail.presentation.components.EventFooter
+import com.example.anima.core.error.AppError
 import com.example.anima.features.eventdetail.presentation.components.EventInfoGrid
 import com.example.anima.features.eventdetail.presentation.components.EventOrganizer
+import com.example.anima.features.feed.presentation.components.coverImageUrl
 
 private val FOOTER_RESERVE = 112.dp
 
@@ -55,11 +56,13 @@ fun EventDetailScreen(
             actionError = uiState.actionError,
             isCurator = uiState.isCurator,
             isUploadingImage = uiState.isUploadingImage,
+            isRefreshing = uiState.isRefreshing,
             onAddImage = pickImage,
             onNavigateBack = onNavigateBack,
             onShare = {},
             onFavorite = {},
             onSubscribe = viewModel::onSubscribeClick,
+            onRefresh = viewModel::refresh,
         )
     }
 }
@@ -68,17 +71,24 @@ fun EventDetailScreen(
 private fun EventDetailContent(
     event: Event,
     subscription: SubscriptionUi,
-    actionError: Boolean,
+    actionError: AppError?,
     isCurator: Boolean,
     isUploadingImage: Boolean,
+    isRefreshing: Boolean,
     onAddImage: () -> Unit,
     onNavigateBack: () -> Unit,
     onShare: () -> Unit,
     onFavorite: () -> Unit,
     onSubscribe: () -> Unit,
+    onRefresh: () -> Unit,
 ) {
     AnimaScaffold(insets = AnimaScaffoldInsets.Standalone) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        // the footer floats in the same box, only the list feeds the pull gesture
+        AnimaPullToRefresh(
+            isRefreshing = isRefreshing,
+            onRefresh = onRefresh,
+            modifier = Modifier.fillMaxSize(),
+        ) {
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -93,7 +103,7 @@ private fun EventDetailContent(
                         title = event.title,
                         category = event.category,
                         price = event.price,
-                        imageUrl = event.imageUrls.firstOrNull()?.let(::deviceImageUrl),
+                        imageUrl = event.coverImageUrl(),
                         canAddImage = isCurator,
                         isUploadingImage = isUploadingImage,
                         onAddImage = onAddImage,
@@ -118,7 +128,7 @@ private fun EventDetailContent(
                             venue = event.venue,
                             city = event.city,
                             distanceLabel = event.distanceLabel,
-                            attendees = event.attendees,
+                            event = event,
                         )
 
                         EventOrganizer(
@@ -133,7 +143,7 @@ private fun EventDetailContent(
             if (subscription != SubscriptionUi.Hidden) {
                 EventFooter(
                     state = subscription,
-                    hasError = actionError,
+                    error = actionError,
                     onClick = onSubscribe,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)

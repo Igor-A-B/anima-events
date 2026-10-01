@@ -3,7 +3,6 @@ package com.example.anima.features.profile.presentation
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -26,7 +25,6 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.compose.viewmodel.koinViewModel
 import anima.app.shared.generated.resources.Res
-import anima.app.shared.generated.resources.core_error_generic
 import anima.app.shared.generated.resources.profile_change
 import anima.app.shared.generated.resources.profile_field_email
 import anima.app.shared.generated.resources.profile_field_name
@@ -41,7 +39,10 @@ import anima.app.shared.generated.resources.profile_events_retry
 import anima.app.shared.generated.resources.profile_section_account
 import anima.app.shared.generated.resources.profile_section_events
 import anima.app.shared.generated.resources.profile_section_security
+import anima.app.shared.generated.resources.profile_retry
 import anima.app.shared.generated.resources.profile_title
+import com.example.anima.core.error.AppError
+import com.example.anima.core.error.messageRes
 // TODO implement? these belong to the sections commented out below
 //import anima.app.shared.generated.resources.profile_contact_hint
 //import anima.app.shared.generated.resources.profile_delete_account
@@ -53,6 +54,8 @@ import anima.app.shared.generated.resources.profile_title
 //import anima.app.shared.generated.resources.profile_reveal
 //import anima.app.shared.generated.resources.profile_section_contact
 //import anima.app.shared.generated.resources.profile_see_all
+import com.example.anima.core.components.AnimaPullToRefresh
+import com.example.anima.core.components.AnimaRefreshableFill
 import com.example.anima.core.components.AnimaScaffold
 import com.example.anima.core.components.AnimaScaffoldInsets
 import com.example.anima.core.components.icon.AnimaIcon
@@ -102,6 +105,8 @@ fun ProfileScreen(
         onLogout = { viewModel.onLogout(onSignedOut) },
         onEventClick = { event -> if (uiState.isExhibitor) onEditEvent(event.id) else onOpenEvent(event.id) },
         onRetryEvents = viewModel::loadEvents,
+        onRetryProfile = viewModel::loadProfile,
+        onRefresh = viewModel::refresh,
         // TODO implement?
         // onToggleDocument = viewModel::onToggleDocumentVisibility,
         // onSeeAllEvents = viewModel::onSeeAllEvents,
@@ -129,10 +134,16 @@ private fun ProfileContent(
     onLogout: () -> Unit,
     onEventClick: (Event) -> Unit,
     onRetryEvents: () -> Unit,
+    onRetryProfile: () -> Unit,
+    onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     AnimaScaffold(insets = AnimaScaffoldInsets.WithChrome) {
-        Box(modifier = modifier.fillMaxSize()) {
+        AnimaPullToRefresh(
+            isRefreshing = uiState.isRefreshing,
+            onRefresh = onRefresh,
+            modifier = modifier.fillMaxSize(),
+        ) {
             val profile = uiState.profile
 
             when {
@@ -141,15 +152,14 @@ private fun ProfileContent(
                     modifier = Modifier.align(Alignment.Center),
                 )
 
-                uiState.error.isNotBlank() || profile == null -> Text(
-                    text = stringResource(Res.string.core_error_generic),
-                    style = AnimaTheme.typography.bodyMedium,
-                    color = AnimaTheme.colors.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(AnimaTheme.spacing.xl),
-                )
+                // a failed reload behind a loaded profile keeps the list, ProfileList shows it inline
+                // scrolls so the error can be pulled too
+                profile == null -> AnimaRefreshableFill {
+                    ProfileError(
+                        message = stringResource((uiState.error ?: AppError.UNKNOWN).messageRes()),
+                        onRetry = onRetryProfile,
+                    )
+                }
 
                 else -> ProfileList(
                     profile = profile,
@@ -160,6 +170,7 @@ private fun ProfileContent(
                     onLogout = onLogout,
                     onEventClick = onEventClick,
                     onRetryEvents = onRetryEvents,
+                    onRetryProfile = onRetryProfile,
                 )
             }
         }
@@ -176,6 +187,7 @@ private fun ProfileList(
     onLogout: () -> Unit,
     onEventClick: (Event) -> Unit,
     onRetryEvents: () -> Unit,
+    onRetryProfile: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val change = stringResource(Res.string.profile_change)
@@ -196,6 +208,21 @@ private fun ProfileList(
                 style = AnimaTheme.typography.headlineSmall,
                 color = AnimaTheme.colors.onBackground,
             )
+        }
+
+        uiState.error?.let { error ->
+            item(key = "reload-error") {
+                Text(
+                    text = "${stringResource(error.messageRes())} ${stringResource(Res.string.profile_retry)}",
+                    style = AnimaTheme.typography.bodySmall,
+                    color = AnimaTheme.colors.error,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(AnimaTheme.shapes.medium)
+                        .clickable(onClick = onRetryProfile)
+                        .padding(AnimaTheme.spacing.sm),
+                )
+            }
         }
 
         item(key = "header") {
@@ -324,8 +351,12 @@ private fun ProfileList(
                                 .size(20.dp),
                         )
 
-                        uiState.eventsError -> Text(
-                            text = stringResource(Res.string.profile_events_retry),
+                        uiState.eventsError != null -> Text(
+                            // the retry text already says the load failed, a specific reason goes above it
+                            text = listOfNotNull(
+                                uiState.eventsError.takeIf { it != AppError.UNKNOWN }?.let { stringResource(it.messageRes()) },
+                                stringResource(Res.string.profile_events_retry),
+                            ).joinToString("\n"),
                             style = AnimaTheme.typography.bodyMedium,
                             color = AnimaTheme.colors.onSurfaceVariant,
                             modifier = Modifier
@@ -403,6 +434,38 @@ private fun ProfileList(
 //        }
 //    }
 //}
+
+// the profile could not be loaded: the reason and a way to try again
+@Composable
+private fun ProfileError(
+    message: String,
+    onRetry: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.padding(AnimaTheme.spacing.xl),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.lg),
+    ) {
+        Text(
+            text = message,
+            style = AnimaTheme.typography.bodyMedium,
+            color = AnimaTheme.colors.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+        )
+
+        Text(
+            text = stringResource(Res.string.profile_retry),
+            style = AnimaTheme.typography.labelLarge,
+            color = AnimaTheme.colors.primaryVariant,
+            modifier = Modifier
+                .clip(AnimaTheme.shapes.full)
+                .border(width = 1.dp, color = AnimaTheme.colors.outline, shape = AnimaTheme.shapes.full)
+                .clickable(onClick = onRetry)
+                .padding(horizontal = AnimaTheme.spacing.lg, vertical = AnimaTheme.spacing.sm),
+        )
+    }
+}
 
 @Composable
 private fun LogoutButton(

@@ -58,8 +58,13 @@ internal fun EventEntity.toEvent(
         imageUrl = imageUrl,
         curatorId = organizer?.id?.toString() ?: "",
         imageUrls = images.map { publicUrl(it.objectPath) },
+        capacity = capacity,
     )
 }
+
+// the first uploaded image, else the legacy imageUrl column, null when the event has neither
+internal fun EventEntity.coverUrl(publicUrl: (String) -> String): String? =
+    images.firstOrNull()?.let { publicUrl(it.objectPath) } ?: imageUrl
 
 private fun haversineKm(lat1: Double, lng1: Double, lat2: Double, lng2: Double): Double {
     val dLat = Math.toRadians(lat2 - lat1)

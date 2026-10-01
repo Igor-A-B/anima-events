@@ -45,7 +45,7 @@ import com.example.anima.core.components.icon.lucide.LucideMail
 import com.example.anima.core.components.textfield.AnimaTextField
 import com.example.anima.core.error.messageRes
 import com.example.anima.core.theme.AnimaTheme
-import com.example.anima.features.auth.presentation.login.components.BiometricButton
+// import com.example.anima.features.auth.presentation.login.components.BiometricButton
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -154,9 +154,10 @@ fun LoginScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(AnimaTheme.spacing.xxxl))
-
-            BiometricButton(onClick = { })
+            // TODO: biometrics
+            // Spacer(modifier = Modifier.height(AnimaTheme.spacing.xxxl))
+            //
+            // BiometricButton(onClick = { })
         }
     }
 }

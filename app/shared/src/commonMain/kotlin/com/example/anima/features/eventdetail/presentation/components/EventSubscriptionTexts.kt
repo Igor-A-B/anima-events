@@ -6,6 +6,7 @@ import anima.app.shared.generated.resources.event_detail_participate
 import anima.app.shared.generated.resources.event_detail_subscribe_again
 import anima.app.shared.generated.resources.event_detail_subscription_attended
 import anima.app.shared.generated.resources.event_detail_subscription_confirmed
+import anima.app.shared.generated.resources.event_detail_subscription_full
 import anima.app.shared.generated.resources.event_detail_subscription_loading
 import com.example.anima.features.eventdetail.presentation.SubscriptionUi
 import org.jetbrains.compose.resources.stringResource
@@ -18,6 +19,7 @@ fun SubscriptionUi.label(): String = stringResource(
         SubscriptionUi.Confirmed -> Res.string.event_detail_subscription_confirmed
         SubscriptionUi.Cancelled -> Res.string.event_detail_subscribe_again
         SubscriptionUi.Attended -> Res.string.event_detail_subscription_attended
+        SubscriptionUi.Full -> Res.string.event_detail_subscription_full
         SubscriptionUi.NotSubscribed, SubscriptionUi.Hidden -> Res.string.event_detail_participate
     },
 )

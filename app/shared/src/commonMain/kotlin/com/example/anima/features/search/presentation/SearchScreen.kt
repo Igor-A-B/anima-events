@@ -25,10 +25,12 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import anima.app.shared.generated.resources.Res
-import anima.app.shared.generated.resources.core_error_generic
 import anima.app.shared.generated.resources.search_empty
 import anima.app.shared.generated.resources.search_results_count
+import com.example.anima.core.components.AnimaPullToRefresh
+import com.example.anima.core.components.AnimaRefreshableFill
 import com.example.anima.core.components.AnimaScaffold
+import com.example.anima.core.error.messageRes
 import com.example.anima.core.components.AnimaScaffoldInsets
 import com.example.anima.core.theme.AnimaTheme
 import com.anima.features.event.models.Event
@@ -64,6 +66,7 @@ fun SearchScreen(
         onClearFilters = viewModel::onClearFilters,
         onEventClick = { event -> onNavigateToEvent(event.id) },
         onLoadMore = viewModel::loadMore,
+        onRefresh = viewModel::refresh,
     )
 }
 
@@ -81,6 +84,7 @@ private fun SearchContent(
     onClearFilters: () -> Unit,
     onEventClick: (Event) -> Unit,
     onLoadMore: () -> Unit,
+    onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val gridState = rememberLazyGridState()
@@ -130,21 +134,22 @@ private fun SearchContent(
                 )
             }
 
-            Box(
+            AnimaPullToRefresh(
+                isRefreshing = uiState.isRefreshing,
+                onRefresh = onRefresh,
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth(),
             ) {
                 when {
-                    uiState.error.isNotBlank() -> SearchMessage(
-                        text = stringResource(Res.string.core_error_generic),
-                        modifier = Modifier.align(Alignment.Center),
-                    )
+                    // the messages scroll so they can be pulled too
+                    uiState.error != null -> AnimaRefreshableFill {
+                        SearchMessage(text = stringResource(uiState.error.messageRes()))
+                    }
 
-                    uiState.isEmpty -> SearchMessage(
-                        text = stringResource(Res.string.search_empty),
-                        modifier = Modifier.align(Alignment.Center),
-                    )
+                    uiState.isEmpty -> AnimaRefreshableFill {
+                        SearchMessage(text = stringResource(Res.string.search_empty))
+                    }
 
                     // also the first load: an empty grid plus the indicator on top
                     else -> LazyVerticalGrid(

@@ -6,16 +6,16 @@ import anima.app.shared.generated.resources.Res
 import anima.app.shared.generated.resources.add_event_created
 import anima.app.shared.generated.resources.add_event_deleted
 import anima.app.shared.generated.resources.add_event_error_date
-import anima.app.shared.generated.resources.add_event_error_forbidden
-import anima.app.shared.generated.resources.add_event_error_validation
 import anima.app.shared.generated.resources.add_event_photo_too_large
 import anima.app.shared.generated.resources.add_event_updated
 import anima.app.shared.generated.resources.core_error_image_unsupported
 import com.anima.features.event.models.EventCategory
 import com.example.anima.core.error.AppExceptionBus
+import com.example.anima.core.error.ErrorContext
+import com.example.anima.core.error.toAppError
 import com.example.anima.core.error.Severity
 import com.example.anima.core.image.PickedImage
-import com.example.anima.core.network.ApiException
+import com.example.anima.core.image.deviceImageUrl
 import com.example.anima.features.addevent.data.ExhibitorEventRepository
 import com.example.anima.features.addevent.domain.model.toDraft
 import com.example.anima.features.addevent.domain.model.toRequest
@@ -39,14 +39,15 @@ class AddEventViewModel(
     // called again on recomposition with the same id, only the first call loads
     fun load(eventId: String?) {
         if (eventId == null || _uiState.value.eventId == eventId) return
-        _uiState.update { it.copy(eventId = eventId, isLoading = true, loadFailed = false) }
+        _uiState.update { it.copy(eventId = eventId, isLoading = true, loadError = null) }
 
         viewModelScope.launch {
             try {
                 val form = repository.getForm(eventId)
 
                 val draft = form.toDraft()
-                val existingUrl = form.imageUrl
+                // coverUrl is the current cover (an uploaded image or imageUrl), read only
+                val existingUrl = (form.coverUrl ?: form.imageUrl)?.takeIf { it.isNotBlank() }?.let { deviceImageUrl(it) }
 
                 _uiState.update {
                     it.copy(
@@ -58,8 +59,9 @@ class AddEventViewModel(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                _uiState.update { it.copy(isLoading = false, loadFailed = true) }
-                report(e)
+                val error = e.toAppError(ErrorContext.LOAD_EVENT_FORM)
+                _uiState.update { it.copy(isLoading = false, loadError = error) }
+                bus.report(error)
             }
         }
     }
@@ -147,7 +149,7 @@ class AddEventViewModel(
                 throw e
             } catch (e: Exception) {
                 _uiState.update { it.copy(isSubmitting = false) }
-                report(e)
+                bus.report(e, if (state.eventId == null) ErrorContext.CREATE_EVENT else ErrorContext.UPDATE_EVENT)
             }
         }
     }
@@ -159,11 +161,7 @@ class AddEventViewModel(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            if ((e as? ApiException)?.status == 413) {
-                bus.show(Res.string.add_event_photo_too_large, Severity.WARN)
-            } else {
-                report(e)
-            }
+            bus.report(e, ErrorContext.UPLOAD_IMAGE)
         }
     }
 
@@ -190,17 +188,8 @@ class AddEventViewModel(
                 throw e
             } catch (e: Exception) {
                 _uiState.update { it.copy(isDeleting = false, isDeleteDialogOpen = false) }
-                report(e)
+                bus.report(e, ErrorContext.DELETE_EVENT)
             }
-        }
-    }
-
-    // the generic mapping reads 403 as a wrong password, here it means not allowed
-    private fun report(e: Exception) {
-        when ((e as? ApiException)?.status) {
-            400 -> bus.show(Res.string.add_event_error_validation, Severity.WARN)
-            403 -> bus.show(Res.string.add_event_error_forbidden, Severity.ERROR)
-            else -> bus.report(e)
         }
     }
 }

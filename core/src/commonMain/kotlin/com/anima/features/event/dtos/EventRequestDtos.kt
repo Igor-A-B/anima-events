@@ -19,6 +19,9 @@ data class CreateEventRequestDto(
     // street and number, venue is the place name
     val address: String? = null,
     val imageUrl: String? = null,
+    // read only, filled by GET /events/{id}/form with the current cover (first uploaded image,
+    // else imageUrl); the server ignores it on create and update
+    val coverUrl: String? = null,
 )
 
 // full replace, same fields as create
