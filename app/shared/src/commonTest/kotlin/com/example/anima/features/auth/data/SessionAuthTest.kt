@@ -25,9 +25,13 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Clock
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 
 class SessionAuthTest {
@@ -56,6 +60,8 @@ class SessionAuthTest {
         val refreshTokensSent = mutableListOf<String>()
         var refreshFailure: Throwable? = null
         var refreshDelayMs = 0L
+        // when set, refresh waits for it, so other things can happen while it is in flight
+        var gate: CompletableDeferred<Unit>? = null
         var nextExpiry: () -> Long = { now() + 900 }
 
         fun issue(user: Pair<String, AccountType>): TokenResponseDto {
@@ -75,6 +81,7 @@ class SessionAuthTest {
             refreshCalls++
             refreshTokensSent += request.refreshToken
             if (refreshDelayMs > 0) delay(refreshDelayMs)
+            gate?.await()
             refreshFailure?.let { throw it }
             val user = liveRefreshTokens.remove(request.refreshToken)
                 ?: throw ApiException(401, "Refresh token inválido ou expirado")
@@ -89,7 +96,8 @@ class SessionAuthTest {
     private class Fixture {
         val storage = MemoryTokenStorage()
         val auth = FakeAuth()
-        val session = SessionRepository(auth, storage)
+        var nowMillis = Clock.System.now().toEpochMilliseconds()
+        val session = SessionRepository(auth, storage) { nowMillis }
 
         // tokens the api answers 401 to, like a revoked or expired one
         val rejected = mutableSetOf<String>()
@@ -135,7 +143,7 @@ class SessionAuthTest {
         f.session.login("visitor@test.com", "pw")
         f.client.get("events")
 
-        f.session.logout()
+        f.session.signOut()
         assertFailsWith<ApiException> { f.client.get("events") }
         assertNull(f.sentTokens.last())
     }
@@ -227,9 +235,99 @@ class SessionAuthTest {
 
             assertFailsWith<ApiException> { f.client.get("events") }
 
+            assertEquals(1, f.auth.refreshCalls, "one request, one refresh after $failure")
             assertEquals(tokens, f.storage.tokens, "tokens dropped after $failure")
             assertNotNull(f.session.session.value)
         }
+    }
+
+    @Test
+    fun anExpiredTokenWhoseRefreshFailsIsNotRefreshedAgainDuringTheCooldown() = runTest {
+        for (failure in listOf(ApiException(null, "offline"), ApiException(429, "slow down"), ApiException(503, ""))) {
+            val f = Fixture()
+            f.auth.nextExpiry = { now() - 10 }
+            f.session.login("visitor@test.com", "pw")
+            val tokens = f.storage.tokens!!
+            f.rejected += tokens.accessToken
+            f.auth.refreshFailure = failure
+
+            assertFailsWith<ApiException> { f.client.get("events") }
+            assertEquals(1, f.auth.refreshCalls, "first request after $failure")
+
+            assertFailsWith<ApiException> { f.client.get("events") }
+            assertEquals(1, f.auth.refreshCalls, "second request inside the cooldown after $failure")
+            assertEquals(tokens, f.storage.tokens)
+
+            // once the cooldown is over the server is asked again
+            f.nowMillis += 20_000
+            f.auth.refreshFailure = null
+            f.auth.nextExpiry = { now() + 900 }
+            f.client.get("events")
+            assertEquals(2, f.auth.refreshCalls)
+        }
+    }
+
+    @Test
+    fun aRefreshInFlightDuringAnAccountSwitchNeverTouchesTheNewSession() = runTest {
+        for (refreshFails in listOf(true, false)) {
+            val f = Fixture()
+            f.session.login("visitor@test.com", "pw")
+            val visitorToken = f.storage.tokens!!.accessToken
+            val gate = CompletableDeferred<Unit>()
+            f.auth.gate = gate
+            if (refreshFails) f.auth.refreshFailure = ApiException(401, "Refresh token inválido ou expirado")
+
+            val refresh = launch { f.session.refresh(visitorToken) }
+            runCurrent()
+            assertEquals(1, f.auth.refreshCalls)
+            val switch = launch {
+                f.session.signOut()
+                f.session.login("exhibitor@test.com", "pw")
+            }
+            runCurrent()
+            gate.complete(Unit)
+            joinAll(refresh, switch)
+
+            assertEquals(AccountType.EXHIBITOR, parseJwtClaims(f.storage.tokens!!.accessToken)?.accountType, "refresh failed: $refreshFails")
+            assertEquals(AccountType.EXHIBITOR, f.session.session.value?.accountType)
+        }
+    }
+
+    @Test
+    fun aRefreshOnlyWritesOverTheTokensItStartedFrom() = runTest {
+        for (refreshFails in listOf(true, false)) {
+            val f = Fixture()
+            f.session.login("visitor@test.com", "pw")
+            val visitorToken = f.storage.tokens!!.accessToken
+            val exhibitorTokens = f.auth.issue("exhibitor-id" to AccountType.EXHIBITOR)
+            val gate = CompletableDeferred<Unit>()
+            f.auth.gate = gate
+            if (refreshFails) f.auth.refreshFailure = ApiException(401, "Refresh token inválido ou expirado")
+
+            val refresh = async { f.session.refresh(visitorToken) }
+            runCurrent()
+            // a write that did not go through the session, the refresh must leave it alone
+            f.storage.tokens = exhibitorTokens
+            gate.complete(Unit)
+
+            assertNull(refresh.await())
+            assertEquals(exhibitorTokens, f.storage.tokens, "refresh failed: $refreshFails")
+        }
+    }
+
+    @Test
+    fun anOldRequestIsNotReplayedAsTheNextUser() = runTest {
+        val f = Fixture()
+        f.session.login("visitor@test.com", "pw")
+        val visitorToken = f.storage.tokens!!.accessToken
+        f.session.signOut()
+
+        assertNull(f.session.refresh(visitorToken), "no session at all")
+
+        f.session.login("exhibitor@test.com", "pw")
+        assertNull(f.session.refresh(visitorToken), "another user is signed in")
+        assertNull(f.session.refresh(null), "the request carried no token")
+        assertEquals(0, f.auth.refreshCalls)
     }
 
     private companion object {

@@ -19,46 +19,52 @@ data class Session(val userId: String, val accountType: AccountType)
 
 // who is signed in, backed by the tokens on disk
 // the auth repository has no auth plugin, so login and refresh never loop
+// every write to the stored tokens happens under sessionLock, so a refresh still in flight
+// can't overwrite or wipe a session that started after it
 class SessionRepository(
     private val auth: AuthRepository,
     private val storage: TokenStorage,
+    // epoch millis, tests move it to step over the refresh cooldown
+    private val nowMillis: () -> Long = { Clock.System.now().toEpochMilliseconds() },
 ) : SessionTokens {
 
-    private val refreshLock = Mutex()
+    private val sessionLock = Mutex()
     private val listeners = mutableListOf<() -> Unit>()
     private val _session = MutableStateFlow(storage.load()?.let(::sessionOf))
     val session: StateFlow<Session?> = _session.asStateFlow()
 
+    // the refresh token whose refresh failed without ending the session (offline, 429, 5xx) and until when
+    // it is left alone, so every request doesn't hammer /auth/refresh
+    private var cooldownRefreshToken: String? = null
+    private var cooldownUntilMillis = 0L
+
     // throws ApiException, 401 means wrong email or password
     suspend fun login(email: String, password: String) {
-        store(auth.login(LoginRequestDto(email.trim(), password)))
+        val tokens = auth.login(LoginRequestDto(email.trim(), password))
+        sessionLock.withLock { store(tokens) }
         notifySessionChanged()
     }
 
     // throws ApiException, 409 means the email is taken, 400 means invalid data
     suspend fun register(request: RegisterRequestDto) {
-        store(auth.register(request.copy(name = request.name.trim(), email = request.email.trim())))
+        val tokens = auth.register(request.copy(name = request.name.trim(), email = request.email.trim()))
+        sessionLock.withLock { store(tokens) }
         notifySessionChanged()
     }
 
-    // revokes the refresh token on the server, the local session ends even if that call fails
+    // ends the local session first, then revokes the refresh token on the server (a failure there is ignored)
     suspend fun signOut() {
-        val refreshToken = storage.load()?.refreshToken
+        val refreshToken = sessionLock.withLock {
+            storage.load()?.refreshToken.also { clearLocal() }
+        }
+        notifySessionChanged()
         try {
             if (refreshToken != null) auth.logout(RefreshRequestDto(refreshToken))
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            // nothing to do, the tokens are dropped below anyway
-        } finally {
-            logout()
+            // nothing to do, the tokens are already gone
         }
-    }
-
-    fun logout() {
-        storage.clear()
-        _session.value = null
-        notifySessionChanged()
     }
 
     override fun onSessionChanged(listener: () -> Unit) {
@@ -73,28 +79,57 @@ class SessionRepository(
     override suspend fun validTokens(): TokenResponseDto? {
         val tokens = storage.load() ?: return null
         val exp = parseJwtClaims(tokens.accessToken)?.expiresAtSeconds ?: 0
-        if (exp - EXPIRY_MARGIN_SECONDS > Clock.System.now().epochSeconds) return tokens
+        if ((exp - EXPIRY_MARGIN_SECONDS) * 1000 > nowMillis()) return tokens
         // a failed refresh that kept the session (offline, rate limited) still sends the old token,
-        // the server answers 401 and the auth plugin tries once more
+        // the server answers 401 and the request fails without another refresh during the cooldown
         return refresh(tokens.accessToken) ?: storage.load()
     }
 
     // one refresh at a time, refresh tokens rotate so the same one must never be sent twice
     // only a definitive 401/403 from /auth/refresh ends the session, offline, 429 or 5xx keep the tokens
-    override suspend fun refresh(failedAccessToken: String?): TokenResponseDto? = refreshLock.withLock {
-        val current = storage.load() ?: return null
-        // someone else refreshed (or signed in) while this request waited, reuse their tokens
-        if (current.accessToken != failedAccessToken) return current
-        try {
-            auth.refresh(RefreshRequestDto(current.refreshToken)).also(::store)
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: ApiException) {
-            if (e.status == 401 || e.status == 403) logout()
-            null
-        } catch (e: Exception) {
-            null
+    override suspend fun refresh(failedAccessToken: String?): TokenResponseDto? {
+        var ended = false
+        val result = sessionLock.withLock {
+            val current = storage.load() ?: return@withLock null
+            if (current.accessToken != failedAccessToken) {
+                // someone else refreshed meanwhile: reuse their tokens, but only for the same user,
+                // a request made as someone else (or as nobody) must not be replayed as the new user
+                return@withLock current.takeIf { failedAccessToken != null && sameUser(failedAccessToken, current.accessToken) }
+            }
+            if (current.refreshToken == cooldownRefreshToken && nowMillis() < cooldownUntilMillis) return@withLock null
+            try {
+                val fresh = auth.refresh(RefreshRequestDto(current.refreshToken))
+                // compare and set, never write over tokens that are not the ones this refresh started from
+                if (storage.load() != current) return@withLock null
+                store(fresh)
+                fresh
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                if (storage.load() != current) return@withLock null
+                if (e is ApiException && (e.status == 401 || e.status == 403)) {
+                    clearLocal()
+                    ended = true
+                } else {
+                    cooldownRefreshToken = current.refreshToken
+                    cooldownUntilMillis = nowMillis() + REFRESH_COOLDOWN_MILLIS
+                }
+                null
+            }
         }
+        if (ended) notifySessionChanged()
+        return result
+    }
+
+    private fun sameUser(a: String, b: String): Boolean {
+        val first = parseJwtClaims(a)?.userId ?: return false
+        return first == parseJwtClaims(b)?.userId
+    }
+
+    private fun clearLocal() {
+        storage.clear()
+        _session.value = null
+        cooldownRefreshToken = null
     }
 
     private fun store(tokens: TokenResponseDto) {
@@ -106,6 +141,7 @@ class SessionRepository(
         parseJwtClaims(tokens.accessToken)?.let { Session(it.userId, it.accountType) }
 
     private companion object {
-        const val EXPIRY_MARGIN_SECONDS = 30
+        const val EXPIRY_MARGIN_SECONDS = 30L
+        const val REFRESH_COOLDOWN_MILLIS = 15_000L
     }
 }
