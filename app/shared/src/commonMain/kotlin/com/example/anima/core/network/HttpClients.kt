@@ -18,6 +18,8 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import com.example.anima.core.log.AppLog
 import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.authProviders
+import io.ktor.client.plugins.auth.providers.BearerAuthProvider
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.serialization.kotlinx.json.json
@@ -88,6 +90,10 @@ fun createApiClient(session: SessionTokens) = HttpClient {
             refreshTokens { session.refresh()?.let { BearerTokens(it.accessToken, it.refreshToken) } }
         }
     }
+}
+
+fun HttpClient.clearBearerTokens() {
+    authProviders.filterIsInstance<BearerAuthProvider>().forEach { it.clearToken() }
 }
 
 // what the auth plugin needs from the session, implemented by SessionRepository
