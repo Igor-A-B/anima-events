@@ -27,14 +27,20 @@ class SessionRepository(
     private val _session = MutableStateFlow(storage.load()?.let(::sessionOf))
     val session: StateFlow<Session?> = _session.asStateFlow()
 
+    // set by the di module: the http client caches the bearer token, so it must be told when the user changes,
+    // otherwise the next account keeps sending the previous account's token
+    var onUserChanged: () -> Unit = {}
+
     // throws ApiException, 401 means wrong email or password
     suspend fun login(email: String, password: String) {
         store(auth.login(LoginRequestDto(email.trim(), password)))
+        onUserChanged()
     }
 
     // throws ApiException, 409 means the email is taken, 400 means invalid data
     suspend fun register(request: RegisterRequestDto) {
         store(auth.register(request.copy(name = request.name.trim(), email = request.email.trim())))
+        onUserChanged()
     }
 
     // revokes the refresh token on the server, the local session ends even if that call fails
@@ -52,6 +58,7 @@ class SessionRepository(
     fun logout() {
         storage.clear()
         _session.value = null
+        onUserChanged()
     }
 
     // refreshes first when the access token is about to expire
