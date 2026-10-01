@@ -15,6 +15,7 @@ import com.anima.features.event.models.EventCategory
 import com.example.anima.core.error.AppExceptionBus
 import com.example.anima.core.error.Severity
 import com.example.anima.core.image.PickedImage
+import com.example.anima.core.image.deviceImageUrl
 import com.example.anima.core.network.ApiException
 import com.example.anima.features.addevent.data.ExhibitorEventRepository
 import com.example.anima.features.addevent.domain.model.toDraft
@@ -46,7 +47,8 @@ class AddEventViewModel(
                 val form = repository.getForm(eventId)
 
                 val draft = form.toDraft()
-                val existingUrl = form.imageUrl
+                // coverUrl is the current cover (an uploaded image or imageUrl), read only
+                val existingUrl = (form.coverUrl ?: form.imageUrl)?.takeIf { it.isNotBlank() }?.let { deviceImageUrl(it) }
 
                 _uiState.update {
                     it.copy(
