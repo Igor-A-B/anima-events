@@ -8,6 +8,10 @@ RUN apt-get update \
 
 RUN npm install -g firebase-tools
 
+# the storage emulator and the ui download their jar and zip on start, fetch them now so a start never needs the network
+# (a failed download exits the emulator, and the server waits on it, so the api never comes up)
+RUN firebase setup:emulators:storage && firebase setup:emulators:ui
+
 WORKDIR /firebase
 
 # firebase.json, .firebaserc, storage.rules and .local-emulator are mounted by docker compose

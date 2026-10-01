@@ -35,6 +35,7 @@ services:
     init: true
     stop_signal: SIGINT
     stop_grace_period: 30s
+    restart: unless-stopped
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://localhost:9199').then(() => process.exit(0), () => process.exit(1))"]
       interval: 5s
