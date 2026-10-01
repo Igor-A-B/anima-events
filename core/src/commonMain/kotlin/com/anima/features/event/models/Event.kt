@@ -44,4 +44,6 @@ data class Event(
     val curatorId: String = "",
     // oldest first, the first one is the cover
     val imageUrls: List<String> = emptyList(),
+    // maximum number of active subscriptions, null means unlimited
+    val capacity: Int? = null,
 )
