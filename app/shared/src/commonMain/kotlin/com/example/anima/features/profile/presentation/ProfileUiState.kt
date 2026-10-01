@@ -10,7 +10,8 @@ data class ProfileUiState(
     // from the access token, not from the profile
     val accountType: AccountType = AccountType.VISITOR,
     val isLoading: Boolean = true,
-    val error: String = "",
+    // why the profile could not be loaded, null while loading or after a success
+    val error: AppError? = null,
     val isPasswordDialogOpen: Boolean = false,
     val isChangingPassword: Boolean = false,
     val passwordError: AppError? = null,
@@ -39,3 +40,14 @@ data class ProfileUiState(
     //     !isShowingAllEvents &&
     //     profile.createdEventCount > profile.createdEvents.size
 }
+
+// a loaded profile always clears an older error, even one left by a cancelled load
+fun ProfileUiState.withProfile(profile: UserProfile): ProfileUiState =
+    copy(isLoading = false, profile = profile, error = null)
+
+fun ProfileUiState.withProfileError(error: AppError): ProfileUiState =
+    copy(isLoading = false, error = error)
+
+// a reload keeps the profile already shown, the error goes away while it runs
+fun ProfileUiState.loadingProfile(): ProfileUiState =
+    copy(isLoading = profile == null, error = null)

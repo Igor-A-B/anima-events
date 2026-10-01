@@ -12,6 +12,8 @@ import com.example.anima.features.profile.domain.repository.ProfileRepository
 import com.example.anima.features.subscription.data.SubscriptionRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -76,6 +78,8 @@ class ProfileViewModel(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
+                // same as the profile load: a cancelled refresh must not flag the section as failed
+                currentCoroutineContext().ensureActive()
                 // only the section fails, the rest of the profile still works
                 AppLog.e("Profile", "could not load the events", e)
                 _uiState.update { it.copy(eventsError = true) }
@@ -89,22 +93,19 @@ class ProfileViewModel(
         loadJob?.cancel()
 
         loadJob = viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, error = "") }
-
-            runCatching { repository.getProfile() }
-                .onSuccess { profile ->
-                    _uiState.update { it.copy(isLoading = false, profile = profile) }
-                }
-                .onFailure { throwable ->
-                    if (throwable is CancellationException) throw throwable
-
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            error = throwable.message ?: "unknown error",
-                        )
-                    }
-                }
+            _uiState.update { it.loadingProfile() }
+            try {
+                val profile = repository.getProfile()
+                _uiState.update { it.withProfile(profile) }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                // ktor hands a cancellation to the response validator, which rethrows it as an
+                // ApiException with no status: a load cancelled by a newer one must not write its error
+                currentCoroutineContext().ensureActive()
+                AppLog.e("Profile", "could not load the profile", e)
+                _uiState.update { it.withProfileError(e.toAppError()) }
+            }
         }
     }
 

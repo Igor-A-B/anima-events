@@ -26,7 +26,6 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.compose.viewmodel.koinViewModel
 import anima.app.shared.generated.resources.Res
-import anima.app.shared.generated.resources.core_error_generic
 import anima.app.shared.generated.resources.profile_change
 import anima.app.shared.generated.resources.profile_field_email
 import anima.app.shared.generated.resources.profile_field_name
@@ -41,7 +40,10 @@ import anima.app.shared.generated.resources.profile_events_retry
 import anima.app.shared.generated.resources.profile_section_account
 import anima.app.shared.generated.resources.profile_section_events
 import anima.app.shared.generated.resources.profile_section_security
+import anima.app.shared.generated.resources.profile_retry
 import anima.app.shared.generated.resources.profile_title
+import com.example.anima.core.error.AppError
+import com.example.anima.core.error.messageRes
 // TODO implement? these belong to the sections commented out below
 //import anima.app.shared.generated.resources.profile_contact_hint
 //import anima.app.shared.generated.resources.profile_delete_account
@@ -102,6 +104,7 @@ fun ProfileScreen(
         onLogout = { viewModel.onLogout(onSignedOut) },
         onEventClick = { event -> if (uiState.isExhibitor) onEditEvent(event.id) else onOpenEvent(event.id) },
         onRetryEvents = viewModel::loadEvents,
+        onRetryProfile = viewModel::loadProfile,
         // TODO implement?
         // onToggleDocument = viewModel::onToggleDocumentVisibility,
         // onSeeAllEvents = viewModel::onSeeAllEvents,
@@ -129,6 +132,7 @@ private fun ProfileContent(
     onLogout: () -> Unit,
     onEventClick: (Event) -> Unit,
     onRetryEvents: () -> Unit,
+    onRetryProfile: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     AnimaScaffold(insets = AnimaScaffoldInsets.WithChrome) {
@@ -141,14 +145,10 @@ private fun ProfileContent(
                     modifier = Modifier.align(Alignment.Center),
                 )
 
-                uiState.error.isNotBlank() || profile == null -> Text(
-                    text = stringResource(Res.string.core_error_generic),
-                    style = AnimaTheme.typography.bodyMedium,
-                    color = AnimaTheme.colors.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(AnimaTheme.spacing.xl),
+                uiState.error != null || profile == null -> ProfileError(
+                    message = stringResource((uiState.error ?: AppError.UNKNOWN).messageRes()),
+                    onRetry = onRetryProfile,
+                    modifier = Modifier.align(Alignment.Center),
                 )
 
                 else -> ProfileList(
@@ -403,6 +403,38 @@ private fun ProfileList(
 //        }
 //    }
 //}
+
+// the profile could not be loaded: the reason and a way to try again
+@Composable
+private fun ProfileError(
+    message: String,
+    onRetry: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.padding(AnimaTheme.spacing.xl),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.lg),
+    ) {
+        Text(
+            text = message,
+            style = AnimaTheme.typography.bodyMedium,
+            color = AnimaTheme.colors.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+        )
+
+        Text(
+            text = stringResource(Res.string.profile_retry),
+            style = AnimaTheme.typography.labelLarge,
+            color = AnimaTheme.colors.primaryVariant,
+            modifier = Modifier
+                .clip(AnimaTheme.shapes.full)
+                .border(width = 1.dp, color = AnimaTheme.colors.outline, shape = AnimaTheme.shapes.full)
+                .clickable(onClick = onRetry)
+                .padding(horizontal = AnimaTheme.spacing.lg, vertical = AnimaTheme.spacing.sm),
+        )
+    }
+}
 
 @Composable
 private fun LogoutButton(
