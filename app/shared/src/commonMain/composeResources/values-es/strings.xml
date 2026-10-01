@@ -18,6 +18,22 @@
     <string name="core_error_forbidden">No tienes permiso para hacer eso.</string>
     <string name="core_error_file_too_large">El archivo es demasiado grande.</string>
     <string name="core_error_image_unsupported">Imagen no compatible. Usa JPG, PNG o WebP.</string>
+    <string name="core_error_validation">Algunos datos no son válidos. Revísalos e inténtalo de nuevo.</string>
+    <string name="core_error_session_expired">Tu sesión ha expirado. Inicia sesión de nuevo.</string>
+    <string name="core_error_exhibitor_only">Solo los expositores pueden crear y gestionar eventos.</string>
+    <string name="core_error_visitor_only">Solo los visitantes pueden participar en eventos.</string>
+    <string name="core_error_not_organizer">Solo el organizador de este evento puede hacer eso.</string>
+    <string name="core_error_not_found">No encontramos lo que buscabas.</string>
+    <string name="core_error_event_not_found">Este evento ya no existe.</string>
+    <string name="core_error_event_full">Este evento está completo.</string>
+    <string name="core_error_event_finished">Este evento ya ha terminado.</string>
+    <string name="core_error_conflict">Esta acción entra en conflicto con los datos actuales. Actualiza e inténtalo de nuevo.</string>
+    <string name="core_error_image_upload_failed">No se pudo subir la imagen. Inténtalo de nuevo.</string>
+    <string name="core_error_image_load_failed">No se pudo cargar la imagen.</string>
+    <string name="core_error_too_many_requests">Demasiados intentos. Espera un momento e inténtalo de nuevo.</string>
+    <string name="core_error_server">El servidor tuvo un problema. Inténtalo más tarde.</string>
+    <string name="core_error_service_unavailable">El servicio no está disponible temporalmente. Inténtalo más tarde.</string>
+    <string name="core_error_timeout">El servidor tardó demasiado en responder. Inténtalo de nuevo.</string>
 
     <!-- FEATURE: Login -->
     <string name="login_title">¡Bienvenido/a de nuevo!</string>

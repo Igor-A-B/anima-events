@@ -2,6 +2,7 @@ package com.example.anima.features.feed.presentation
 
 import com.anima.features.event.models.EventCategory
 import com.anima.features.event.models.FeedSectionType
+import com.example.anima.core.error.AppError
 import com.example.anima.features.feed.domain.FeedSection
 
 // sections land one by one, so the feed shows what it has while the rest still loads
@@ -12,6 +13,8 @@ data class FeedUiState(
     // sections fetching their next page
     val loadingMore: Set<FeedSectionType> = emptySet(),
     val selectedCategory: EventCategory? = null,
+    // why the last section failed, shown when nothing loaded
+    val error: AppError? = null,
 ) {
     // spinner only until the first section arrives
     val isLoading: Boolean = pending.isNotEmpty() && sections.isEmpty()

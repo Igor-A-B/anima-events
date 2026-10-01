@@ -26,7 +26,6 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.compose.viewmodel.koinViewModel
 import anima.app.shared.generated.resources.Res
-import anima.app.shared.generated.resources.core_error_generic
 import anima.app.shared.generated.resources.profile_change
 import anima.app.shared.generated.resources.profile_field_email
 import anima.app.shared.generated.resources.profile_field_name
@@ -54,6 +53,8 @@ import anima.app.shared.generated.resources.profile_title
 //import anima.app.shared.generated.resources.profile_section_contact
 //import anima.app.shared.generated.resources.profile_see_all
 import com.example.anima.core.components.AnimaScaffold
+import com.example.anima.core.error.AppError
+import com.example.anima.core.error.messageRes
 import com.example.anima.core.components.AnimaScaffoldInsets
 import com.example.anima.core.components.icon.AnimaIcon
 import com.example.anima.core.components.icon.lucide.LucideLogOut
@@ -141,8 +142,8 @@ private fun ProfileContent(
                     modifier = Modifier.align(Alignment.Center),
                 )
 
-                uiState.error.isNotBlank() || profile == null -> Text(
-                    text = stringResource(Res.string.core_error_generic),
+                uiState.error != null || profile == null -> Text(
+                    text = stringResource((uiState.error ?: AppError.UNKNOWN).messageRes()),
                     style = AnimaTheme.typography.bodyMedium,
                     color = AnimaTheme.colors.onSurfaceVariant,
                     textAlign = TextAlign.Center,
@@ -324,8 +325,12 @@ private fun ProfileList(
                                 .size(20.dp),
                         )
 
-                        uiState.eventsError -> Text(
-                            text = stringResource(Res.string.profile_events_retry),
+                        uiState.eventsError != null -> Text(
+                            // the retry text already says the load failed, a specific reason goes above it
+                            text = listOfNotNull(
+                                uiState.eventsError.takeIf { it != AppError.UNKNOWN }?.let { stringResource(it.messageRes()) },
+                                stringResource(Res.string.profile_events_retry),
+                            ).joinToString("\n"),
                             style = AnimaTheme.typography.bodyMedium,
                             color = AnimaTheme.colors.onSurfaceVariant,
                             modifier = Modifier

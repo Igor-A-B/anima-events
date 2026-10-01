@@ -8,7 +8,10 @@ import com.anima.features.subscription.models.SubscriptionStatus
 import anima.app.shared.generated.resources.Res
 import anima.app.shared.generated.resources.core_error_image_unsupported
 import anima.app.shared.generated.resources.event_detail_image_added
+import com.example.anima.core.error.AppError
 import com.example.anima.core.error.AppExceptionBus
+import com.example.anima.core.error.ErrorContext
+import com.example.anima.core.error.toAppError
 import com.example.anima.core.error.Severity
 import com.example.anima.core.image.PickedImage
 import com.example.anima.features.auth.data.SessionRepository
@@ -34,7 +37,7 @@ class EventDetailViewModel(
 
     private val event = MutableStateFlow<Event?>(null)
     private val busy = MutableStateFlow(false)
-    private val actionError = MutableStateFlow(false)
+    private val actionError = MutableStateFlow<AppError?>(null)
     private val uploadingImage = MutableStateFlow(false)
 
     private val baseState = combine(
@@ -63,7 +66,9 @@ class EventDetailViewModel(
 
     fun loadEvent(id: String) {
         viewModelScope.launch {
-            event.value = runCatching { feedRepository.findById(id) }.getOrNull()
+            event.value = runCatching { feedRepository.findById(id) }
+                .onFailure { if (it is CancellationException) throw it else bus.report(it, ErrorContext.LOAD_EVENT) }
+                .getOrNull()
             runCatching { subscriptions.refresh() }
         }
     }
@@ -78,7 +83,7 @@ class EventDetailViewModel(
 
         viewModelScope.launch {
             busy.value = true
-            actionError.value = false
+            actionError.value = null
             try {
                 if (subscribe) subscriptions.subscribe(current.id) else subscriptions.cancel(current.id)
                 // the attendees count changed on the server
@@ -86,7 +91,7 @@ class EventDetailViewModel(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                actionError.value = true
+                actionError.value = e.toAppError(if (subscribe) ErrorContext.SUBSCRIBE else ErrorContext.UNSUBSCRIBE)
             } finally {
                 busy.value = false
             }
@@ -107,7 +112,7 @@ class EventDetailViewModel(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                bus.report(e)
+                bus.report(e, ErrorContext.UPLOAD_IMAGE)
             } finally {
                 uploadingImage.value = false
             }

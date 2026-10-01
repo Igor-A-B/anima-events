@@ -2,11 +2,10 @@ package com.example.anima.features.profile.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.anima.core.error.AppError
+import com.example.anima.core.error.ErrorContext
 import com.example.anima.core.error.toAppError
 import com.example.anima.core.log.AppLog
 import com.example.anima.features.addevent.data.ExhibitorEventRepository
-import com.example.anima.core.network.ApiException
 import com.example.anima.features.auth.data.SessionRepository
 import com.example.anima.features.profile.domain.repository.ProfileRepository
 import com.example.anima.features.subscription.data.SubscriptionRepository
@@ -69,7 +68,7 @@ class ProfileViewModel(
         eventsJob?.cancel()
         eventsJob = viewModelScope.launch {
             // the spinner is only for an empty section, a refresh behind a list stays quiet
-            _uiState.update { it.copy(isLoadingEvents = it.myEvents.isEmpty(), eventsError = false) }
+            _uiState.update { it.copy(isLoadingEvents = it.myEvents.isEmpty(), eventsError = null) }
             try {
                 if (_uiState.value.isExhibitor) exhibitorEvents.refresh() else subscriptions.refresh()
                 observeEvents()
@@ -78,7 +77,7 @@ class ProfileViewModel(
             } catch (e: Exception) {
                 // only the section fails, the rest of the profile still works
                 AppLog.e("Profile", "could not load the events", e)
-                _uiState.update { it.copy(eventsError = true) }
+                _uiState.update { it.copy(eventsError = e.toAppError(ErrorContext.LOAD_MY_EVENTS)) }
             } finally {
                 _uiState.update { it.copy(isLoadingEvents = false) }
             }
@@ -89,7 +88,7 @@ class ProfileViewModel(
         loadJob?.cancel()
 
         loadJob = viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, error = "") }
+            _uiState.update { it.copy(isLoading = true, error = null) }
 
             runCatching { repository.getProfile() }
                 .onSuccess { profile ->
@@ -101,7 +100,7 @@ class ProfileViewModel(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            error = throwable.message ?: "unknown error",
+                            error = throwable.toAppError(ErrorContext.LOAD_PROFILE),
                         )
                     }
                 }
@@ -133,7 +132,7 @@ class ProfileViewModel(
                 throw e
             } catch (e: Exception) {
                 // on this call a 403 means the current password is wrong
-                val error = if ((e as? ApiException)?.status == 403) AppError.INCORRECT_PASSWORD else e.toAppError()
+                val error = e.toAppError(ErrorContext.CHANGE_PASSWORD)
                 _uiState.update { it.copy(isChangingPassword = false, passwordError = error) }
             }
         }

@@ -18,6 +18,22 @@
     <string name="core_error_forbidden">You don't have permission to do that.</string>
     <string name="core_error_file_too_large">The file is too large.</string>
     <string name="core_error_image_unsupported">Unsupported image. Use JPG, PNG or WebP.</string>
+    <string name="core_error_validation">Some information is invalid. Check it and try again.</string>
+    <string name="core_error_session_expired">Your session has expired. Please sign in again.</string>
+    <string name="core_error_exhibitor_only">Only exhibitors can create and manage events.</string>
+    <string name="core_error_visitor_only">Only visitors can join events.</string>
+    <string name="core_error_not_organizer">Only the organizer of this event can do that.</string>
+    <string name="core_error_not_found">We couldn't find what you were looking for.</string>
+    <string name="core_error_event_not_found">This event no longer exists.</string>
+    <string name="core_error_event_full">This event is full.</string>
+    <string name="core_error_event_finished">This event has already finished.</string>
+    <string name="core_error_conflict">This action conflicts with the current data. Refresh and try again.</string>
+    <string name="core_error_image_upload_failed">Couldn't upload the image. Try again.</string>
+    <string name="core_error_image_load_failed">Couldn't load the image.</string>
+    <string name="core_error_too_many_requests">Too many attempts. Wait a moment and try again.</string>
+    <string name="core_error_server">The server had a problem. Try again later.</string>
+    <string name="core_error_service_unavailable">The service is temporarily unavailable. Try again later.</string>
+    <string name="core_error_timeout">The server took too long to respond. Try again.</string>
 
     <!-- FEATURE: Login -->
     <string name="login_title">Welcome Back!</string>

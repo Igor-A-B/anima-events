@@ -26,6 +26,7 @@ import com.anima.features.event.models.Event
 import com.example.anima.features.eventdetail.presentation.components.EventAbout
 import com.example.anima.features.eventdetail.presentation.components.EventCover
 import com.example.anima.features.eventdetail.presentation.components.EventFooter
+import com.example.anima.core.error.AppError
 import com.example.anima.features.eventdetail.presentation.components.EventInfoGrid
 import com.example.anima.features.eventdetail.presentation.components.EventOrganizer
 
@@ -68,7 +69,7 @@ fun EventDetailScreen(
 private fun EventDetailContent(
     event: Event,
     subscription: SubscriptionUi,
-    actionError: Boolean,
+    actionError: AppError?,
     isCurator: Boolean,
     isUploadingImage: Boolean,
     onAddImage: () -> Unit,
@@ -133,7 +134,7 @@ private fun EventDetailContent(
             if (subscription != SubscriptionUi.Hidden) {
                 EventFooter(
                     state = subscription,
-                    hasError = actionError,
+                    error = actionError,
                     onClick = onSubscribe,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)

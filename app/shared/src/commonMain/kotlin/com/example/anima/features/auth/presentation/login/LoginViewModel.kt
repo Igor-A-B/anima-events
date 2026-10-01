@@ -3,6 +3,7 @@ package com.example.anima.features.auth.presentation.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.anima.core.error.AppExceptionBus
+import com.example.anima.core.error.ErrorContext
 import com.example.anima.core.error.toAppError
 import com.example.anima.features.auth.data.SessionRepository
 import kotlinx.coroutines.CancellationException
@@ -41,8 +42,8 @@ class LoginViewModel(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                bus.report(e)
-                _uiState.update { it.copy(isLoading = false, error = e.toAppError()) }
+                bus.report(e, ErrorContext.LOGIN)
+                _uiState.update { it.copy(isLoading = false, error = e.toAppError(ErrorContext.LOGIN)) }
             }
         }
     }

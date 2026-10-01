@@ -25,10 +25,10 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import anima.app.shared.generated.resources.Res
-import anima.app.shared.generated.resources.core_error_generic
 import anima.app.shared.generated.resources.search_empty
 import anima.app.shared.generated.resources.search_results_count
 import com.example.anima.core.components.AnimaScaffold
+import com.example.anima.core.error.messageRes
 import com.example.anima.core.components.AnimaScaffoldInsets
 import com.example.anima.core.theme.AnimaTheme
 import com.anima.features.event.models.Event
@@ -136,8 +136,8 @@ private fun SearchContent(
                     .fillMaxWidth(),
             ) {
                 when {
-                    uiState.error.isNotBlank() -> SearchMessage(
-                        text = stringResource(Res.string.core_error_generic),
+                    uiState.error != null -> SearchMessage(
+                        text = stringResource(uiState.error.messageRes()),
                         modifier = Modifier.align(Alignment.Center),
                     )
 

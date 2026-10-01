@@ -22,9 +22,10 @@ import anima.app.shared.generated.resources.add_event_delete
 import anima.app.shared.generated.resources.add_event_title
 import anima.app.shared.generated.resources.core_button_confirm
 import anima.app.shared.generated.resources.core_button_save
-import anima.app.shared.generated.resources.core_error_generic
 import anima.app.shared.generated.resources.edit_event_title
 import com.example.anima.core.components.AnimaScaffold
+import com.example.anima.core.error.AppError
+import com.example.anima.core.error.messageRes
 import com.example.anima.core.components.AnimaScaffoldInsets
 import com.example.anima.core.components.button.AnimaButton
 import com.example.anima.core.components.button.AnimaIconButton
@@ -125,7 +126,7 @@ fun AddEventScreen(
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text = stringResource(Res.string.core_error_generic),
+                        text = stringResource((uiState.loadError ?: AppError.UNKNOWN).messageRes()),
                         style = AnimaTheme.typography.bodyMedium,
                         color = AnimaTheme.colors.onSurfaceVariant,
                     )

@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anima.features.event.models.EventCategory
 import com.anima.features.event.models.FeedSectionType
+import com.example.anima.core.error.ErrorContext
+import com.example.anima.core.error.toAppError
 import com.example.anima.core.events.EventChanges
 import com.example.anima.features.feed.data.FeedRepository
 import com.example.anima.features.feed.domain.FeedPage
@@ -70,7 +72,8 @@ class FeedViewModel(
                 }
                 .onFailure { throwable ->
                     if (throwable is CancellationException) throw throwable
-                    _uiState.update { it.copy(pending = it.pending - type, failed = it.failed + type) }
+                    val error = throwable.toAppError(ErrorContext.LOAD_FEED)
+                    _uiState.update { it.copy(pending = it.pending - type, failed = it.failed + type, error = error) }
                 }
         }
     }

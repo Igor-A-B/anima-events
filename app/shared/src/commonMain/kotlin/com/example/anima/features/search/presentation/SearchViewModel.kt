@@ -3,6 +3,8 @@ package com.example.anima.features.search.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anima.features.event.models.EventCategory
+import com.example.anima.core.error.ErrorContext
+import com.example.anima.core.error.toAppError
 import com.example.anima.core.events.EventChanges
 import com.example.anima.features.search.data.SearchRepository
 import com.anima.features.event.models.DateFilter
@@ -90,7 +92,7 @@ class SearchViewModel(
         searchJob = viewModelScope.launch {
             if (debounce) delay(QUERY_DEBOUNCE_MILLIS)
 
-            _uiState.update { it.copy(isLoading = true, isLoadingMore = false, error = "") }
+            _uiState.update { it.copy(isLoading = true, isLoadingMore = false, error = null) }
 
             val state = _uiState.value
 
@@ -108,7 +110,7 @@ class SearchViewModel(
                             isLoading = false,
                             results = emptyList(),
                             nextCursor = null,
-                            error = throwable.message ?: "unknown error",
+                            error = throwable.toAppError(ErrorContext.SEARCH),
                         )
                     }
                 }

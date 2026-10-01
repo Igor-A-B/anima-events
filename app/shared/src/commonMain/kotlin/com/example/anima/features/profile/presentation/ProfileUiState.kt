@@ -10,7 +10,7 @@ data class ProfileUiState(
     // from the access token, not from the profile
     val accountType: AccountType = AccountType.VISITOR,
     val isLoading: Boolean = true,
-    val error: String = "",
+    val error: AppError? = null,
     val isPasswordDialogOpen: Boolean = false,
     val isChangingPassword: Boolean = false,
     val passwordError: AppError? = null,
@@ -21,7 +21,7 @@ data class ProfileUiState(
     // visitor only, the events they take part in
     val participatingEvents: List<Event> = emptyList(),
     // the last load of the events section failed, the section offers a retry
-    val eventsError: Boolean = false,
+    val eventsError: AppError? = null,
     // TODO implement?
     // the document is masked until the user asks to see it
     // val isDocumentVisible: Boolean = false,

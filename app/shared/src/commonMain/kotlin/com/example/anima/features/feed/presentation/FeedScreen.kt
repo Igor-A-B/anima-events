@@ -24,9 +24,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.compose.viewmodel.koinViewModel
 import anima.app.shared.generated.resources.Res
-import anima.app.shared.generated.resources.core_error_generic
 import anima.app.shared.generated.resources.feed_empty
 import com.example.anima.core.components.AnimaScaffold
+import com.example.anima.core.error.AppError
+import com.example.anima.core.error.messageRes
 import com.example.anima.core.components.AnimaScaffoldInsets
 import com.example.anima.core.theme.AnimaTheme
 import com.anima.features.event.models.Event
@@ -95,7 +96,7 @@ private fun FeedContent(
                     )
 
                     uiState.hasError -> FeedMessage(
-                        text = stringResource(Res.string.core_error_generic),
+                        text = stringResource((uiState.error ?: AppError.UNKNOWN).messageRes()),
                         modifier = Modifier.align(Alignment.Center),
                     )
 

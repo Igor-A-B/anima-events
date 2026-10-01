@@ -15,8 +15,13 @@ class AppExceptionBus {
     )
     val exceptions: SharedFlow<AppException> = _exceptions.asSharedFlow()
 
-    fun report(exception: Throwable) {
-        _exceptions.tryEmit(exception.toAppException())
+    fun report(exception: Throwable, context: ErrorContext = ErrorContext.GENERIC) {
+        _exceptions.tryEmit(exception.toAppException(context))
+    }
+
+    // for an error already mapped, like one also shown inline
+    fun report(error: AppError) {
+        _exceptions.tryEmit(error.toAppException())
     }
 
     // for non errors too, like a success or a notification

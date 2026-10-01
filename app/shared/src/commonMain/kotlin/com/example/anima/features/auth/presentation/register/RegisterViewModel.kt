@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.anima.features.auth.dtos.RegisterRequestDto
 import com.anima.features.user.models.AccountType
 import com.example.anima.core.error.AppExceptionBus
+import com.example.anima.core.error.ErrorContext
 import com.example.anima.core.error.toAppError
 import com.example.anima.features.auth.data.SessionRepository
 import kotlinx.coroutines.CancellationException
@@ -73,8 +74,8 @@ class RegisterViewModel(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                _uiState.update { it.copy(isLoading = false, error = e.toAppError()) }
-                bus.report(e)
+                _uiState.update { it.copy(isLoading = false, error = e.toAppError(ErrorContext.REGISTER)) }
+                bus.report(e, ErrorContext.REGISTER)
             }
         }
     }
