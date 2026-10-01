@@ -152,6 +152,7 @@
     <string name="add_event_about_label">Sobre o evento</string>
     <string name="add_event_about_hint">Descreva seu evento...</string>
     <string name="add_event_city_hint">Cidade</string>
+    <string name="add_event_city_no_results">Nenhuma cidade encontrada</string>
     <string name="edit_event_title">Editar evento</string>
     <string name="add_event_delete">Excluir evento</string>
     <string name="add_event_delete_confirm_title">Excluir este evento?</string>
