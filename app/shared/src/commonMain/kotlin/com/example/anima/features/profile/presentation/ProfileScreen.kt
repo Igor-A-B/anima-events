@@ -145,7 +145,8 @@ private fun ProfileContent(
                     modifier = Modifier.align(Alignment.Center),
                 )
 
-                uiState.error != null || profile == null -> ProfileError(
+                // a failed reload behind a loaded profile keeps the list, ProfileList shows it inline
+                profile == null -> ProfileError(
                     message = stringResource((uiState.error ?: AppError.UNKNOWN).messageRes()),
                     onRetry = onRetryProfile,
                     modifier = Modifier.align(Alignment.Center),
@@ -160,6 +161,7 @@ private fun ProfileContent(
                     onLogout = onLogout,
                     onEventClick = onEventClick,
                     onRetryEvents = onRetryEvents,
+                    onRetryProfile = onRetryProfile,
                 )
             }
         }
@@ -176,6 +178,7 @@ private fun ProfileList(
     onLogout: () -> Unit,
     onEventClick: (Event) -> Unit,
     onRetryEvents: () -> Unit,
+    onRetryProfile: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val change = stringResource(Res.string.profile_change)
@@ -196,6 +199,21 @@ private fun ProfileList(
                 style = AnimaTheme.typography.headlineSmall,
                 color = AnimaTheme.colors.onBackground,
             )
+        }
+
+        uiState.error?.let { error ->
+            item(key = "reload-error") {
+                Text(
+                    text = "${stringResource(error.messageRes())} ${stringResource(Res.string.profile_retry)}",
+                    style = AnimaTheme.typography.bodySmall,
+                    color = AnimaTheme.colors.error,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(AnimaTheme.shapes.medium)
+                        .clickable(onClick = onRetryProfile)
+                        .padding(AnimaTheme.spacing.sm),
+                )
+            }
         }
 
         item(key = "header") {

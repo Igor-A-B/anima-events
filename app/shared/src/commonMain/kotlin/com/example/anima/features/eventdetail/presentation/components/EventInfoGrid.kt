@@ -33,6 +33,9 @@ import com.example.anima.core.components.icon.lucide.LucideMapPin
 import com.example.anima.core.components.icon.lucide.LucideTicket
 import com.example.anima.core.components.icon.lucide.LucideUsers
 import com.example.anima.core.theme.AnimaTheme
+import com.anima.features.event.models.Event
+import com.example.anima.features.eventdetail.presentation.isFull
+import com.example.anima.features.eventdetail.presentation.spotsLeft
 import androidx.compose.ui.graphics.Color
 import org.jetbrains.compose.resources.stringResource
 
@@ -43,11 +46,8 @@ fun EventInfoGrid(
     venue: String,
     city: String,
     distanceLabel: String?,
-    attendees: Int,
-    // null means unlimited
-    capacity: Int?,
-    // formatted by the server, null means free
-    price: String?,
+    // attendees, capacity (null means unlimited) and price (null means free)
+    event: Event,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -90,17 +90,18 @@ fun EventInfoGrid(
             )
 
             val people = stringResource(Res.string.event_detail_attendees_count)
-            val spotsLeft = capacity?.let { (it - attendees).coerceAtLeast(0) }
+            val spotsLeft = event.spotsLeft()
+            val isFull = event.isFull()
             EventInfoCard(
                 icon = LucideUsers,
                 label = stringResource(Res.string.event_detail_attendees),
-                value = if (capacity != null) "$attendees / $capacity $people" else "$attendees $people",
+                value = event.capacity?.let { "${event.attendees} / $it $people" } ?: "${event.attendees} $people",
                 subValue = when {
                     spotsLeft == null -> stringResource(Res.string.event_detail_unlimited)
-                    spotsLeft == 0 -> stringResource(Res.string.event_detail_full)
+                    isFull -> stringResource(Res.string.event_detail_full)
                     else -> stringResource(Res.string.event_detail_spots_left, spotsLeft.toString())
                 },
-                subValueColor = if (spotsLeft == 0) AnimaTheme.colors.error else null,
+                subValueColor = if (isFull) AnimaTheme.colors.error else null,
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight(),
@@ -110,8 +111,8 @@ fun EventInfoGrid(
         EventInfoCard(
             icon = LucideTicket,
             label = stringResource(Res.string.event_detail_price),
-            value = price ?: stringResource(Res.string.event_detail_free),
-            valueColor = if (price == null) AnimaTheme.colors.success else null,
+            value = event.price ?: stringResource(Res.string.event_detail_free),
+            valueColor = if (event.price == null) AnimaTheme.colors.success else null,
             modifier = Modifier.fillMaxWidth(),
         )
     }

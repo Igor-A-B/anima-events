@@ -118,9 +118,7 @@ private fun EventDetailContent(
                             venue = event.venue,
                             city = event.city,
                             distanceLabel = event.distanceLabel,
-                            attendees = event.attendees,
-                            capacity = event.capacity,
-                            price = event.price,
+                            event = event,
                         )
 
                         EventOrganizer(
