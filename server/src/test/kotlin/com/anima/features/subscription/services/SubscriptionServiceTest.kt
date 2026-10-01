@@ -15,6 +15,8 @@ import com.anima.testing.FakeVisitorRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import com.anima.features.subscription.entities.SubscriptionEntity
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
@@ -169,6 +171,50 @@ class SubscriptionServiceTest {
         }.andExpect {
             status { isConflict() }
             jsonPath("$.error") { value("This event is full") }
+        }
+    }
+
+    @Test
+    fun `route retries a duplicate insert and answers the existing subscription`() {
+        val event = event(capacity = null)
+        // the first save loses the race: another request of the same visitor committed the row first
+        val racing = object : FakeSubscriptionRepository() {
+            var collided = false
+            override fun onSave(subscription: SubscriptionEntity) {
+                if (collided) return
+                collided = true
+                add(me, event, SubscriptionStatus.CONFIRMED)
+                throw DataIntegrityViolationException("duplicate visitor_id, event_id")
+            }
+        }
+        val service = SubscriptionService(racing, FakeVisitorRepository(me), FakeEventRepository(event), FakeStorageService())
+        val mvc = MockMvcBuilders.standaloneSetup(SubscriptionRoute(service)).build()
+
+        mvc.post("/events/${event.id}/subscription") {
+            principal = UsernamePasswordAuthenticationToken(me.user!!.id.toString(), null, emptyList())
+        }.andExpect {
+            status { isOk() }
+            jsonPath("$.id") { value(racing.rows.single().id.toString()) }
+            jsonPath("$.status") { value("CONFIRMED") }
+        }
+    }
+
+    @Test
+    fun `route answers a repeated collision with a neutral 500, not 409`() {
+        val event = event(capacity = null)
+        val alwaysColliding = object : FakeSubscriptionRepository() {
+            override fun onSave(subscription: SubscriptionEntity) {
+                throw DataIntegrityViolationException("duplicate")
+            }
+        }
+        val service = SubscriptionService(alwaysColliding, FakeVisitorRepository(me), FakeEventRepository(event), FakeStorageService())
+        val mvc = MockMvcBuilders.standaloneSetup(SubscriptionRoute(service)).build()
+
+        mvc.post("/events/${event.id}/subscription") {
+            principal = UsernamePasswordAuthenticationToken(me.user!!.id.toString(), null, emptyList())
+        }.andExpect {
+            status { isInternalServerError() }
+            jsonPath("$.error") { exists() }
         }
     }
 }

@@ -31,7 +31,7 @@ class FakeEventRepository(vararg events: EventEntity) : EventRepository {
     override fun deleteById(id: UUID) { rows.removeIf { it.id == id } }
 }
 
-class FakeSubscriptionRepository : SubscriptionRepository {
+open class FakeSubscriptionRepository : SubscriptionRepository {
     val rows = mutableListOf<SubscriptionEntity>()
     var saves = 0
 
@@ -41,6 +41,7 @@ class FakeSubscriptionRepository : SubscriptionRepository {
     override fun countByEventIdAndStatusIn(eventId: UUID, statuses: Collection<SubscriptionStatus>): Long =
         rows.count { it.event?.id == eventId && it.status in statuses }.toLong()
     override fun save(subscription: SubscriptionEntity): SubscriptionEntity {
+        onSave(subscription)
         saves++
         if (subscription.id == null) {
             subscription.id = UUID.randomUUID()
@@ -49,6 +50,9 @@ class FakeSubscriptionRepository : SubscriptionRepository {
         return subscription
     }
     override fun deleteAllByEventId(eventId: UUID) { rows.removeIf { it.event?.id == eventId } }
+
+    // hook for tests that simulate a concurrent writer
+    protected open fun onSave(subscription: SubscriptionEntity) = Unit
 
     fun add(visitor: VisitorEntity, event: EventEntity, status: SubscriptionStatus) = SubscriptionEntity().also {
         it.id = UUID.randomUUID()

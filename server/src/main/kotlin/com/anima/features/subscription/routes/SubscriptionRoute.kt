@@ -53,10 +53,10 @@ class SubscriptionRoute(private val subscriptionService: SubscriptionService) {
     @ExceptionHandler(EventFullException::class)
     fun handleFull(ex: RuntimeException) = error(HttpStatus.CONFLICT, ex)
 
-    // only reached when the retry above collides again
+    // only reached when the retry above collides again; not 409, the app reads every 409 here as "event full"
     @ExceptionHandler(DataIntegrityViolationException::class)
     fun handleConflict(ex: DataIntegrityViolationException): ResponseEntity<Map<String, String>> =
-        ResponseEntity.status(HttpStatus.CONFLICT).body(mapOf("error" to "Subscription changed concurrently, please try again"))
+        ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapOf("error" to "Could not update the subscription, please try again"))
 
     private fun error(status: HttpStatus, ex: RuntimeException): ResponseEntity<Map<String, String>> =
         ResponseEntity.status(status).body(mapOf("error" to (ex.message ?: status.name)))
