@@ -19,7 +19,7 @@ import com.example.anima.core.components.icon.lucide.LucideStore
 import com.example.anima.core.components.icon.lucide.LucideUser
 import com.example.anima.core.components.textfield.AnimaTextField
 import com.example.anima.core.theme.AnimaTheme
-import com.example.anima.features.auth.presentation.register.AccountType
+import com.anima.features.user.models.AccountType
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

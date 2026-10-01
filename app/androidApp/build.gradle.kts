@@ -1,9 +1,17 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeCompiler)
 }
+
+// debug builds read the server url from local.properties (api.baseUrl), release builds from API_BASE_URL
+val localProperties = Properties().apply {
+    rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use(::load)
+}
+val debugApiUrl = localProperties.getProperty("api.baseUrl") ?: "http://localhost:8080"
+val releaseApiUrl = providers.gradleProperty("API_BASE_URL").orElse(providers.environmentVariable("API_BASE_URL"))
 
 kotlin {
     compilerOptions {
@@ -36,12 +44,21 @@ android {
         }
     }
     buildTypes {
+        debug {
+            buildConfigField("String", "API_BASE_URL", "\"$debugApiUrl\"")
+        }
         release {
+            // a release must never ship with a dev url
+            val url = releaseApiUrl.orNull ?: if (gradle.startParameter.taskNames.any { it.contains("release", true) }) {
+                throw GradleException("Set API_BASE_URL (gradle property or env var) to build a release")
+            } else ""
+            buildConfigField("String", "API_BASE_URL", "\"$url\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -50,5 +67,20 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
+// a real phone reaches the dev server through usb: its localhost:8080 (api) and localhost:9199 (storage emulator, image urls) are forwarded to this machine
+// runs on every debug build because adb drops the forward when it restarts; skipped when api.baseUrl is set
+val adbPath = (localProperties.getProperty("sdk.dir") ?: System.getenv("ANDROID_HOME") ?: "") + "/platform-tools/adb"
+val useAdbReverse = localProperties.getProperty("api.baseUrl") == null && File(adbPath).exists()
+// one task per port, so a failing forward doesn't skip the other
+fun adbReverseTask(name: String, port: Int) = tasks.register(name, Exec::class) {
+    enabled = useAdbReverse
+    commandLine(adbPath, "reverse", "tcp:$port", "tcp:$port")
+    // no device connected is fine. The app also rewrites loopback image urls to the api host (deviceImageUrl), so the emulator doesn't depend on this forward
+    isIgnoreExitValue = true
+}
+val adbReverse = adbReverseTask("adbReverse", 8080)
+val adbReverseStorage = adbReverseTask("adbReverseStorage", 9199)
+tasks.matching { it.name == "preDebugBuild" }.configureEach { dependsOn(adbReverse, adbReverseStorage) }

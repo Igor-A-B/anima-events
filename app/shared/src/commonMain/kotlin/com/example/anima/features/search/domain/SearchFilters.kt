@@ -1,22 +1,8 @@
 package com.example.anima.features.search.domain
 
-import com.example.anima.features.event.models.EventCategory
-
-/** Price bucket. Maps to whether the event has a ticket price at all. */
-enum class PriceFilter {
-    ANY,
-    FREE,
-    PAID,
-}
-
-/** When the event happens. */
-enum class DateFilter {
-    ANY,
-    NOW,
-    TODAY,
-    TOMORROW,
-    WEEKEND,
-}
+import com.anima.features.event.models.DateFilter
+import com.anima.features.event.models.EventCategory
+import com.anima.features.event.models.PriceFilter
 
 /** Everything the search narrows by, apart from the free text query. */
 data class SearchFilters(

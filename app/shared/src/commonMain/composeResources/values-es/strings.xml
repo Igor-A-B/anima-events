@@ -15,6 +15,24 @@
     <!-- Error messages -->
     <string name="core_error_generic">Ocurrió un error inesperado. Inténtalo de nuevo.</string>
     <string name="core_error_network">Sin conexión a internet.</string>
+    <string name="core_error_forbidden">No tienes permiso para hacer eso.</string>
+    <string name="core_error_file_too_large">El archivo es demasiado grande.</string>
+    <string name="core_error_image_unsupported">Imagen no compatible. Usa JPG, PNG o WebP.</string>
+    <string name="core_error_validation">Algunos datos no son válidos. Revísalos e inténtalo de nuevo.</string>
+    <string name="core_error_session_expired">Tu sesión ha expirado. Inicia sesión de nuevo.</string>
+    <string name="core_error_exhibitor_only">Solo los expositores pueden crear y gestionar eventos.</string>
+    <string name="core_error_visitor_only">Solo los visitantes pueden participar en eventos.</string>
+    <string name="core_error_not_organizer">Solo el organizador de este evento puede hacer eso.</string>
+    <string name="core_error_not_found">No encontramos lo que buscabas.</string>
+    <string name="core_error_event_not_found">Este evento ya no existe.</string>
+    <string name="core_error_event_full">Este evento está completo.</string>
+    <string name="core_error_event_finished">Este evento ya ha terminado.</string>
+    <string name="core_error_conflict">Esta acción entra en conflicto con los datos actuales. Actualiza e inténtalo de nuevo.</string>
+    <string name="core_error_image_upload_failed">No se pudo subir la imagen. Inténtalo de nuevo.</string>
+    <string name="core_error_too_many_requests">Demasiados intentos. Espera un momento e inténtalo de nuevo.</string>
+    <string name="core_error_server">El servidor tuvo un problema. Inténtalo más tarde.</string>
+    <string name="core_error_service_unavailable">El servicio no está disponible temporalmente. Inténtalo más tarde.</string>
+    <string name="core_error_timeout">El servidor tardó demasiado en responder. Inténtalo de nuevo.</string>
 
     <!-- FEATURE: Login -->
     <string name="login_title">¡Bienvenido/a de nuevo!</string>
@@ -134,6 +152,10 @@
     <!-- FEATURE: Crear evento -->
     <string name="add_event_title">Crear evento</string>
     <string name="add_event_photo_picker">Agregar foto</string>
+    <string name="add_event_photo_take">Tomar foto</string>
+    <string name="add_event_photo_replace">Reemplazar</string>
+    <string name="add_event_photo_too_large">Foto demasiado grande. El limite es 10 MB.</string>
+    <string name="add_event_photo_remove">Quitar</string>
     <string name="add_event_name_hint">Nombre del evento</string>
     <string name="add_event_date_hint">Fecha</string>
     <string name="add_event_time_hint">Horario</string>
@@ -144,6 +166,18 @@
     <string name="add_event_capacity_hint">Capacidad máxima</string>
     <string name="add_event_about_label">Sobre el evento</string>
     <string name="add_event_about_hint">Describe tu evento...</string>
+    <string name="add_event_city_hint">Ciudad</string>
+    <string name="add_event_city_no_results">No se encontraron ciudades</string>
+    <string name="edit_event_title">Editar evento</string>
+    <string name="add_event_delete">Eliminar evento</string>
+    <string name="add_event_delete_confirm_title">¿Eliminar este evento?</string>
+    <string name="add_event_delete_confirm_text">Sus inscripciones también se eliminan. No se puede deshacer.</string>
+    <string name="add_event_created">Evento creado</string>
+    <string name="add_event_updated">Evento actualizado</string>
+    <string name="add_event_deleted">Evento eliminado</string>
+    <string name="add_event_error_date">Fecha u hora inválida. Usa dd/mm/aaaa y hh:mm</string>
+    <string name="add_event_error_validation">Revisa los campos del evento</string>
+    <string name="add_event_error_forbidden">Solo los expositores pueden gestionar eventos</string>
 
 
     <!-- FEATURE: Perfil -->
@@ -184,9 +218,37 @@
     <string name="profile_events_count">%1$s de %2$s</string>
     <string name="profile_see_all">Ver todos</string>
     <string name="profile_event_published">Publicado</string>
+    <string name="profile_events_empty">Aún no has creado eventos</string>
+    <string name="profile_events_empty_visitor">Aún no participas en eventos</string>
+    <string name="profile_events_retry">No se pudieron cargar tus eventos. Toca para intentar de nuevo</string>
+    <string name="profile_retry">Intentar de nuevo</string>
+    <string name="profile_event_going">Voy</string>
 
     <!-- Perfil: sesion -->
     <string name="profile_logout">Cerrar sesión</string>
     <string name="profile_delete_account">Eliminar cuenta</string>
 
+    <!-- Profile: change password dialog -->
+    <string name="profile_password_title">Cambiar contraseña</string>
+    <string name="profile_password_current_hint">Contraseña actual</string>
+    <string name="profile_password_new_hint">Nueva contraseña (mín. 8 caracteres)</string>
+    <string name="profile_password_save">Guardar</string>
+    <string name="profile_cancel">Cancelar</string>
+    <string name="profile_password_error_incorrect">La contraseña actual es incorrecta.</string>
+
+    <string name="event_detail_subscription_confirmed">Confirmado (toca para cancelar)</string>
+    <string name="event_detail_subscribe_again">Ir de nuevo</string>
+    <string name="event_detail_subscription_loading">Espera...</string>
+    <string name="event_detail_subscription_attended">Participaste</string>
+    <string name="event_detail_subscription_error">No se pudo actualizar tu participación. Inténtalo de nuevo.</string>
+    <string name="event_detail_add_image">Agregar imagen</string>
+    <string name="event_detail_image_added">Imagen agregada</string>
+    <string name="event_detail_price">Precio</string>
+    <string name="event_detail_spots_left">Plazas disponibles: %1$s</string>
+    <string name="event_detail_full">Completo</string>
+    <string name="event_detail_unlimited">Sin límite de plazas</string>
+    <string name="event_detail_subscription_full">Evento completo</string>
+    <string name="login_error_invalid_credentials">Correo o contraseña incorrectos.</string>
+    <string name="register_error_email_taken">Este correo ya está registrado.</string>
+    <string name="register_error_validation">Revisa tus datos e inténtalo de nuevo.</string>
 </resources>

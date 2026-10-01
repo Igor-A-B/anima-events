@@ -23,13 +23,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hasRoute
 import com.example.anima.core.components.button.AnimaButtonDefaults
 import com.example.anima.core.components.icon.AnimaIcon
 import com.example.anima.core.theme.AnimaTheme
 
 @Composable
 fun AnimaBottomNav(
-    currentRoute: Any?,
+    currentDestination: NavDestination?,
     onItemClick: (Any) -> Unit,
     items: List<BottomNavItem> = BottomNavItem.entries,
     modifier: Modifier = Modifier,
@@ -67,7 +69,7 @@ fun AnimaBottomNav(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             items.forEach { item ->
-                val isSelected = currentRoute == item.qualifiedName
+                val isSelected = currentDestination?.hasRoute(item.routeClass) == true
 
                 val tint by animateColorAsState(
                     targetValue = if (isSelected) AnimaTheme.colors.onPrimary

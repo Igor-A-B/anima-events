@@ -15,6 +15,24 @@
     <!-- Error messages -->
     <string name="core_error_generic">An unexpected error occurred. Please try again.</string>
     <string name="core_error_network">No internet connection.</string>
+    <string name="core_error_forbidden">You don't have permission to do that.</string>
+    <string name="core_error_file_too_large">The file is too large.</string>
+    <string name="core_error_image_unsupported">Unsupported image. Use JPG, PNG or WebP.</string>
+    <string name="core_error_validation">Some information is invalid. Check it and try again.</string>
+    <string name="core_error_session_expired">Your session has expired. Please sign in again.</string>
+    <string name="core_error_exhibitor_only">Only exhibitors can create and manage events.</string>
+    <string name="core_error_visitor_only">Only visitors can join events.</string>
+    <string name="core_error_not_organizer">Only the organizer of this event can do that.</string>
+    <string name="core_error_not_found">We couldn't find what you were looking for.</string>
+    <string name="core_error_event_not_found">This event no longer exists.</string>
+    <string name="core_error_event_full">This event is full.</string>
+    <string name="core_error_event_finished">This event has already finished.</string>
+    <string name="core_error_conflict">This action conflicts with the current data. Refresh and try again.</string>
+    <string name="core_error_image_upload_failed">Couldn't upload the image. Try again.</string>
+    <string name="core_error_too_many_requests">Too many attempts. Wait a moment and try again.</string>
+    <string name="core_error_server">The server had a problem. Try again later.</string>
+    <string name="core_error_service_unavailable">The service is temporarily unavailable. Try again later.</string>
+    <string name="core_error_timeout">The server took too long to respond. Try again.</string>
 
     <!-- FEATURE: Login -->
     <string name="login_title">Welcome Back!</string>
@@ -135,6 +153,10 @@
     <!-- FEATURE: Add event -->
     <string name="add_event_title">Create event</string>
     <string name="add_event_photo_picker">Add photo</string>
+    <string name="add_event_photo_take">Take photo</string>
+    <string name="add_event_photo_replace">Replace</string>
+    <string name="add_event_photo_too_large">Photo too large. The limit is 10 MB.</string>
+    <string name="add_event_photo_remove">Remove</string>
     <string name="add_event_name_hint">Event name</string>
     <string name="add_event_date_hint">Date</string>
     <string name="add_event_time_hint">Time</string>
@@ -145,6 +167,18 @@
     <string name="add_event_capacity_hint">Maximum capacity</string>
     <string name="add_event_about_label">About the event</string>
     <string name="add_event_about_hint">Describe your event...</string>
+    <string name="add_event_city_hint">City</string>
+    <string name="add_event_city_no_results">No cities found</string>
+    <string name="edit_event_title">Edit event</string>
+    <string name="add_event_delete">Delete event</string>
+    <string name="add_event_delete_confirm_title">Delete this event?</string>
+    <string name="add_event_delete_confirm_text">Its subscriptions are removed too. This can't be undone.</string>
+    <string name="add_event_created">Event created</string>
+    <string name="add_event_updated">Event updated</string>
+    <string name="add_event_deleted">Event deleted</string>
+    <string name="add_event_error_date">Invalid date or time. Use dd/mm/yyyy and hh:mm</string>
+    <string name="add_event_error_validation">Check the event fields</string>
+    <string name="add_event_error_forbidden">Only exhibitors can manage events</string>
 
     <!-- FEATURE: Profile -->
     <string name="profile_title">Profile</string>
@@ -184,9 +218,37 @@
     <string name="profile_events_count">%1$s of %2$s</string>
     <string name="profile_see_all">See all</string>
     <string name="profile_event_published">Published</string>
+    <string name="profile_events_empty">You haven't created any events yet</string>
+    <string name="profile_events_empty_visitor">You are not going to any events yet</string>
+    <string name="profile_events_retry">Couldn't load your events. Tap to try again</string>
+    <string name="profile_retry">Try again</string>
+    <string name="profile_event_going">Going</string>
 
     <!-- Profile: session -->
     <string name="profile_logout">Log out</string>
     <string name="profile_delete_account">Delete account</string>
 
+    <!-- Profile: change password dialog -->
+    <string name="profile_password_title">Change password</string>
+    <string name="profile_password_current_hint">Current password</string>
+    <string name="profile_password_new_hint">New password (8+ characters)</string>
+    <string name="profile_password_save">Save</string>
+    <string name="profile_cancel">Cancel</string>
+    <string name="profile_password_error_incorrect">The current password is wrong.</string>
+
+    <string name="event_detail_subscription_confirmed">Going (tap to cancel)</string>
+    <string name="event_detail_subscribe_again">I'm going again</string>
+    <string name="event_detail_subscription_loading">Please wait...</string>
+    <string name="event_detail_subscription_attended">You attended</string>
+    <string name="event_detail_subscription_error">Couldn't update your subscription. Try again.</string>
+    <string name="event_detail_add_image">Add image</string>
+    <string name="event_detail_image_added">Image added</string>
+    <string name="event_detail_price">Price</string>
+    <string name="event_detail_spots_left">Spots left: %1$s</string>
+    <string name="event_detail_full">Full</string>
+    <string name="event_detail_unlimited">No attendee limit</string>
+    <string name="event_detail_subscription_full">Event full</string>
+    <string name="login_error_invalid_credentials">Wrong email or password.</string>
+    <string name="register_error_email_taken">This email is already registered.</string>
+    <string name="register_error_validation">Check your details and try again.</string>
 </resources>

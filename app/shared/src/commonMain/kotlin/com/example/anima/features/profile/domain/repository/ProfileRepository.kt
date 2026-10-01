@@ -1,14 +1,16 @@
 package com.example.anima.features.profile.domain.repository
 
-import com.example.anima.features.event.models.Event
 import com.example.anima.features.profile.domain.model.UserProfile
 
-// TODO: swap the implementation to go from mock to API
+// both throw ApiException on failure
 interface ProfileRepository {
 
-    // the first page already comes inside UserProfile.createdEvents
     suspend fun getProfile(): UserProfile
 
-    // the rest, loaded when the user taps see all
-    suspend fun getAllCreatedEvents(): List<Event>
+    // 403 means the current password is wrong, 400 means the new one is invalid
+    suspend fun changePassword(currentPassword: String, newPassword: String)
+
+    // TODO implement?
+    // the rest of the created events, loaded when the user taps see all
+    // suspend fun getAllCreatedEvents(): List<Event>
 }

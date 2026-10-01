@@ -10,30 +10,31 @@ import com.example.anima.navigation.AddEvent
 import com.example.anima.navigation.Home
 import com.example.anima.navigation.Profile
 import com.example.anima.navigation.Search
+import kotlin.reflect.KClass
 
 enum class BottomNavItem(
     val route: Any,
-    val qualifiedName: String?,
+    val routeClass: KClass<out Any>,
     val icon: @Composable () -> ImageVector,
 ) {
     FEED(
         route = Home,
-        qualifiedName = Home::class.qualifiedName,
+        routeClass = Home::class,
         icon = { LucideHome },
     ),
     SEARCH(
         route = Search,
-        qualifiedName = Search::class.qualifiedName,
+        routeClass = Search::class,
         icon = { LucideSearch },
     ),
     ADD_EVENT(
         route = AddEvent,
-        qualifiedName = AddEvent::class.qualifiedName,
+        routeClass = AddEvent::class,
         icon = { LucideCirclePlus },
     ),
     PROFILE(
         route = Profile,
-        qualifiedName = Profile::class.qualifiedName,
+        routeClass = Profile::class,
         icon = { LucideCircleUser },
     ),
 }

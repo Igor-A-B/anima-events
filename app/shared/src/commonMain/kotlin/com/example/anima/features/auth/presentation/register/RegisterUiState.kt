@@ -1,8 +1,8 @@
 package com.example.anima.features.auth.presentation.register
 
+import com.anima.features.user.models.AccountType
+import com.example.anima.core.error.AppError
 import com.example.anima.features.auth.presentation.register.components.steps.isPasswordStrong
-
-enum class AccountType { VISITOR, EXHIBITOR }
 
 data class RegisterUiState(
     val step: Int = 1,
@@ -11,7 +11,7 @@ data class RegisterUiState(
     val email: String = "",
     val password: String = "",
     val isLoading: Boolean = false,
-    val error: String = ""
+    val error: AppError? = null
 ) {
     val totalSteps: Int = 5
 

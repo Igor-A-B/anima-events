@@ -72,18 +72,32 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.androidx.navigation.compose)
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose.viewmodel)
+            implementation(libs.multiplatform.settings)
             // ktor dependecies
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.contentNeg)
             implementation(libs.ktor.client.logging)
+            implementation(libs.ktor.client.auth)
             implementation(libs.ktor.serialization.json)
+            // images: picking files and loading urls
+            implementation(libs.filekit.dialogs.compose)
+            implementation(libs.coil.compose)
+            implementation(libs.coil.network.ktor3)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(libs.ktor.client.mock)
+            implementation(libs.kotlinx.coroutines.test)
         }
         jsMain.dependencies {
             implementation(libs.wrappers.browser)
             // ktor
+            implementation(libs.ktor.client.js)
+        }
+        wasmJsMain.dependencies {
+            // ktor, also the engine coil loads images with
             implementation(libs.ktor.client.js)
         }
     }

@@ -6,7 +6,7 @@ import anima.app.shared.generated.resources.profile_account_exhibitor
 import anima.app.shared.generated.resources.profile_account_visitor
 import anima.app.shared.generated.resources.profile_field_cnpj
 import anima.app.shared.generated.resources.profile_field_cpf
-import com.example.anima.features.auth.presentation.register.AccountType
+import com.anima.features.user.models.AccountType
 import org.jetbrains.compose.resources.stringResource
 
 // same idea as FeedTexts: the enum stays language free

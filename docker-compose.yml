@@ -16,6 +16,32 @@ services:
       timeout: 5s
       retries: 5
 
+  # firebase storage emulator, project anima-events
+  # data is imported from and exported to ./.local-emulator on start/stop
+  firebase:
+    container_name: anima-firebase
+    build:
+      context: ./firebase
+    ports:
+      - "9199:9199" # storage
+      - "4000:4000" # emulator ui
+      - "4400:4400" # hub, the ui talks to it
+    volumes:
+      - ./firebase.json:/firebase/firebase.json:ro
+      - ./.firebaserc:/firebase/.firebaserc:ro
+      - ./storage.rules:/firebase/storage.rules:ro
+      - ./.local-emulator:/firebase/.local-emulator
+    # tini forwards the stop signal so export-on-exit gets to run
+    init: true
+    stop_signal: SIGINT
+    stop_grace_period: 30s
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:9199').then(() => process.exit(0), () => process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
   server:
     container_name: anima-server
     build:
@@ -24,12 +50,19 @@ services:
     ports:
       - "8080:8080"
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_HOST: postgres
+      SPRING_DATASOURCE_URL: ${POSTGRES_URI}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      STORAGE_EMULATOR_HOST: http://firebase:9199
+      # event dates carry no zone, the server compares them with its local clock, so this must match
+      # where the users are (one zone only, there is no per-request offset)
+      TZ: ${APP_TIMEZONE:-America/Sao_Paulo}
+    env_file:
+      - .env
     depends_on:
       postgres:
+        condition: service_healthy
+      firebase:
         condition: service_healthy
     restart: unless-stopped
 

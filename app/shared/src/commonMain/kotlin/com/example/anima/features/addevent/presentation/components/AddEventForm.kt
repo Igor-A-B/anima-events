@@ -27,11 +27,13 @@ import anima.app.shared.generated.resources.add_event_about_label
 import anima.app.shared.generated.resources.add_event_address_hint
 import anima.app.shared.generated.resources.add_event_capacity_hint
 import anima.app.shared.generated.resources.add_event_category_label
+import anima.app.shared.generated.resources.add_event_city_hint
 import anima.app.shared.generated.resources.add_event_date_hint
 import anima.app.shared.generated.resources.add_event_location_hint
 import anima.app.shared.generated.resources.add_event_name_hint
 import anima.app.shared.generated.resources.add_event_price_hint
 import anima.app.shared.generated.resources.add_event_time_hint
+import com.anima.features.event.models.EventCategory
 import com.example.anima.core.components.icon.AnimaIcon
 import com.example.anima.core.components.icon.lucide.LucideBuilding
 import com.example.anima.core.components.icon.lucide.LucideMapPin
@@ -41,9 +43,9 @@ import com.example.anima.core.components.icon.lucide.LucideUsers
 import com.example.anima.core.components.picker.AnimaDatePicker
 import com.example.anima.core.components.picker.AnimaTimePicker
 import com.example.anima.core.components.textfield.AnimaTextField
+import com.example.anima.core.image.PickedImage
 import com.example.anima.core.theme.AnimaTheme
 import com.example.anima.features.addevent.domain.model.EventDraft
-import com.example.anima.features.event.models.EventCategory
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -56,11 +58,16 @@ fun AddEventForm(
     onTimeChanged: (String) -> Unit,
     onLocationChanged: (String) -> Unit,
     onAddressChanged: (String) -> Unit,
+    onCityChanged: (String) -> Unit,
     onCategorySelected: (EventCategory) -> Unit,
     onPriceChanged: (String) -> Unit,
     onCapacityChanged: (String) -> Unit,
     onAboutChanged: (String) -> Unit,
+    photo: PickedImage?,
+    existingPhotoUrl: String?,
     onPickPhoto: () -> Unit,
+    onTakePhoto: (() -> Unit)?,
+    onRemovePhoto: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
@@ -72,6 +79,7 @@ fun AddEventForm(
 
     val locationFocus = FocusRequester()
     val addressFocus = FocusRequester()
+    val cityFocus = FocusRequester()
     val priceFocus = FocusRequester()
     val capacityFocus = FocusRequester()
     val aboutFocus = FocusRequester()
@@ -88,7 +96,13 @@ fun AddEventForm(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.xl),
     ) {
-        EventPhotoPicker(onPickPhoto = onPickPhoto)
+        EventPhotoPicker(
+            photo = photo,
+            existingPhotoUrl = existingPhotoUrl,
+            onPickPhoto = onPickPhoto,
+            onTakePhoto = onTakePhoto,
+            onRemovePhoto = onRemovePhoto,
+        )
 
         AnimaTextField(
             value = draft.name,
@@ -168,9 +182,32 @@ fun AddEventForm(
             onValueChange = onAddressChanged,
             placeholder = stringResource(Res.string.add_event_address_hint),
             modifier = Modifier.focusRequester(addressFocus),
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(
+                onNext = {
+                    cityFocus.requestFocus()
+                }
+            ),
             leadingIcon = {
                 AnimaIcon(
                     imageVector = LucideBuilding,
+                    contentDescription = null,
+                    tint = AnimaTheme.colors.onSurfaceVariant,
+                    size = AnimaTheme.spacing.lg,
+                )
+            },
+        )
+
+        AnimaTextField(
+            value = draft.city,
+            onValueChange = onCityChanged,
+            placeholder = stringResource(Res.string.add_event_city_hint),
+            modifier = Modifier.focusRequester(cityFocus),
+            leadingIcon = {
+                AnimaIcon(
+                    imageVector = LucideMapPin,
                     contentDescription = null,
                     tint = AnimaTheme.colors.onSurfaceVariant,
                     size = AnimaTheme.spacing.lg,

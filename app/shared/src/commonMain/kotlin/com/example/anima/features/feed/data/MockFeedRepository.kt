@@ -1,17 +1,17 @@
 package com.example.anima.features.feed.data
 
 
-import com.example.anima.features.event.models.Event
-import com.example.anima.features.event.models.EventCategory
-import com.example.anima.features.event.models.EventStatus
+import com.anima.features.event.models.Event
+import com.anima.features.event.models.EventCategory
+import com.anima.features.event.models.EventStatus
+import com.anima.features.event.models.FeedSectionType
 import com.example.anima.features.feed.domain.FeedSection
-import com.example.anima.features.feed.domain.FeedSectionType
 import kotlinx.coroutines.delay
 
 // fake data source for UI development
-class MockFeedRepository : FeedRepository {
+class MockFeedRepository {
 
-    override suspend fun getSections(category: EventCategory?): List<FeedSection> {
+    suspend fun getSections(category: EventCategory?): List<FeedSection> {
         // fake network latency
         delay(600)
 
@@ -28,7 +28,7 @@ class MockFeedRepository : FeedRepository {
             .filter { section -> section.events.isNotEmpty() }
     }
 
-    override suspend fun findById(id: String): Event? =
+    suspend fun findById(id: String): Event? =
         (happeningNow + nearby + recommended + participating).find { it.id == id }
 
     // mock data

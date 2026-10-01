@@ -13,11 +13,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.anima.core.theme.AnimaTheme
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.anima.features.user.models.AccountType
+import com.example.anima.features.auth.data.SessionRepository
 import com.example.anima.navigation.bottomnav.AnimaBottomNav
+import com.example.anima.navigation.bottomnav.BottomNavItem
+import org.koin.compose.koinInject
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -29,13 +35,16 @@ fun AppNavHost(
     startDestination: Any,
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
+    val currentDestination = navBackStackEntry?.destination
 
-    val showBottomNav = currentRoute in listOf(
-        Home::class.qualifiedName,
-        Search::class.qualifiedName,
-        Profile::class.qualifiedName,
-    )
+    // only exhibitors can create events
+    val session by koinInject<SessionRepository>().session.collectAsStateWithLifecycle()
+    val navItems = BottomNavItem.entries.filter {
+        it != BottomNavItem.ADD_EVENT || session?.accountType == AccountType.EXHIBITOR
+    }
+
+    // hasRoute instead of comparing qualifiedName, which Kotlin/JS doesn't support
+    val showBottomNav = listOf(Home::class, Search::class, Profile::class).any { currentDestination?.hasRoute(it) == true }
 
     Box(
         modifier = Modifier
@@ -56,7 +65,8 @@ fun AppNavHost(
 
         if (showBottomNav) {
             AnimaBottomNav(
-                currentRoute = currentRoute,
+                currentDestination = currentDestination,
+                items = navItems,
                 onItemClick = { route ->
                     navController.navigate(route) {
                         popUpTo(Home) { saveState = true }

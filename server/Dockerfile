@@ -1,20 +1,19 @@
 FROM docker.io/library/gradle:8.7-jdk21-alpine AS build
 WORKDIR /home/gradle/src
-COPY --chown=gradle:gradle . .
+COPY . .
 
-# instala dos2unix pra converter quebras de linha do 2indows e deixa o wrapper executavel
 RUN apk add --no-cache dos2unix && \
     dos2unix gradlew && \
     chmod +x gradlew
 
-ENV GRADLE_OPTS="-Dorg.gradle.jvmargs='-Xmx1024m -XX:MaxMetaspaceSize=512m' -Dorg.gradle.daemon=false"
+ENV GRADLE_OPTS="-Dorg.gradle.jvmargs='-Xmx4096m -XX:MaxMetaspaceSize=512m' -Dorg.gradle.daemon=false"
 ENV KOTLIN_COMPILER_EXECUTION_STRATEGY="in-process"
 
-# executa o wrapper usando gradle 9.5.0
-RUN ./gradlew :server:buildFatJar --no-daemon -Porg.gradle.java.installations.auto-download=false
+RUN --mount=type=cache,target=/home/gradle/.gradle \
+    ./gradlew :server:bootJar --no-daemon -Porg.gradle.java.installations.auto-download=false
 
 FROM docker.io/library/eclipse-temurin:21-jre-alpine
 EXPOSE 8080
 WORKDIR /app
-COPY --from=build /home/gradle/src/server/build/libs/*.jar /app/ktor-server.jar
-ENTRYPOINT ["java", "-jar", "/app/ktor-server.jar"]
+COPY --from=build /home/gradle/src/server/build/libs/*.jar /app/spring-server.jar
+ENTRYPOINT ["java", "-jar", "/app/spring-server.jar"]

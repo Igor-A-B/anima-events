@@ -1,0 +1,19 @@
+rules_version = '2';
+
+// uploads go through the backend (admin access, rules don't apply),
+// clients only read the public download urls
+service firebase.storage {
+  match /b/{bucket}/o {
+    // event images, one folder per event
+    match /events/{eventId}/{file} {
+      allow read;
+      allow write: if false;
+    }
+
+    // profile photos
+    match /users/{userId}/{file} {
+      allow read;
+      allow write: if false;
+    }
+  }
+}

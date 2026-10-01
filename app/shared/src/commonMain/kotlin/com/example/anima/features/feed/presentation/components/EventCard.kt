@@ -16,7 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.anima.core.theme.AnimaTheme
-import com.example.anima.features.event.models.Event
+import com.anima.features.event.models.Event
 
 // event card used in feed carousels
 @Composable

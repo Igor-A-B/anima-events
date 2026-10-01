@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -26,14 +27,18 @@ import anima.app.shared.generated.resources.feed_interested
 import anima.app.shared.generated.resources.feed_live
 import anima.app.shared.generated.resources.feed_price_free
 import anima.app.shared.generated.resources.feed_status_finished
+import coil3.compose.AsyncImage
+import com.example.anima.core.image.deviceImageUrl
+import com.example.anima.core.network.apiBaseUrl as deviceApiBaseUrl
+import com.example.anima.core.log.AppLog
 import com.example.anima.core.components.icon.AnimaIcon
 import com.example.anima.core.components.icon.lucide.LucideUsers
 import com.example.anima.core.theme.AnimaTheme
-import com.example.anima.features.event.models.Event
-import com.example.anima.features.event.models.EventStatus
+import com.anima.features.event.models.Event
+import com.anima.features.event.models.EventStatus
 import org.jetbrains.compose.resources.stringResource
 
-// gradients for the cover image until an image loader is added
+// gradients for events without images, and while the image loads
 private val coverPalettes: List<List<Color>> = listOf(
     listOf(Color(0xFFBC1F4B), Color(0xFF4A0E22)),
     listOf(Color(0xFF7A2A8C), Color(0xFF241046)),
@@ -45,6 +50,11 @@ private val coverPalettes: List<List<Color>> = listOf(
 
 fun eventCoverBrush(coverSeed: Int): Brush =
     Brush.linearGradient(coverPalettes[coverSeed.mod(coverPalettes.size)])
+
+// the first uploaded image is the cover, else the legacy imageUrl; null keeps the gradient only
+// shared by the feed card, the profile row and the event detail
+fun Event.coverImageUrl(apiBaseUrl: String = deviceApiBaseUrl): String? =
+    (imageUrls.firstOrNull() ?: imageUrl)?.takeIf { it.isNotBlank() }?.let { deviceImageUrl(it, apiBaseUrl) }
 
 // how much room the cover has for its chips
 enum class EventCoverSize { DEFAULT, COMPACT }
@@ -63,6 +73,21 @@ fun EventCover(
             .height(height)
             .background(eventCoverBrush(event.coverSeed)),
     ) {
+        // the first image is the cover, the gradient stays behind it as placeholder and fallback
+        event.coverImageUrl()?.let { url ->
+            AsyncImage(
+                // fades in over the gradient (loader-level crossfade). The size comes from the
+                // layout: fixed cover height (EventCardDefaults / SearchResultCardDefaults) and a
+                // bounded width, so coil decodes to that size, not the full original.
+                // On failure (404, offline) the gradient stays; coil does not retry on its own.
+                model = url,
+                onError = { AppLog.e("EventCover", "image failed: $url", it.result.throwable) },
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.matchParentSize(),
+            )
+        }
+
         // scrim: keeps the title readable over any gradient
         Box(
             modifier = Modifier

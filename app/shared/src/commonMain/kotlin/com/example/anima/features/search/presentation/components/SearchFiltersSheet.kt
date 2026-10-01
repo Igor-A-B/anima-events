@@ -29,8 +29,8 @@ import anima.app.shared.generated.resources.search_filters_title
 import com.example.anima.core.components.button.AnimaButton
 import com.example.anima.core.components.chip.AnimaChip
 import com.example.anima.core.theme.AnimaTheme
-import com.example.anima.features.search.domain.DateFilter
-import com.example.anima.features.search.domain.PriceFilter
+import com.anima.features.event.models.DateFilter
+import com.anima.features.event.models.PriceFilter
 import com.example.anima.features.search.domain.SearchFilters
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -40,7 +40,8 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun SearchFiltersSheet(
     filters: SearchFilters,
-    resultCount: Int,
+    // already formatted, "20+" while more pages exist
+    resultCount: String,
     onPriceChange: (PriceFilter) -> Unit,
     onDateChange: (DateFilter) -> Unit,
     onClearFilters: () -> Unit,
@@ -120,7 +121,7 @@ fun SearchFiltersSheet(
             }
 
             AnimaButton(
-                text = stringResource(Res.string.search_filters_apply, resultCount.toString()),
+                text = stringResource(Res.string.search_filters_apply, resultCount),
                 onClick = { dismissAnimated() },
             )
         }
