@@ -29,7 +29,6 @@
     <string name="core_error_event_finished">This event has already finished.</string>
     <string name="core_error_conflict">This action conflicts with the current data. Refresh and try again.</string>
     <string name="core_error_image_upload_failed">Couldn't upload the image. Try again.</string>
-    <string name="core_error_image_load_failed">Couldn't load the image.</string>
     <string name="core_error_too_many_requests">Too many attempts. Wait a moment and try again.</string>
     <string name="core_error_server">The server had a problem. Try again later.</string>
     <string name="core_error_service_unavailable">The service is temporarily unavailable. Try again later.</string>

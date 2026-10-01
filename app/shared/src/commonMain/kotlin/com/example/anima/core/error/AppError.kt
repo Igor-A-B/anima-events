@@ -28,7 +28,6 @@ enum class AppError {
     CONFLICT,
     FILE_TOO_LARGE,
     IMAGE_UPLOAD_FAILED,
-    IMAGE_LOAD_FAILED,
     IMAGE_UNSUPPORTED,
     TOO_MANY_REQUESTS,
     // 5xx
@@ -52,27 +51,20 @@ enum class ErrorContext {
     SUBSCRIBE,
     UNSUBSCRIBE,
     LOAD_PROFILE,
-    UPDATE_PROFILE,
     CHANGE_PASSWORD,
-    LOGOUT,
     LOAD_MY_EVENTS,
     CREATE_EVENT,
     UPDATE_EVENT,
     DELETE_EVENT,
     LOAD_EVENT_FORM,
     UPLOAD_IMAGE,
-    LOAD_IMAGE,
     GENERIC,
 }
 
 fun Throwable.toAppError(context: ErrorContext = ErrorContext.GENERIC): AppError {
     if (this is ApiException) return mapApiError(status, message, isTimeout, context)
     AppLog.e("AppError", "unexpected exception in $context", this)
-    return when (context) {
-        ErrorContext.UPLOAD_IMAGE -> AppError.IMAGE_UPLOAD_FAILED
-        ErrorContext.LOAD_IMAGE -> AppError.IMAGE_LOAD_FAILED
-        else -> AppError.UNKNOWN
-    }
+    return if (context == ErrorContext.UPLOAD_IMAGE) AppError.IMAGE_UPLOAD_FAILED else AppError.UNKNOWN
 }
 
 private val EVENT_CONTEXTS = setOf(
@@ -95,9 +87,9 @@ private val FULL_WORD = Regex("""\bfull\b""")
  * 403: the server message first ("Only exhibitors", "Only visitors", "Only the organizer", "Current password"),
  *      then the context (CHANGE_PASSWORD, CREATE_EVENT, SUBSCRIBE/UNSUBSCRIBE, event editing and images), else FORBIDDEN.
  * 400/422: EVENT_FINISHED or EVENT_FULL when the message says so, IMAGE_UNSUPPORTED on uploads, else VALIDATION.
- * 404: EVENT_NOT_FOUND in event contexts, IMAGE_LOAD_FAILED for images, else NOT_FOUND.
+ * 404: EVENT_NOT_FOUND in event contexts, else NOT_FOUND.
  * 409: EMAIL_ALREADY_EXISTS on REGISTER, EVENT_FULL on SUBSCRIBE (or a "full" message), else CONFLICT.
- * 5xx: on UPLOAD_IMAGE always IMAGE_UPLOAD_FAILED (503 is usually the image storage), on LOAD_IMAGE IMAGE_LOAD_FAILED,
+ * 5xx: on UPLOAD_IMAGE always IMAGE_UPLOAD_FAILED (503 is usually the image storage),
  *      else 503 is SERVICE_UNAVAILABLE and the rest SERVER.
  */
 fun mapApiError(status: Int?, serverMessage: String?, isTimeout: Boolean, context: ErrorContext): AppError {
@@ -125,11 +117,7 @@ fun mapApiError(status: Int?, serverMessage: String?, isTimeout: Boolean, contex
                 else -> AppError.FORBIDDEN
             }
         }
-        404 -> when (context) {
-            in EVENT_CONTEXTS -> AppError.EVENT_NOT_FOUND
-            ErrorContext.LOAD_IMAGE -> AppError.IMAGE_LOAD_FAILED
-            else -> AppError.NOT_FOUND
-        }
+        404 -> if (context in EVENT_CONTEXTS) AppError.EVENT_NOT_FOUND else AppError.NOT_FOUND
         408 -> AppError.TIMEOUT
         409 -> when {
             context == ErrorContext.REGISTER -> AppError.EMAIL_ALREADY_EXISTS
@@ -142,15 +130,10 @@ fun mapApiError(status: Int?, serverMessage: String?, isTimeout: Boolean, contex
         429 -> AppError.TOO_MANY_REQUESTS
         in 500..599 -> when {
             context == ErrorContext.UPLOAD_IMAGE -> AppError.IMAGE_UPLOAD_FAILED
-            context == ErrorContext.LOAD_IMAGE -> AppError.IMAGE_LOAD_FAILED
             status == 503 -> AppError.SERVICE_UNAVAILABLE
             else -> AppError.SERVER
         }
-        else -> when (context) {
-            ErrorContext.UPLOAD_IMAGE -> AppError.IMAGE_UPLOAD_FAILED
-            ErrorContext.LOAD_IMAGE -> AppError.IMAGE_LOAD_FAILED
-            else -> AppError.UNKNOWN
-        }
+        else -> if (context == ErrorContext.UPLOAD_IMAGE) AppError.IMAGE_UPLOAD_FAILED else AppError.UNKNOWN
     }
 }
 

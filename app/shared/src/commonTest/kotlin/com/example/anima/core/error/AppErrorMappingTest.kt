@@ -9,7 +9,6 @@ import com.example.anima.core.error.ErrorContext.GENERIC
 import com.example.anima.core.error.ErrorContext.LOAD_EVENT
 import com.example.anima.core.error.ErrorContext.LOAD_EVENT_FORM
 import com.example.anima.core.error.ErrorContext.LOAD_FEED
-import com.example.anima.core.error.ErrorContext.LOAD_IMAGE
 import com.example.anima.core.error.ErrorContext.LOAD_PROFILE
 import com.example.anima.core.error.ErrorContext.LOGIN
 import com.example.anima.core.error.ErrorContext.REGISTER
@@ -79,7 +78,6 @@ class AppErrorMappingTest {
         assertEquals(AppError.EVENT_NOT_FOUND, map(404, LOAD_EVENT, "Event not found"))
         assertEquals(AppError.EVENT_NOT_FOUND, map(404, UPDATE_EVENT))
         assertEquals(AppError.EVENT_NOT_FOUND, map(404, SUBSCRIBE))
-        assertEquals(AppError.IMAGE_LOAD_FAILED, map(404, LOAD_IMAGE))
         assertEquals(AppError.NOT_FOUND, map(404, LOAD_PROFILE))
         assertEquals(AppError.NOT_FOUND, map(404))
     }
@@ -110,7 +108,6 @@ class AppErrorMappingTest {
         assertEquals(AppError.SERVICE_UNAVAILABLE, map(503, LOAD_FEED))
         assertEquals(AppError.IMAGE_UPLOAD_FAILED, map(503, UPLOAD_IMAGE, "storage is unavailable"))
         assertEquals(AppError.IMAGE_UPLOAD_FAILED, map(500, UPLOAD_IMAGE))
-        assertEquals(AppError.IMAGE_LOAD_FAILED, map(502, LOAD_IMAGE))
     }
 
     @Test
@@ -119,7 +116,6 @@ class AppErrorMappingTest {
         assertEquals(AppError.UNKNOWN, boom.toAppError())
         assertEquals(AppError.UNKNOWN, boom.toAppError(CREATE_EVENT))
         assertEquals(AppError.IMAGE_UPLOAD_FAILED, boom.toAppError(UPLOAD_IMAGE))
-        assertEquals(AppError.IMAGE_LOAD_FAILED, boom.toAppError(LOAD_IMAGE))
     }
 
     @Test

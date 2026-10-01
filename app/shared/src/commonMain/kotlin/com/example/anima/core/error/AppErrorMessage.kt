@@ -9,7 +9,6 @@ import anima.app.shared.generated.resources.core_error_exhibitor_only
 import anima.app.shared.generated.resources.core_error_file_too_large
 import anima.app.shared.generated.resources.core_error_forbidden
 import anima.app.shared.generated.resources.core_error_generic
-import anima.app.shared.generated.resources.core_error_image_load_failed
 import anima.app.shared.generated.resources.core_error_image_unsupported
 import anima.app.shared.generated.resources.core_error_image_upload_failed
 import anima.app.shared.generated.resources.core_error_network
@@ -46,7 +45,6 @@ fun AppError.messageRes(): StringResource = when (this) {
     AppError.CONFLICT -> Res.string.core_error_conflict
     AppError.FILE_TOO_LARGE -> Res.string.core_error_file_too_large
     AppError.IMAGE_UPLOAD_FAILED -> Res.string.core_error_image_upload_failed
-    AppError.IMAGE_LOAD_FAILED -> Res.string.core_error_image_load_failed
     AppError.IMAGE_UNSUPPORTED -> Res.string.core_error_image_unsupported
     AppError.TOO_MANY_REQUESTS -> Res.string.core_error_too_many_requests
     AppError.SERVER -> Res.string.core_error_server

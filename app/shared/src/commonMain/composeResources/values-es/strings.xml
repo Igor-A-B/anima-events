@@ -29,7 +29,6 @@
     <string name="core_error_event_finished">Este evento ya ha terminado.</string>
     <string name="core_error_conflict">Esta acción entra en conflicto con los datos actuales. Actualiza e inténtalo de nuevo.</string>
     <string name="core_error_image_upload_failed">No se pudo subir la imagen. Inténtalo de nuevo.</string>
-    <string name="core_error_image_load_failed">No se pudo cargar la imagen.</string>
     <string name="core_error_too_many_requests">Demasiados intentos. Espera un momento e inténtalo de nuevo.</string>
     <string name="core_error_server">El servidor tuvo un problema. Inténtalo más tarde.</string>
     <string name="core_error_service_unavailable">El servicio no está disponible temporalmente. Inténtalo más tarde.</string>
