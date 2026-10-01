@@ -8,6 +8,7 @@ import com.anima.features.event.services.toEvent
 import com.anima.features.storage.services.StorageService
 import com.anima.features.subscription.entities.SubscriptionEntity
 import com.anima.features.subscription.exceptions.EventAlreadyFinishedException
+import com.anima.features.subscription.exceptions.EventFullException
 import com.anima.features.subscription.exceptions.NotAVisitorException
 import com.anima.features.subscription.exceptions.SubscriptionNotCancellableException
 import com.anima.features.subscription.models.Subscription
@@ -31,13 +32,19 @@ class SubscriptionService(
     private val storage: StorageService,
 ) {
     // idempotent, a cancelled subscription is reused
+    // the event row is locked first, so two visitors can't both take the last spot
     fun subscribe(userId: UUID, eventId: UUID): Subscription {
         val visitor = visitorOf(userId)
-        val event = events.findById(eventId).orElseThrow { EventNotFoundException() }
+        val event = events.findByIdForUpdate(eventId).orElseThrow { EventNotFoundException() }
         val existing = subscriptions.findByVisitorIdAndEventId(visitor.id, eventId).orElse(null)
-        if (existing != null && existing.status != SubscriptionStatus.CANCELLED) return existing.toModel()
+        if (existing != null && existing.status in ACTIVE) return existing.toModel()
 
         if (event.toEvent(0, storage::publicUrl).status == EventStatus.FINISHED) throw EventAlreadyFinishedException()
+        // a cancelled subscription coming back takes a spot like a new one
+        val capacity = event.capacity
+        if (capacity != null && subscriptions.countByEventIdAndStatusIn(eventId, ACTIVE) >= capacity) {
+            throw EventFullException()
+        }
         val entity = existing ?: SubscriptionEntity().also {
             it.visitor = visitor
             it.event = event
