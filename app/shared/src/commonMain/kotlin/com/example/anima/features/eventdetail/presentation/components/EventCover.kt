@@ -23,6 +23,7 @@ import anima.app.shared.generated.resources.Res
 import anima.app.shared.generated.resources.event_detail_add_image
 import anima.app.shared.generated.resources.event_detail_free
 import coil3.compose.AsyncImage
+import com.anima.features.event.models.EventCategory
 import com.example.anima.core.components.button.AnimaIconButton
 import com.example.anima.core.components.icon.AnimaIcon
 import com.example.anima.core.components.icon.lucide.LucideArrowLeft
@@ -30,7 +31,6 @@ import com.example.anima.core.components.icon.lucide.LucideHeart
 import com.example.anima.core.components.icon.lucide.LucideImage
 import com.example.anima.core.components.icon.lucide.LucideShare
 import com.example.anima.core.theme.AnimaTheme
-import com.anima.features.event.models.EventCategory
 import com.example.anima.features.feed.presentation.components.label
 import org.jetbrains.compose.resources.stringResource
 
