@@ -1,6 +1,5 @@
 package com.example.anima.features.eventdetail.presentation
 
-import com.example.anima.core.image.deviceImageUrl
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,6 +28,7 @@ import com.example.anima.features.eventdetail.presentation.components.EventFoote
 import com.example.anima.core.error.AppError
 import com.example.anima.features.eventdetail.presentation.components.EventInfoGrid
 import com.example.anima.features.eventdetail.presentation.components.EventOrganizer
+import com.example.anima.features.feed.presentation.components.coverImageUrl
 
 private val FOOTER_RESERVE = 112.dp
 
@@ -94,7 +94,7 @@ private fun EventDetailContent(
                         title = event.title,
                         category = event.category,
                         price = event.price,
-                        imageUrl = event.imageUrls.firstOrNull()?.let(::deviceImageUrl),
+                        imageUrl = event.coverImageUrl(),
                         canAddImage = isCurator,
                         isUploadingImage = isUploadingImage,
                         onAddImage = onAddImage,
@@ -119,7 +119,7 @@ private fun EventDetailContent(
                             venue = event.venue,
                             city = event.city,
                             distanceLabel = event.distanceLabel,
-                            attendees = event.attendees,
+                            event = event,
                         )
 
                         EventOrganizer(

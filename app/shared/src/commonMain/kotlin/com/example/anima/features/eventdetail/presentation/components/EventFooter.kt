@@ -12,8 +12,8 @@ import com.example.anima.core.error.messageRes
 import com.example.anima.core.components.button.AnimaButton
 import com.example.anima.core.components.button.AnimaButtonVariant
 import com.example.anima.core.theme.AnimaTheme
-import com.example.anima.features.eventdetail.presentation.SubscriptionUi
 import org.jetbrains.compose.resources.stringResource
+import com.example.anima.features.eventdetail.presentation.SubscriptionUi
 
 @Composable
 fun EventFooter(
@@ -40,7 +40,7 @@ fun EventFooter(
             text = state.label(),
             onClick = onClick,
             variant = if (state == SubscriptionUi.Confirmed) AnimaButtonVariant.OUTLINED else AnimaButtonVariant.PRIMARY,
-            enabled = state != SubscriptionUi.Attended,
+            enabled = state != SubscriptionUi.Attended && state != SubscriptionUi.Full,
             loading = state == SubscriptionUi.Loading,
         )
     }

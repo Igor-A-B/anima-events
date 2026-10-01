@@ -3,8 +3,6 @@ package com.example.anima.features.eventdetail.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anima.features.event.models.Event
-import com.anima.features.event.models.EventStatus
-import com.anima.features.subscription.models.SubscriptionStatus
 import anima.app.shared.generated.resources.Res
 import anima.app.shared.generated.resources.core_error_image_unsupported
 import anima.app.shared.generated.resources.event_detail_image_added
@@ -16,7 +14,6 @@ import com.example.anima.core.error.Severity
 import com.example.anima.core.image.PickedImage
 import com.example.anima.features.auth.data.SessionRepository
 import com.example.anima.features.eventdetail.data.EventImageRepository
-import com.anima.features.user.models.AccountType
 import com.example.anima.features.feed.data.FeedRepository
 import com.example.anima.features.subscription.data.SubscriptionRepository
 import kotlinx.coroutines.CancellationException
@@ -43,19 +40,8 @@ class EventDetailViewModel(
     private val baseState = combine(
         event, subscriptions.subscriptions, session.session, busy, actionError,
     ) { event, subs, session, busy, actionError ->
-        val state = when {
-            event == null || session?.accountType != AccountType.VISITOR -> SubscriptionUi.Hidden
-            busy -> SubscriptionUi.Loading
-            else -> {
-                val finished = event.status == EventStatus.FINISHED
-                when (subs.firstOrNull { it.event.id == event.id }?.status) {
-                    SubscriptionStatus.CONFIRMED -> SubscriptionUi.Confirmed
-                    SubscriptionStatus.ATTENDED -> SubscriptionUi.Attended
-                    SubscriptionStatus.CANCELLED -> if (finished) SubscriptionUi.Hidden else SubscriptionUi.Cancelled
-                    null -> if (finished) SubscriptionUi.Hidden else SubscriptionUi.NotSubscribed
-                }
-            }
-        }
+        val status = event?.let { e -> subs.firstOrNull { it.event.id == e.id }?.status }
+        val state = subscriptionUiFor(event, status, session?.accountType, busy)
         val isCurator = event != null && event.curatorId.isNotBlank() && event.curatorId == session?.userId
         EventDetailUiState(event, state, actionError, isCurator = isCurator)
     }
@@ -87,14 +73,27 @@ class EventDetailViewModel(
             try {
                 if (subscribe) subscriptions.subscribe(current.id) else subscriptions.cancel(current.id)
                 // the attendees count changed on the server
-                runCatching { feedRepository.findById(current.id) }.getOrNull()?.let { event.value = it }
+                reloadEvent(current.id)
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                actionError.value = e.toAppError(if (subscribe) ErrorContext.SUBSCRIBE else ErrorContext.UNSUBSCRIBE)
+                val error = e.toAppError(if (subscribe) ErrorContext.SUBSCRIBE else ErrorContext.UNSUBSCRIBE)
+                actionError.value = error
+                // someone took the last spot first, the new count turns the button into Full
+                if (error == AppError.EVENT_FULL) reloadEvent(current.id)
             } finally {
                 busy.value = false
             }
+        }
+    }
+
+    private suspend fun reloadEvent(id: String) {
+        try {
+            feedRepository.findById(id)?.let { event.value = it }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            // the previous values stay on screen
         }
     }
 

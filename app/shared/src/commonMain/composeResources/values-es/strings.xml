@@ -220,6 +220,7 @@
     <string name="profile_events_empty">Aún no has creado eventos</string>
     <string name="profile_events_empty_visitor">Aún no participas en eventos</string>
     <string name="profile_events_retry">No se pudieron cargar tus eventos. Toca para intentar de nuevo</string>
+    <string name="profile_retry">Intentar de nuevo</string>
     <string name="profile_event_going">Voy</string>
 
     <!-- Perfil: sesion -->
@@ -241,6 +242,11 @@
     <string name="event_detail_subscription_error">No se pudo actualizar tu participación. Inténtalo de nuevo.</string>
     <string name="event_detail_add_image">Agregar imagen</string>
     <string name="event_detail_image_added">Imagen agregada</string>
+    <string name="event_detail_price">Precio</string>
+    <string name="event_detail_spots_left">Plazas disponibles: %1$s</string>
+    <string name="event_detail_full">Completo</string>
+    <string name="event_detail_unlimited">Sin límite de plazas</string>
+    <string name="event_detail_subscription_full">Evento completo</string>
     <string name="login_error_invalid_credentials">Correo o contraseña incorrectos.</string>
     <string name="register_error_email_taken">Este correo ya está registrado.</string>
     <string name="register_error_validation">Revisa tus datos e inténtalo de nuevo.</string>

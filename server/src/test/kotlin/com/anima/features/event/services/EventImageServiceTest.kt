@@ -22,6 +22,7 @@ import java.util.UUID
 
 private class FakeEvents(private val events: List<EventEntity>) : EventRepository {
     override fun findById(id: UUID): Optional<EventEntity> = Optional.ofNullable(events.find { it.id == id })
+    override fun findByIdForUpdate(id: UUID) = findById(id)
     override fun search(spec: Specification<EventEntity>, pageable: Pageable): Page<EventEntity> = throw NotImplementedError()
     override fun findAllByOrganizerId(organizerId: UUID) = events.filter { it.organizer?.id == organizerId }
     override fun save(event: EventEntity) = event

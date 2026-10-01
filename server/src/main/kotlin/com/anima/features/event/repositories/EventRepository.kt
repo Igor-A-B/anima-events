@@ -9,6 +9,9 @@ import java.util.UUID
 
 interface EventRepository {
     fun findById(id: UUID): Optional<EventEntity>
+
+    // takes a row lock until the transaction ends, so concurrent subscriptions to one event serialize
+    fun findByIdForUpdate(id: UUID): Optional<EventEntity>
     fun search(spec: Specification<EventEntity>, pageable: Pageable): Page<EventEntity>
     fun save(event: EventEntity): EventEntity
     fun findAllByOrganizerId(organizerId: UUID): List<EventEntity>

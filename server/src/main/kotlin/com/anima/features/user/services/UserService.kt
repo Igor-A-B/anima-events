@@ -4,6 +4,7 @@ import at.favre.lib.crypto.bcrypt.BCrypt
 import com.anima.features.auth.repositories.RefreshTokenRepository
 import com.anima.features.user.dtos.MeResponseDto
 import com.anima.features.user.exceptions.IncorrectPasswordException
+import com.anima.features.user.exceptions.InvalidSessionException
 import com.anima.features.user.models.AccountType
 import com.anima.features.user.repositories.UserRepository
 import org.springframework.stereotype.Service
@@ -21,7 +22,8 @@ class UserService(
 
     // the account type comes from the access token, so it is not looked up again
     fun me(userId: UUID, accountType: AccountType): MeResponseDto {
-        val user = userRepository.findById(userId).orElseThrow { NoSuchElementException("User not found") }
+        // a valid token whose user is gone (e.g. database recreated) is a dead session, not a server error
+        val user = userRepository.findById(userId).orElseThrow { InvalidSessionException() }
         return MeResponseDto(user.name, user.email, accountType, user.registerDate.toString())
     }
 
@@ -30,7 +32,7 @@ class UserService(
     fun changePassword(userId: UUID, currentPassword: String, newPassword: String) {
         require(newPassword.length >= MIN_PASSWORD_LENGTH) { "Password must have at least $MIN_PASSWORD_LENGTH characters" }
 
-        val user = userRepository.findById(userId).orElseThrow { NoSuchElementException("User not found") }
+        val user = userRepository.findById(userId).orElseThrow { InvalidSessionException() }
         val currentOk = BCrypt.verifyer().verify(currentPassword.toCharArray(), user.passwordHash).verified
         if (!currentOk) throw IncorrectPasswordException()
 

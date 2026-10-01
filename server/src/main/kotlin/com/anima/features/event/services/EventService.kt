@@ -86,6 +86,7 @@ class EventService(
             longitude = it.longitude,
             address = it.address,
             imageUrl = it.imageUrl,
+            coverUrl = it.coverUrl(storage::publicUrl),
         )
     }
 

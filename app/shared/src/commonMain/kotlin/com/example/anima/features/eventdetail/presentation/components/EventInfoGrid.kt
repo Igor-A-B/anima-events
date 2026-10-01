@@ -19,14 +19,24 @@ import anima.app.shared.generated.resources.Res
 import anima.app.shared.generated.resources.event_detail_attendees
 import anima.app.shared.generated.resources.event_detail_attendees_count
 import anima.app.shared.generated.resources.event_detail_date
+import anima.app.shared.generated.resources.event_detail_free
+import anima.app.shared.generated.resources.event_detail_full
+import anima.app.shared.generated.resources.event_detail_price
+import anima.app.shared.generated.resources.event_detail_spots_left
+import anima.app.shared.generated.resources.event_detail_unlimited
 import anima.app.shared.generated.resources.event_detail_location
 import anima.app.shared.generated.resources.event_detail_time
 import com.example.anima.core.components.icon.AnimaIcon
 import com.example.anima.core.components.icon.lucide.LucideCalendar
 import com.example.anima.core.components.icon.lucide.LucideClock
 import com.example.anima.core.components.icon.lucide.LucideMapPin
+import com.example.anima.core.components.icon.lucide.LucideTicket
 import com.example.anima.core.components.icon.lucide.LucideUsers
 import com.example.anima.core.theme.AnimaTheme
+import com.anima.features.event.models.Event
+import com.example.anima.features.eventdetail.presentation.isFull
+import com.example.anima.features.eventdetail.presentation.spotsLeft
+import androidx.compose.ui.graphics.Color
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -36,7 +46,8 @@ fun EventInfoGrid(
     venue: String,
     city: String,
     distanceLabel: String?,
-    attendees: Int,
+    // attendees, capacity (null means unlimited) and price (null means free)
+    event: Event,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -78,15 +89,32 @@ fun EventInfoGrid(
                     .fillMaxHeight(),
             )
 
+            val people = stringResource(Res.string.event_detail_attendees_count)
+            val spotsLeft = event.spotsLeft()
+            val isFull = event.isFull()
             EventInfoCard(
                 icon = LucideUsers,
                 label = stringResource(Res.string.event_detail_attendees),
-                value = "$attendees ${stringResource(Res.string.event_detail_attendees_count)}",
+                value = event.capacity?.let { "${event.attendees} / $it $people" } ?: "${event.attendees} $people",
+                subValue = when {
+                    spotsLeft == null -> stringResource(Res.string.event_detail_unlimited)
+                    isFull -> stringResource(Res.string.event_detail_full)
+                    else -> stringResource(Res.string.event_detail_spots_left, spotsLeft.toString())
+                },
+                subValueColor = if (isFull) AnimaTheme.colors.error else null,
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight(),
             )
         }
+
+        EventInfoCard(
+            icon = LucideTicket,
+            label = stringResource(Res.string.event_detail_price),
+            value = event.price ?: stringResource(Res.string.event_detail_free),
+            valueColor = if (event.price == null) AnimaTheme.colors.success else null,
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 
@@ -97,6 +125,8 @@ private fun EventInfoCard(
     value: String,
     modifier: Modifier = Modifier,
     subValue: String? = null,
+    valueColor: Color? = null,
+    subValueColor: Color? = null,
 ) {
     Column(
         modifier = modifier
@@ -129,7 +159,7 @@ private fun EventInfoCard(
         Text(
             text = value,
             style = AnimaTheme.typography.bodyMedium,
-            color = AnimaTheme.colors.onSurface,
+            color = valueColor ?: AnimaTheme.colors.onSurface,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -138,7 +168,7 @@ private fun EventInfoCard(
             Text(
                 text = subValue,
                 style = AnimaTheme.typography.bodySmall,
-                color = AnimaTheme.colors.onSurfaceVariant,
+                color = subValueColor ?: AnimaTheme.colors.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )

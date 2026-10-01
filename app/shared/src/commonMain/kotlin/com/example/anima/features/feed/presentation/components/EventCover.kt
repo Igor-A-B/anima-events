@@ -51,9 +51,10 @@ private val coverPalettes: List<List<Color>> = listOf(
 fun eventCoverBrush(coverSeed: Int): Brush =
     Brush.linearGradient(coverPalettes[coverSeed.mod(coverPalettes.size)])
 
-// the first image is the cover, null keeps the gradient only
+// the first uploaded image is the cover, else the legacy imageUrl; null keeps the gradient only
+// shared by the feed card, the profile row and the event detail
 fun Event.coverImageUrl(apiBaseUrl: String = deviceApiBaseUrl): String? =
-    imageUrls.firstOrNull()?.let { deviceImageUrl(it, apiBaseUrl) }
+    (imageUrls.firstOrNull() ?: imageUrl)?.takeIf { it.isNotBlank() }?.let { deviceImageUrl(it, apiBaseUrl) }
 
 // how much room the cover has for its chips
 enum class EventCoverSize { DEFAULT, COMPACT }
