@@ -6,19 +6,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import anima.app.shared.generated.resources.Res
 import anima.app.shared.generated.resources.add_event_photo_picker
@@ -27,14 +27,15 @@ import anima.app.shared.generated.resources.add_event_photo_replace
 import anima.app.shared.generated.resources.add_event_photo_take
 import coil3.compose.AsyncImage
 import com.example.anima.core.components.icon.AnimaIcon
-import com.example.anima.core.image.PickedImage
 import com.example.anima.core.components.icon.lucide.LucideImage
+import com.example.anima.core.image.PickedImage
 import com.example.anima.core.theme.AnimaTheme
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun EventPhotoPicker(
     photo: PickedImage?,
+    existingPhotoUrl: String?,
     onPickPhoto: () -> Unit,
     // null where the platform can't take photos
     onTakePhoto: (() -> Unit)?,
@@ -43,12 +44,25 @@ fun EventPhotoPicker(
 ) {
     if (photo != null) {
         PhotoPreview(
-            photo = photo,
+            model = photo.bytes,
             onReplace = onPickPhoto,
             onTakePhoto = onTakePhoto,
             onRemove = onRemovePhoto,
             modifier = modifier,
         )
+
+        return
+    }
+
+    if (existingPhotoUrl != null) {
+        PhotoPreview(
+            model = existingPhotoUrl,
+            onReplace = onPickPhoto,
+            onTakePhoto = onTakePhoto,
+            onRemove = onRemovePhoto,
+            modifier = modifier,
+        )
+
         return
     }
 
@@ -108,7 +122,7 @@ fun EventPhotoPicker(
 
 @Composable
 private fun PhotoPreview(
-    photo: PickedImage,
+    model: Any,
     onReplace: () -> Unit,
     onTakePhoto: (() -> Unit)?,
     onRemove: () -> Unit,
@@ -126,7 +140,7 @@ private fun PhotoPreview(
                 .background(AnimaTheme.colors.surface),
         ) {
             AsyncImage(
-                model = photo.bytes,
+                model = model,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.matchParentSize(),
@@ -135,9 +149,11 @@ private fun PhotoPreview(
 
         Row(horizontalArrangement = Arrangement.spacedBy(AnimaTheme.spacing.lg)) {
             PhotoAction(stringResource(Res.string.add_event_photo_replace), onReplace)
+
             if (onTakePhoto != null) {
                 PhotoAction(stringResource(Res.string.add_event_photo_take), onTakePhoto)
             }
+
             PhotoAction(stringResource(Res.string.add_event_photo_remove), onRemove)
         }
     }

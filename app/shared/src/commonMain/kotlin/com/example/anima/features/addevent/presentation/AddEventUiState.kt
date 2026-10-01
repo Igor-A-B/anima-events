@@ -7,6 +7,7 @@ data class AddEventUiState(
     val draft: EventDraft = EventDraft(),
     // picked or taken, uploaded once the event is saved
     val photo: PickedImage? = null,
+    val existingPhotoUrl: String? = null,
     // null when creating, the event being edited otherwise
     val eventId: String? = null,
     // loading the stored values of the event being edited

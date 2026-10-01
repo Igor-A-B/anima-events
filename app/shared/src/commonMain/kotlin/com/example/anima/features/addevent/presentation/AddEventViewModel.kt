@@ -16,10 +16,10 @@ import com.example.anima.core.error.AppExceptionBus
 import com.example.anima.core.error.Severity
 import com.example.anima.core.image.PickedImage
 import com.example.anima.core.network.ApiException
-import com.example.anima.features.eventdetail.data.EventImageRepository
 import com.example.anima.features.addevent.data.ExhibitorEventRepository
 import com.example.anima.features.addevent.domain.model.toDraft
 import com.example.anima.features.addevent.domain.model.toRequest
+import com.example.anima.features.eventdetail.data.EventImageRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -43,8 +43,18 @@ class AddEventViewModel(
 
         viewModelScope.launch {
             try {
-                val draft = repository.getForm(eventId).toDraft()
-                _uiState.update { it.copy(draft = draft, isLoading = false) }
+                val form = repository.getForm(eventId)
+
+                val draft = form.toDraft()
+                val existingUrl = form.imageUrl
+
+                _uiState.update {
+                    it.copy(
+                        draft = draft,
+                        existingPhotoUrl = existingUrl,
+                        isLoading = false,
+                    )
+                }
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
@@ -55,16 +65,15 @@ class AddEventViewModel(
     }
 
     fun onPhotoPicked(photo: PickedImage) {
-        // the server refuses more, better to say so before the event is created
         if (photo.bytes.size > MAX_PHOTO_BYTES) {
             bus.show(Res.string.add_event_photo_too_large, Severity.WARN)
             return
         }
-        _uiState.update { it.copy(photo = photo) }
+        _uiState.update { it.copy(photo = photo, existingPhotoUrl = null) }
     }
 
     fun onPhotoRemoved() {
-        _uiState.update { it.copy(photo = null) }
+        _uiState.update { it.copy(photo = null, existingPhotoUrl = null) }
     }
 
     fun onUnsupportedPhoto() {
@@ -124,9 +133,11 @@ class AddEventViewModel(
             _uiState.update { it.copy(isSubmitting = true) }
             try {
                 val saved = if (state.eventId == null) {
-                    repository.create(request).also { bus.show(Res.string.add_event_created, Severity.SUCCESS) }
+                    repository.create(request)
+                        .also { bus.show(Res.string.add_event_created, Severity.SUCCESS) }
                 } else {
-                    repository.update(state.eventId, request).also { bus.show(Res.string.add_event_updated, Severity.SUCCESS) }
+                    repository.update(state.eventId, request)
+                        .also { bus.show(Res.string.add_event_updated, Severity.SUCCESS) }
                 }
                 state.photo?.let { uploadPhoto(saved.id, it) }
                 // a fresh form for the next event, the create screen stays in the back stack

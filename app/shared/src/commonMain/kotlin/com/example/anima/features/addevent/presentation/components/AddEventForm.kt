@@ -33,6 +33,7 @@ import anima.app.shared.generated.resources.add_event_location_hint
 import anima.app.shared.generated.resources.add_event_name_hint
 import anima.app.shared.generated.resources.add_event_price_hint
 import anima.app.shared.generated.resources.add_event_time_hint
+import com.anima.features.event.models.EventCategory
 import com.example.anima.core.components.icon.AnimaIcon
 import com.example.anima.core.components.icon.lucide.LucideBuilding
 import com.example.anima.core.components.icon.lucide.LucideMapPin
@@ -45,7 +46,6 @@ import com.example.anima.core.components.textfield.AnimaTextField
 import com.example.anima.core.image.PickedImage
 import com.example.anima.core.theme.AnimaTheme
 import com.example.anima.features.addevent.domain.model.EventDraft
-import com.anima.features.event.models.EventCategory
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -64,6 +64,7 @@ fun AddEventForm(
     onCapacityChanged: (String) -> Unit,
     onAboutChanged: (String) -> Unit,
     photo: PickedImage?,
+    existingPhotoUrl: String?,
     onPickPhoto: () -> Unit,
     onTakePhoto: (() -> Unit)?,
     onRemovePhoto: () -> Unit,
@@ -97,6 +98,7 @@ fun AddEventForm(
     ) {
         EventPhotoPicker(
             photo = photo,
+            existingPhotoUrl = existingPhotoUrl,
             onPickPhoto = onPickPhoto,
             onTakePhoto = onTakePhoto,
             onRemovePhoto = onRemovePhoto,

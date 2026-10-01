@@ -151,6 +151,7 @@ fun AddEventScreen(
                         onCapacityChanged = viewModel::onCapacityChanged,
                         onAboutChanged = viewModel::onAboutChanged,
                         photo = uiState.photo,
+                        existingPhotoUrl = uiState.existingPhotoUrl,
                         onPickPhoto = pickPhoto,
                         onTakePhoto = takePhoto,
                         onRemovePhoto = viewModel::onPhotoRemoved,
